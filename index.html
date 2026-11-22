@@ -274,6 +274,9 @@ button.kpi:hover{border-color:var(--accent)}
 .vrow .t{flex:1;min-width:0;overflow-wrap:anywhere}
 .vrow .row-actions{margin-top:6px}
 @media (max-width:720px){ .fustat{grid-template-columns:minmax(0,1fr)} .kprow{grid-template-columns:90px minmax(0,1fr) auto} }
+.perpick{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin:12px 0;font-size:13px;font-weight:600}
+.perpick select{width:auto;max-width:100%;padding:7px 10px;font-size:14px}
+.kpibox .kh select{width:auto;max-width:100%;padding:6px 10px;font-size:13px;font-weight:600}
 .st-Diterima{background:var(--good-soft);color:var(--good)}
 .st-Ditolak{background:var(--bad-soft);color:var(--bad)}
 </style>
@@ -321,10 +324,13 @@ button.kpi:hover{border-color:var(--accent)}
       <div class="kpis mystats" id="myStats"></div>
       <section class="zone zone-open">
         <h2 class="sec"><span class="zdot"></span>Prospek berjalan <span class="hint" id="openCount"></span></h2>
+        <p class="hint" style="margin:-4px 0 10px">Tetap tampil sampai hasilnya Diterima atau Ditolak, walaupun periode target sudah berganti.</p>
         <div class="list" id="openList"></div>
       </section>
       <section class="zone zone-done">
-        <details id="doneBox"><summary class="sec"><span class="zdot"></span>Aktivitas selesai <span class="hint" id="doneCount"></span></summary><div class="list" id="doneList" style="margin-top:12px"></div></details>
+        <details id="doneBox"><summary class="sec"><span class="zdot"></span>Aktivitas selesai <span class="hint" id="doneCount"></span></summary>
+          <div class="perpick"><label for="doneSel">Tampilkan periode</label><select id="doneSel"></select></div>
+          <div class="list" id="doneList"></div></details>
       </section>
     </div>
 
@@ -495,18 +501,22 @@ button.kpi:hover{border-color:var(--accent)}
         <tbody id="userRows"></tbody></table></div>
     </div>
     <div class="panel" id="kpiPanel">
-      <h2>Target KPI sales <small>hanya bisa diatur dari menu Pengaturan</small></h2>
+      <h2>Target KPI sales <small>periode ini yang bisa dipilih sales di halaman awalnya</small></h2>
       <div class="inline" style="margin-top:0">
-        <label class="switch" style="font-weight:600">Periode<input type="date" id="kpiStart" style="width:auto"></label>
-        <label class="switch" style="font-weight:600">sampai<input type="date" id="kpiEnd" style="width:auto"></label>
-        <button class="btn sm" type="button" id="kpiMonth">Bulan ini</button>
+        <label class="switch" style="font-weight:600">Periode<select id="kpiPer" style="width:auto"></select></label>
+        <button class="btn sm" type="button" id="kpiNew">+ Periode baru</button>
+        <button class="btn sm danger" type="button" id="kpiDel">Hapus periode ini</button>
+      </div>
+      <div class="inline">
+        <label class="switch" style="font-weight:600">Mulai<input type="date" id="kpiStart" style="width:auto"></label>
+        <label class="switch" style="font-weight:600">Selesai<input type="date" id="kpiEnd" style="width:auto"></label>
+        <button class="btn sm" type="button" id="kpiMonth">Isi 1 bulan penuh</button>
       </div>
       <div class="tbl" style="margin-top:12px"><table class="kpitable" id="kpiTable"></table></div>
       <div class="inline">
-        <span class="hint">Isi semua sales dengan target yang sama:</span>
         <button class="btn sm" type="button" id="kpiFill">Salin baris pertama ke semua</button>
         <span style="flex:1"></span>
-        <button class="btn primary" type="button" id="kpiSave">Simpan target</button>
+        <button class="btn primary" type="button" id="kpiSave">Simpan target periode ini</button>
       </div>
       <span class="msg" id="kpiMsg"></span>
     </div>
@@ -590,7 +600,8 @@ const DEMO=(()=>{
   const users=[{id:"u-admin",username:"admin",nama:"Administrator",tim:"",role:"Admin",aktif:true,pin:"123456",lastLogin:null}];
   const rows=[], files={}; let n=0; const nn=new Date();
   const d8=d=>d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");
-  const KPI={start:d8(new Date(nn.getFullYear(),nn.getMonth(),1)),end:d8(new Date(nn.getFullYear(),nn.getMonth()+1,0)),targets:{},keys:[]};
+  const KPI={periods:[{start:d8(new Date(nn.getFullYear(),nn.getMonth(),1)),end:d8(new Date(nn.getFullYear(),nn.getMonth()+1,0)),targets:{},unsaved:true}],active:0};
+  const kpiActive=()=>{ KPI.periods.sort((a,b)=>b.start.localeCompare(a.start)); const t=d8(new Date()); const i=KPI.periods.findIndex(p=>p.start<=t&&t<=p.end); KPI.active=i<0?0:i; return KPI; };
   const salesU=()=>users.filter(u=>u.aktif&&u.role!=="Admin"&&(roles.find(r=>r.name===u.role)||{perms:{}}).perms.lapor);
   const wait=v=>new Promise(r=>setTimeout(()=>r(JSON.parse(JSON.stringify(v))),200));
   const fail=m=>Promise.reject(new Error(m));
@@ -606,9 +617,12 @@ const DEMO=(()=>{
     apiMe:t=>run(()=>{ const c=ctx(t); return {user:pub(c.user),perms:c.perms}; }),
     apiChangePin:(t,o,nw)=>run(()=>{ const c=ctx(t); if(c.user.pin!==String(o)) throw new Error("PIN lama salah."); if(!/^\d{4,8}$/.test(nw)) throw new Error("PIN baru harus 4–8 angka."); c.user.pin=String(nw); return {token:tok(c.user)}; }),
     apiSettings:t=>run(()=>{ const c=ctx(t); if(!c.perms.kelolaUser) throw new Error("Kamu tidak punya izin untuk tindakan ini."); return {users:users.map(pub),roles,perms:PL,kpi:KPI}; }),
-    apiTargets:t=>run(()=>{ const c=ctx(t); return {start:KPI.start,end:KPI.end,target:KPI.targets[c.user.id]||null}; }),
+    apiTargets:t=>run(()=>{ const c=ctx(t); kpiActive(); return {active:KPI.active,periods:KPI.periods.map(p=>({start:p.start,end:p.end,target:p.targets[c.user.id]||null}))}; }),
     apiSaveTargets:(t,d)=>run(()=>{ const c=ctx(t); if(!c.perms.kelolaUser) throw new Error("Kamu tidak punya izin untuk tindakan ini."); if(!d.start||!d.end||d.start>d.end) throw new Error("Periode tidak valid.");
-      KPI.start=d.start; KPI.end=d.end; KPI.targets={}; salesU().forEach(u=>{ if(d.targets[u.id]) KPI.targets[u.id]=d.targets[u.id]; }); return {users:users.map(pub),roles,perms:PL,kpi:KPI}; }),
+      const oa=d.origStart||d.start, ob=d.origEnd||d.end; const clash=KPI.periods.find(p=>!p.unsaved&&!(p.start===oa&&p.end===ob)&&p.start<=d.end&&d.start<=p.end);
+      if(clash) throw new Error("Periode bertabrakan dengan periode "+clash.start+" s.d. "+clash.end+".");
+      KPI.periods=KPI.periods.filter(p=>!p.unsaved&&!(p.start===oa&&p.end===ob)); KPI.periods.push({start:d.start,end:d.end,targets:d.targets||{}}); kpiActive(); return {users:users.map(pub),roles,perms:PL,kpi:KPI}; }),
+    apiDeleteTargetPeriod:(t,a,b)=>run(()=>{ ctx(t); KPI.periods=KPI.periods.filter(p=>!(p.start===a&&p.end===b)); if(!KPI.periods.length) KPI.periods=[{start:d8(new Date(nn.getFullYear(),nn.getMonth(),1)),end:d8(new Date(nn.getFullYear(),nn.getMonth()+1,0)),targets:{},unsaved:true}]; kpiActive(); return {users:users.map(pub),roles,perms:PL,kpi:KPI}; }),
     apiEditKlien:(t,id,v)=>run(()=>{ const c=ctx(t); const rs=rows.filter(r=>r.aktivitasId===id); if(!rs.length) throw new Error("Aktivitas tidak ditemukan."); if(rs[0].userId!==c.user.id) throw new Error("Klien ini milik sales lain.");
       if(!v.klien) throw new Error("Nama klien wajib diisi."); rs.forEach(r=>Object.assign(r,v,{updatedAt:Date.now()})); return rs; }),
     apiSaveUser:(t,u)=>run(()=>{ const c=ctx(t); if(!c.perms.kelolaUser) throw new Error("Kamu tidak punya izin untuk tindakan ini.");
@@ -683,7 +697,7 @@ function enter(r){
   $("akunKv").innerHTML=`<dt>Nama</dt><dd>${esc(ME.nama)}</dd><dt>Username</dt><dd>${esc(ME.username)}</dd><dt>Tim / area</dt><dd>${esc(ME.tim||"-")}</dd><dt>Peran</dt><dd>${esc(ME.role)}</dd>`;
   resetForm();
   if(PERM.lapor){ api("apiMine",SESSION).then(rows=>{ mine=rows||[]; renderMine(); }).catch(()=>{});
-    api("apiTargets",SESSION).then(k=>{ MYKPI=k; renderMyKpi(); }).catch(()=>{}); }
+    api("apiTargets",SESSION).then(k=>{ MYKPI=k; homePer=null; donePer=null; renderMine(); }).catch(()=>{}); }
   show(PERM.lapor?"isi":PERM.rekap?"rekap":PERM.kelolaUser?"set":"akun");
 }
 $("meBtn").onclick=()=>show("akun");
@@ -975,21 +989,25 @@ function actCard(a){
     <div class="hist" hidden>${histHtml(a)}</div></article>`;
 }
 function renderMine(){
-  const acts=groupActs(mine), open=acts.filter(a=>a.open), done=acts.filter(a=>!a.open);
-  const won=done.filter(a=>a.status==="Diterima"), lost=done.filter(a=>a.status==="Ditolak"), mStart=today().slice(0,8)+"01";
-  const vMonth=mine.filter(r=>(r.tanggal||"")>=mStart).length;
-  $("myStats").innerHTML=`<button type="button" class="kpi" data-detail="visits"><div class="k">Kunjungan bulan ini</div><div class="v">${vMonth}</div><div class="s">${mine.length} total · ${acts.length} klien</div></button>
-    <button type="button" class="kpi" data-detail="open"><div class="k">Prospek berjalan</div><div class="v">${open.length}</div><div class="s">${rpShort(open.reduce((x,a)=>x+valOpen(a.latest),0))}</div></button>
-    <button type="button" class="kpi good" data-detail="won"><div class="k">Deal</div><div class="v">${won.length}</div><div class="s">${rpShort(won.reduce((x,a)=>x+valDeal(a.latest),0))}</div></button>
-    <button type="button" class="kpi bad" data-detail="lost"><div class="k">Ditolak</div><div class="v">${lost.length}</div><div class="s">${done.length?Math.round(won.length/done.length*100)+"% tingkat deal":"belum ada hasil final"}</div></button>`;
+  const acts=groupActs(mine), open=acts.filter(a=>a.open), doneAll=acts.filter(a=>!a.open), P=homePeriod(), pl=perLabel(P);
+  const inP=a=>inRange(a.last,P.start,P.end);
+  const won=doneAll.filter(a=>a.status==="Diterima"&&inP(a)), lost=doneAll.filter(a=>a.status==="Ditolak"&&inP(a));
+  const vPer=mine.filter(r=>inRange(r.tanggal,P.start,P.end)).length;
+  $("myStats").innerHTML=`<button type="button" class="kpi" data-detail="visits"><div class="k">Kunjungan · ${esc(pl)}</div><div class="v">${vPer}</div><div class="s">${new Set(mine.filter(r=>inRange(r.tanggal,P.start,P.end)).map(r=>r.aktivitasId)).size} klien</div></button>
+    <button type="button" class="kpi" data-detail="open"><div class="k">Prospek berjalan</div><div class="v">${open.length}</div><div class="s">${rpShort(open.reduce((x,a)=>x+valOpen(a.latest),0))} · semua periode</div></button>
+    <button type="button" class="kpi good" data-detail="won"><div class="k">Deal · ${esc(pl)}</div><div class="v">${won.length}</div><div class="s">${rpShort(won.reduce((x,a)=>x+valDeal(a.latest),0))}</div></button>
+    <button type="button" class="kpi bad" data-detail="lost"><div class="k">Ditolak · ${esc(pl)}</div><div class="v">${lost.length}</div><div class="s">${won.length+lost.length?Math.round(won.length/(won.length+lost.length)*100)+"% tingkat deal":"belum ada hasil final"}</div></button>`;
+  const DP=donePeriod(), done=DP?doneAll.filter(a=>inRange(a.last,DP.start,DP.end)):doneAll;
+  const ps=(MYKPI&&MYKPI.periods&&MYKPI.periods.length)?MYKPI.periods:[curMonthPer()], dsel=donePer==="all"?"all":String(ps.indexOf(DP));
+  $("doneSel").innerHTML=ps.map((p,i)=>`<option value="${i}">${esc(perLabel(p))}</option>`).join("")+`<option value="all">Semua periode</option>`; $("doneSel").value=dsel;
   renderMyKpi();
   const prog=mine.filter(r=>r.visitStatus==="Di lokasi"||r.visitStatus==="Isi hasil"), box=$("resume");
   box.hidden=!prog.length;
   box.innerHTML=`<b>Perlu diselesaikan</b>`+prog.map(r=>`<div class="r"><span>${esc(r.klien)} · ${r.visitStatus==="Di lokasi"?"sedang di lokasi sejak "+hm(r.checkIn&&r.checkIn.at):"sudah check-out, hasil belum diisi"}</span><button type="button" class="btn sm primary" data-row="${r.id}">${r.visitStatus==="Di lokasi"?"Buka timer":"Isi hasil"}</button></div>`).join("");
   $("openCount").textContent=open.length?`(${open.length})`:"";
   $("openList").innerHTML=open.length?open.map(actCard).join(""):`<div class="empty" style="padding:22px"><b>Belum ada prospek berjalan</b>Tekan “+ Kunjungan baru” untuk memulai kunjungan ke klien.</div>`;
-  $("doneCount").textContent=done.length?`(${done.length} · ${done.filter(a=>a.status==="Diterima").length} diterima)`:"";
-  $("doneList").innerHTML=done.length?done.map(actCard).join(""):`<div class="empty" style="padding:16px">Belum ada aktivitas yang selesai.</div>`;
+  $("doneCount").textContent=`(${done.length} · ${done.filter(a=>a.status==="Diterima").length} deal · ${done.filter(a=>a.status==="Ditolak").length} ditolak${DP?" · "+perLabel(DP):""})`;
+  $("doneList").innerHTML=done.length?done.map(actCard).join(""):`<div class="empty" style="padding:16px">Belum ada aktivitas yang selesai ${DP?"di periode "+esc(perLabel(DP)):""}.</div>`;
   $("klienList").innerHTML=[...new Set(mine.map(r=>r.klien))].map(k=>`<option value="${esc(k)}">`).join("");
 }
 const pendingDel=new Set();
@@ -999,7 +1017,13 @@ async function delReport(id,b){
   catch(err){ toast(err.message||"Gagal menghapus"); } }
 // ----- KPI & target
 const TKEYS=[["kunjungan","Kunjungan"],["klienBaru","Klien baru"],["deal","Deal"],["nilaiDeal","Nilai deal"]];
-let MYKPI=null;
+let MYKPI=null, homePer=null, donePer=null;
+const MONTHS_ID=["Januari","Februari","Maret","April","Mei","Juni","Juli","Agustus","September","Oktober","November","Desember"];
+function perLabel(p){ const [y,m,d]=p.start.split("-").map(Number), last=new Date(y,m,0).getDate(), [y2,m2,d2]=p.end.split("-").map(Number);
+  return (d===1&&y2===y&&m2===m&&d2===last)?`${MONTHS_ID[m-1]} ${y}`:`${d} ${MONTHS_ID[m-1].slice(0,3)} – ${d2} ${MONTHS_ID[m2-1].slice(0,3)} ${y2}`; }
+function curMonthPer(){ const n=new Date(); return {start:ymd(new Date(n.getFullYear(),n.getMonth(),1)),end:ymd(new Date(n.getFullYear(),n.getMonth()+1,0)),target:null}; }
+function homePeriod(){ const ps=MYKPI&&MYKPI.periods; if(!ps||!ps.length) return curMonthPer(); return ps[homePer??MYKPI.active]||ps[0]; }
+function donePeriod(){ if(donePer==="all") return null; const ps=MYKPI&&MYKPI.periods; if(!ps||!ps.length) return curMonthPer(); return ps[donePer??homePer??MYKPI.active]||ps[0]; }
 const inRange=(d,a,b)=>!!d&&(!a||d>=a)&&(!b||d<=b);
 function achieve(rows,a,b){ const acts=groupActs(rows), won=acts.filter(x=>!x.open&&x.status==="Diterima"&&inRange(x.last,a,b));
   return {kunjungan:rows.filter(r=>inRange(r.tanggal,a,b)).length, klienBaru:acts.filter(x=>inRange(x.rows[0].tanggal,a,b)).length,
@@ -1012,22 +1036,26 @@ const fmtRange=(a,b)=>`${fmtDate(a)} – ${fmtDate(b)}`;
 function daysLeft(b){ const [y,m,d]=b.split("-").map(Number); const n=Math.ceil((new Date(y,m-1,d,23,59)-new Date())/864e5); return n<0?"periode sudah berakhir":n===0?"hari terakhir":`sisa ${n} hari`; }
 function renderMyKpi(){
   const box=$("myKpi"); if(!MYKPI){ box.hidden=true; return; } box.hidden=false;
-  const ach=achieve(mine,MYKPI.start,MYKPI.end), t=MYKPI.target;
-  box.innerHTML=`<div class="kh"><b>Target KPI saya</b><span>Periode ${fmtRange(MYKPI.start,MYKPI.end)} · ${daysLeft(MYKPI.end)}</span></div>
-    ${kpiRowsHtml(ach,t)}${t?"":`<p class="hint" style="margin:8px 0 0">Target periode ini belum diatur admin. Angka di atas adalah capaianmu sejauh ini.</p>`}`;
+  const ps=MYKPI.periods&&MYKPI.periods.length?MYKPI.periods:[curMonthPer()], P=homePeriod(), ach=achieve(mine,P.start,P.end), t=P.target, idx=ps.indexOf(P);
+  const isNow=inRange(today(),P.start,P.end);
+  box.innerHTML=`<div class="kh"><b>Target KPI saya</b><select id="kpiSel" aria-label="Pilih periode target">${ps.map((p,i)=>`<option value="${i}"${i===idx?" selected":""}>${esc(perLabel(p))}${i===MYKPI.active?" (berjalan)":""}</option>`).join("")}</select></div>
+    <div class="hint" style="margin:-4px 0 10px">Periode ${fmtRange(P.start,P.end)} · ${isNow?daysLeft(P.end):P.end<today()?"periode sudah berakhir":"belum dimulai"}</div>
+    ${kpiRowsHtml(ach,t)}${t?"":`<p class="hint" style="margin:8px 0 0">Target periode ini belum diatur admin. Angka di atas adalah capaianmu di periode ini.</p>`}`;
+  $("kpiSel").onchange=e=>{ homePer=Number(e.target.value); donePer=null; renderMine(); };
 }
+$("doneSel").addEventListener("change",e=>{ donePer=e.target.value==="all"?"all":Number(e.target.value); renderMine(); });
 // ----- rincian kotak ringkasan
 function openDetail(kind){
-  const acts=groupActs(mine), mStart=today().slice(0,8)+"01";
-  const T={visits:["Kunjungan bulan ini","Semua kunjungan sejak "+fmtDate(mStart)+"."],open:["Prospek berjalan","Klien yang masih dalam proses follow-up."],
-    won:["Deal","Klien yang penawarannya diterima."],lost:["Ditolak","Klien yang penawarannya ditolak."]}[kind];
+  const acts=groupActs(mine), P=homePeriod(), pl=perLabel(P), inP=a=>inRange(a.last,P.start,P.end);
+  const T={visits:["Kunjungan · "+pl,"Semua kunjungan periode "+fmtRange(P.start,P.end)+"."],open:["Prospek berjalan","Klien yang masih dalam proses follow-up, dari periode mana pun."],
+    won:["Deal · "+pl,"Klien yang penawarannya diterima pada periode "+fmtRange(P.start,P.end)+"."],lost:["Ditolak · "+pl,"Klien yang penawarannya ditolak pada periode "+fmtRange(P.start,P.end)+"."]}[kind];
   $("detTitle").textContent=T[0]; $("detLede").textContent=T[1];
   let html="";
-  if(kind==="visits"){ const rs=mine.filter(r=>(r.tanggal||"")>=mStart).sort((a,b)=>(b.tanggal||"").localeCompare(a.tanggal||"")||(b.createdAt||0)-(a.createdAt||0));
+  if(kind==="visits"){ const rs=mine.filter(r=>inRange(r.tanggal,P.start,P.end)).sort((a,b)=>(b.tanggal||"").localeCompare(a.tanggal||"")||(b.createdAt||0)-(a.createdAt||0));
     html=rs.map(r=>`<article class="act"><div class="top"><span class="client">${esc(r.klien)} <span class="hint">· kunjungan ke-${r.kunjunganKe||1}</span></span>${stPill(normSt(r.status))}</div>
       <div class="meta">${fmtDate(r.tanggal)} · ${esc(r.jenis||"-")}${r.checkIn?` · ${hm(r.checkIn.at)}–${r.checkOut?hm(r.checkOut.at):"…"}${r.checkOut?" ("+dur(r.checkOut.at-r.checkIn.at)+")":""}`:""}</div>
       ${r.hasil?`<div class="meta" style="margin-top:4px">${esc(r.hasil)}</div>`:""}<div class="row-actions"><button class="btn sm" data-row="${r.id}">Buka</button></div></article>`).join(""); }
-  else { const sel=kind==="open"?acts.filter(a=>a.open):acts.filter(a=>!a.open&&a.status===(kind==="won"?"Diterima":"Ditolak")); html=sel.map(actCard).join(""); }
+  else { const sel=kind==="open"?acts.filter(a=>a.open):acts.filter(a=>!a.open&&inP(a)&&a.status===(kind==="won"?"Diterima":"Ditolak")); html=sel.map(actCard).join(""); }
   $("detList").innerHTML=html||`<div class="empty"><b>Belum ada data</b>Data akan muncul di sini.</div>`;
   showScreen("detail");
 }
@@ -1067,6 +1095,9 @@ async function loadDash(){
   try{ const d=await api("apiDashboard",SESSION,400);
     all=(d.rows||[]).map(r=>Object.assign(r,{status:normSt(r.status),aktivitasId:r.aktivitasId||r.id,kunjunganKe:r.kunjunganKe||1}));
     DASH={kpi:d.kpi||null,sales:d.sales||[]}; $("scopeTxt").textContent=d.scope||"";
+    const sel=$("fPeriode"), cv=sel.value; [...sel.querySelectorAll("option[data-per]")].forEach(o=>o.remove());
+    (DASH.kpi?DASH.kpi.periods:[]).forEach((x,i)=>{ const o=document.createElement("option"); o.value="p:"+i; o.dataset.per=1; o.textContent="Target: "+perLabel(x)+(i===DASH.kpi.active?" (berjalan)":""); sel.insertBefore(o,sel.querySelector('option[value="today"]')); });
+    if([...sel.options].some(o=>o.value===cv)) sel.value=cv;
     $("sheetLink").hidden=!d.sheetUrl; if(d.sheetUrl) $("sheetLink").href=d.sheetUrl; $("folderLink").hidden=!d.folderUrl; if(d.folderUrl) $("folderLink").href=d.folderUrl;
     if($("fPeriode").value!=="custom") applyPreset();
     $("lastLoad").textContent="Dimuat "+hm(Date.now())+"."; render(); }
@@ -1075,7 +1106,9 @@ async function loadDash(){
 $("reloadBtn").onclick=loadDash;
 setInterval(()=>{ if(SESSION&&!$("view-rekap").hidden) loadDash(); },120000);
 function applyPreset(){ const p=$("fPeriode").value, now=new Date(); let a="",b=today();
-  if(p==="kpi"&&DASH.kpi){ a=DASH.kpi.start; b=DASH.kpi.end; }
+  const K=DASH.kpi;
+  if(p==="kpi"&&K&&K.periods.length){ const x=K.periods[K.active]; a=x.start; b=x.end; }
+  else if(p.startsWith("p:")&&K){ const x=K.periods[Number(p.slice(2))]; if(x){ a=x.start; b=x.end; } }
   else if(p==="today") a=today(); else if(p==="month"){ a=ymd(new Date(now.getFullYear(),now.getMonth(),1)); b=ymd(new Date(now.getFullYear(),now.getMonth()+1,0)); }
   else if(p==="all"){ a=""; b=""; } else if(p==="custom") return;
   else { const d=new Date(); d.setDate(d.getDate()-((Number(p)||30)-1)); a=ymd(d); }
@@ -1106,10 +1139,11 @@ function render(){
   $("kClose").textContent=lost.length; $("kCloseS").textContent=(won.length+lost.length)?pct(won.length,won.length+lost.length)+"% tingkat deal":"belum ada hasil final";
   // Target KPI tim
   const salesIn=DASH.sales.filter(u=>(!tm||(u.tim||"")===tm)&&(!sl||u.nama===sl));
-  const tgtSum={}; TKEYS.forEach(([k])=>tgtSum[k]=salesIn.reduce((s,u)=>s+((DASH.kpi&&DASH.kpi.targets[u.id]||{})[k]||0),0));
+  const KP=DASH.kpi&&DASH.kpi.periods.length?(DASH.kpi.periods.find(x=>x.start===A&&x.end===B)||DASH.kpi.periods[DASH.kpi.active]):null;
+  const tgtSum={}; TKEYS.forEach(([k])=>tgtSum[k]=salesIn.reduce((s,u)=>s+((KP&&KP.targets[u.id]||{})[k]||0),0));
   const hasT=TKEYS.some(([k])=>tgtSum[k]>0), achT=achieve(base,A,B);
-  const K=DASH.kpi, same=K&&A===K.start&&B===K.end;
-  $("teamKpiPer").textContent=K?`target periode ${fmtRange(K.start,K.end)}`:"";
+  const same=KP&&A===KP.start&&B===KP.end;
+  $("teamKpiPer").textContent=KP?`target ${perLabel(KP)} (${fmtRange(KP.start,KP.end)})`:"";
   $("teamKpi").innerHTML=kpiRowsHtml(achT,hasT?tgtSum:null)+
     `<p class="hint" style="margin:10px 0 0">${salesIn.length} sales · capaian ${A||B?"periode "+(A?fmtDate(A):"awal")+" – "+(B?fmtDate(B):"sekarang"):"semua waktu"}.${!hasT?" Target belum diatur (⚙ Pengaturan → Target KPI).":!same?" Rentang tanggal berbeda dari periode target, jadi persentasenya hanya perkiraan.":""}</p>`;
   // Status follow-up klien
@@ -1123,7 +1157,7 @@ function render(){
   // Peringkat sales
   const names=[...new Set(salesIn.map(u=>u.nama).concat(base.map(r=>r.sales)).filter(Boolean))];
   const rank=names.map(n=>{ const u=salesIn.find(x=>x.nama===n), rs=base.filter(r=>r.sales===n), ach=achieve(rs,A,B), ga=groupActs(rs);
-    const lo=ga.filter(x=>!x.open&&x.status==="Ditolak"&&inRange(x.last,A,B)).length, tg=u&&DASH.kpi?DASH.kpi.targets[u.id]:null;
+    const lo=ga.filter(x=>!x.open&&x.status==="Ditolak"&&inRange(x.last,A,B)).length, tg=u&&KP?KP.targets[u.id]:null;
     return {n,tim:(u&&u.tim)||(rs[0]&&rs[0].tim)||"",ach,lo,rate:(ach.deal+lo)?pct(ach.deal,ach.deal+lo):null,sc:score(ach,tg)}; })
     .sort((a,b)=>((b.sc??-1)-(a.sc??-1))||(b.ach.nilaiDeal-a.ach.nilaiDeal)||(b.ach.deal-a.ach.deal)||(b.ach.kunjungan-a.ach.kunjungan));
   $("rankNote").textContent=rank.some(r=>r.sc!==null)?"diurutkan dari rata-rata pencapaian target, lalu nilai deal":"diurutkan dari nilai deal, jumlah deal, lalu kunjungan";
@@ -1206,26 +1240,41 @@ async function saveUser(){
     toast(isNew?`Pengguna ${u.nama} ditambahkan. Username: ${u.username}`:"Data pengguna disimpan"); if(u.id===ME.id){ const me=await api("apiMe",SESSION); enterPerms(me); } }
   catch(err){ msg(m,err.message,"err"); if($("euSave")) $("euSave").disabled=false; } }
 function enterPerms(r){ ME=r.user; PERM=r.perms; $("tabIsi").hidden=!PERM.lapor; $("tabRekap").hidden=!PERM.rekap; $("tabs").hidden=!(PERM.lapor&&PERM.rekap); $("gearBtn").hidden=!PERM.kelolaUser; }
+let kpiIdx=null, kpiDraftNew=false;
 function renderKpiSet(){
   const k=SET.kpi; $("kpiPanel").hidden=!k; if(!k) return;
-  $("kpiStart").value=k.start; $("kpiEnd").value=k.end;
+  const ps=k.periods||[]; if(kpiIdx===null||kpiIdx>=ps.length) kpiIdx=k.active||0;
+  const P=kpiDraftNew?{start:"",end:"",targets:{}}:(ps[kpiIdx]||{start:"",end:"",targets:{}});
+  $("kpiPer").innerHTML=ps.filter(p=>!p.unsaved).map((p,i)=>`<option value="${i}">${esc(perLabel(p))}${i===k.active?" (berjalan)":""}</option>`).join("")+(kpiDraftNew||ps.every(p=>p.unsaved)?`<option value="new" selected>Periode baru (belum disimpan)</option>`:"");
+  if(!kpiDraftNew&&!(ps[kpiIdx]||{}).unsaved) $("kpiPer").value=String(kpiIdx);
+  $("kpiDel").hidden=kpiDraftNew||!!P.unsaved;
+  if(kpiDraftNew){ const n=new Date(); P.start=ymd(new Date(n.getFullYear(),n.getMonth()+1,1)); P.end=ymd(new Date(n.getFullYear(),n.getMonth()+2,0));
+    const last=ps.find(p=>!p.unsaved); if(last){ const [y,m]=last.end.split("-").map(Number); P.start=ymd(new Date(y,m,1)); P.end=ymd(new Date(y,m+1,0)); P.targets=JSON.parse(JSON.stringify(last.targets)); } }
+  $("kpiStart").value=P.start; $("kpiEnd").value=P.end;
   const sales=SET.users.filter(u=>u.aktif&&u.role!=="Admin"&&(SET.roles.find(r=>r.name===u.role)||{perms:{}}).perms.lapor).sort((a,b)=>(a.tim||"").localeCompare(b.tim||"")||a.nama.localeCompare(b.nama,"id"));
-  const tot={}; TKEYS.forEach(([x])=>tot[x]=sales.reduce((s,u)=>s+((k.targets[u.id]||{})[x]||0),0));
+  const tot={}; TKEYS.forEach(([x])=>tot[x]=sales.reduce((s,u)=>s+((P.targets[u.id]||{})[x]||0),0));
   $("kpiTable").innerHTML=`<thead><tr><th>Sales</th><th>Tim</th>${TKEYS.map(([,l])=>`<th class="num">${l}${l==="Nilai deal"?" (Rp)":""}</th>`).join("")}</tr></thead><tbody>`+
-    (sales.length?sales.map(u=>`<tr><td><b>${esc(u.nama)}</b></td><td>${esc(u.tim||"-")}</td>${TKEYS.map(([x])=>{ const v=(k.targets[u.id]||{})[x]||0; return `<td class="num"><input data-uid="${u.id}" data-k="${x}" inputmode="numeric" value="${v?(x==="nilaiDeal"?v.toLocaleString("id-ID"):v):""}" placeholder="0"></td>`; }).join("")}</tr>`).join("")
+    (sales.length?sales.map(u=>`<tr><td><b>${esc(u.nama)}</b></td><td>${esc(u.tim||"-")}</td>${TKEYS.map(([x])=>{ const v=(P.targets[u.id]||{})[x]||0; return `<td class="num"><input data-uid="${u.id}" data-k="${x}" inputmode="numeric" value="${v?(x==="nilaiDeal"?v.toLocaleString("id-ID"):v):""}" placeholder="0"></td>`; }).join("")}</tr>`).join("")
       :`<tr><td colspan="6" class="hint">Belum ada sales. Tambahkan pengguna dengan peran yang punya hak "Isi laporan kunjungan" (selain Admin).</td></tr>`)+
     `</tbody><tfoot><tr><td colspan="2"><b>Total tim</b></td>${TKEYS.map(([x])=>`<td class="num"><b>${fmtK(x,tot[x])}</b></td>`).join("")}</tr></tfoot>`;
 }
+$("kpiPer").addEventListener("change",e=>{ if(e.target.value==="new") return; kpiDraftNew=false; kpiIdx=Number(e.target.value); renderKpiSet(); msg($("kpiMsg"),""); });
+$("kpiNew").onclick=()=>{ kpiDraftNew=true; renderKpiSet(); msg($("kpiMsg"),"Periode baru: atur tanggal & target (disalin dari periode terakhir), lalu tekan Simpan."); };
+$("kpiDel").onclick=async()=>{ const P=SET.kpi.periods[kpiIdx]; if(!P) return; const b=$("kpiDel");
+  if(Date.now()-(b._armed||0)>4000){ b._armed=Date.now(); b.textContent="Tekan lagi untuk hapus"; setTimeout(()=>b.textContent="Hapus periode ini",4000); return; }
+  try{ kpiIdx=null; applySettings(await api("apiDeleteTargetPeriod",SESSION,P.start,P.end)); msg($("kpiMsg"),"Periode dihapus.","ok"); }catch(err){ msg($("kpiMsg"),err.message,"err"); } };
 $("kpiTable").addEventListener("input",e=>{ const el=e.target; if(!el.dataset.k) return; const d=el.value.replace(/\D/g,""); el.value=d?(el.dataset.k==="nilaiDeal"?Number(d).toLocaleString("id-ID"):String(Number(d))):""; msg($("kpiMsg"),"Ada perubahan target yang belum disimpan."); });
-$("kpiMonth").onclick=()=>{ const n=new Date(); $("kpiStart").value=ymd(new Date(n.getFullYear(),n.getMonth(),1)); $("kpiEnd").value=ymd(new Date(n.getFullYear(),n.getMonth()+1,0)); msg($("kpiMsg"),"Periode diubah, tekan Simpan target."); };
+$("kpiMonth").onclick=()=>{ const v=$("kpiStart").value||today(), [y,m]=v.split("-").map(Number); $("kpiStart").value=ymd(new Date(y,m-1,1)); $("kpiEnd").value=ymd(new Date(y,m,0)); msg($("kpiMsg"),"Tanggal diisi satu bulan penuh, tekan Simpan."); };
 $("kpiFill").onclick=()=>{ const first={}; $("kpiTable").querySelectorAll("tbody tr:first-child input").forEach(i=>first[i.dataset.k]=i.value);
   $("kpiTable").querySelectorAll("tbody input").forEach(i=>i.value=first[i.dataset.k]||""); msg($("kpiMsg"),"Target disalin ke semua sales, tekan Simpan target."); };
 $("kpiSave").onclick=async()=>{ const start=$("kpiStart").value, end=$("kpiEnd").value;
   if(!start||!end||start>end) return msg($("kpiMsg"),"Periode tidak valid. Tanggal mulai harus sebelum tanggal selesai.","err");
   const targets={}; $("kpiTable").querySelectorAll("tbody input").forEach(i=>{ (targets[i.dataset.uid]??={})[i.dataset.k]=Number(i.value.replace(/\D/g,""))||0; });
   $("kpiSave").disabled=true; msg($("kpiMsg"),"Menyimpan…");
-  try{ applySettings(await api("apiSaveTargets",SESSION,{start,end,targets})); msg($("kpiMsg"),"Target KPI disimpan.","ok");
-    if(PERM.lapor) api("apiTargets",SESSION).then(k=>{ MYKPI=k; renderMyKpi(); }).catch(()=>{}); }
+  const orig=kpiDraftNew?null:SET.kpi.periods[kpiIdx];
+  try{ const res=await api("apiSaveTargets",SESSION,{start,end,targets,origStart:orig&&!orig.unsaved?orig.start:null,origEnd:orig&&!orig.unsaved?orig.end:null});
+    kpiDraftNew=false; kpiIdx=Math.max(0,(res.kpi.periods||[]).findIndex(p=>p.start===start&&p.end===end)); applySettings(res); msg($("kpiMsg"),"Target KPI periode "+perLabel({start,end})+" disimpan.","ok");
+    if(PERM.lapor) api("apiTargets",SESSION).then(k=>{ MYKPI=k; renderMine(); }).catch(()=>{}); }
   catch(err){ msg($("kpiMsg"),err.message,"err"); } finally{ $("kpiSave").disabled=false; } };
 $("addUserBtn").onclick=()=>openEditor(null);
 $("userRows").addEventListener("click",e=>{ const b=e.target.closest("[data-edit-user]"); if(b){ openEditor(SET.users.find(u=>u.id===b.dataset.editUser)); $("userEditor").scrollIntoView({behavior:"smooth",block:"start"}); } });
