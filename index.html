@@ -277,6 +277,26 @@ button.kpi:hover{border-color:var(--accent)}
 .perpick{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin:12px 0;font-size:13px;font-weight:600}
 .perpick select{width:auto;max-width:100%;padding:7px 10px;font-size:14px}
 .kpibox .kh select{width:auto;max-width:100%;padding:6px 10px;font-size:13px;font-weight:600}
+.dupbox{background:var(--warn-soft);border:1px solid var(--warn);color:var(--fg);border-radius:var(--r);padding:12px 14px;margin-bottom:16px;font-size:13px}
+.dupbox>b{color:var(--warn);font-size:14px;display:block;margin-bottom:6px}
+.dupbox ul{margin:0;padding-left:18px;display:flex;flex-direction:column;gap:4px}
+.dupwarn{background:var(--warn-soft);border:1px solid var(--warn);border-radius:8px;padding:10px 12px;font-size:13px}
+.dupwarn b{color:var(--warn)}
+.pill.dup{background:var(--warn-soft);color:var(--warn)}
+.dup-panel{border-color:var(--warn)}
+.dangerzone{grid-column:1/-1;border:1px solid var(--bad);background:var(--bad-soft);border-radius:8px;padding:12px 14px;display:flex;flex-direction:column;gap:8px;font-size:13px}
+.dangerzone b{color:var(--bad)}
+.dangerzone label{flex-direction:row;align-items:flex-start;gap:8px;font-weight:500}
+.dangerzone input{width:18px;height:18px;margin-top:1px;accent-color:var(--bad)}
+.zone-appr{background:var(--warn-soft);border:1px solid var(--warn)} .zone-appr .zdot{background:var(--warn)} .zone-appr .sec{color:var(--warn)}
+.apprbox{border:1px solid var(--warn);background:var(--warn-soft);border-radius:8px;padding:12px;display:flex;flex-direction:column;gap:10px;font-size:13px}
+.apprbox b{color:var(--warn)}
+.apprbox.ok{border-color:var(--good);background:var(--good-soft)} .apprbox.ok b{color:var(--good)}
+.apprbox.no{border-color:var(--bad);background:var(--bad-soft)} .apprbox.no b{color:var(--bad)}
+.tabbadge{display:inline-grid;place-items:center;min-width:18px;height:18px;padding:0 5px;margin-left:6px;border-radius:9px;background:var(--bad);color:#fff;font:700 11px var(--font-num);vertical-align:1px}
+.appr-panel{border-color:var(--warn)}
+.ap-Menunggu{background:var(--warn-soft);color:var(--warn)} .ap-Disetujui{background:var(--good-soft);color:var(--good)} .ap-Ditolak{background:var(--bad-soft);color:var(--bad)}
+.cio.single{grid-template-columns:minmax(0,1fr)}
 .st-Diterima{background:var(--good-soft);color:var(--good)}
 .st-Ditolak{background:var(--bad-soft);color:var(--bad)}
 </style>
@@ -300,7 +320,7 @@ button.kpi:hover{border-color:var(--accent)}
   <div class="brand"><span class="logoplate"><img src="data:image/png;base64,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" alt="Berkah Sinergi Ide Group"></span><span class="brandtxt"><b>Laporan Sales</b><span>BERKAH SINERGI IDE</span></span></div>
   <div class="tabs" role="tablist" id="tabs">
     <button role="tab" aria-selected="true" data-view="isi" id="tabIsi">Isi Laporan</button>
-    <button role="tab" aria-selected="false" data-view="rekap" id="tabRekap">Rekap Tim</button>
+    <button role="tab" aria-selected="false" data-view="rekap" id="tabRekap">Rekap Tim<span class="tabbadge" id="apprBadge" hidden></span></button>
   </div>
   <div class="who">
     <button type="button" class="iconbtn" id="gearBtn" title="Pengaturan otoritas pengguna" aria-label="Pengaturan" aria-pressed="false" hidden>
@@ -318,10 +338,15 @@ button.kpi:hover{border-color:var(--accent)}
     <!-- LAYAR 1: daftar aktivitas -->
     <div id="scr-list">
       <div id="resume" class="resume" hidden></div>
+      <div id="dupBox" class="dupbox" role="alert" hidden></div>
       <div class="listhead"><div><h1>Aktivitas saya</h1><p class="lede" style="margin:0">Satu aktivitas = satu prospek klien. Bisa berisi beberapa kunjungan sampai hasilnya <b>Diterima</b> atau <b>Ditolak</b>.</p></div>
         <button class="btn primary" type="button" id="newVisitBtn">+ Kunjungan baru</button></div>
       <div class="kpibox" id="myKpi"></div>
       <div class="kpis mystats" id="myStats"></div>
+      <section class="zone zone-appr" id="apprZone" hidden>
+        <h2 class="sec"><span class="zdot"></span>Pengajuan klien ganda <span class="hint" id="apprCount"></span></h2>
+        <div class="list" id="myApprList"></div>
+      </section>
       <section class="zone zone-open">
         <h2 class="sec"><span class="zdot"></span>Prospek berjalan <span class="hint" id="openCount"></span></h2>
         <p class="hint" style="margin:-4px 0 10px">Tetap tampil sampai hasilnya Diterima atau Ditolak, walaupun periode target sudah berganti.</p>
@@ -371,6 +396,7 @@ button.kpi:hover{border-color:var(--accent)}
           <label>Nama sales<input id="sales" class="readonly" readonly tabindex="-1"></label>
           <label><span class="req">Tanggal</span><input id="tanggal" type="date"></label>
           <label><span class="req">Nama klien / brand</span><input id="klien" placeholder="mis. PT Maju Jaya / Brand X" list="klienList"><datalist id="klienList"></datalist></label>
+          <div class="full dupwarn" id="ciDup" hidden></div>
           <label><span class="req">Jenis aktivitas</span>
             <select id="jenis">
               <option>Kunjungan (visit)</option><option>Meeting</option><option>Presentasi / pitching</option>
@@ -455,6 +481,7 @@ button.kpi:hover{border-color:var(--accent)}
   <section id="view-rekap" hidden>
     <h1>Dashboard sales</h1>
     <p class="lede"><span id="scopeTxt"></span> · data langsung dari Google Sheets. <span id="lastLoad"></span></p>
+    <div class="panel appr-panel" id="apprPanel" hidden><h2>Persetujuan klien ganda <small id="apprPanelCount"></small></h2><div class="list" id="apprList"></div></div>
     <div class="filters">
       <label>Periode<select id="fPeriode">
         <option value="kpi" selected>Periode KPI</option><option value="today">Hari ini</option><option value="7">7 hari terakhir</option><option value="month">Bulan ini</option><option value="30">30 hari terakhir</option><option value="all">Semua (≤ 1 tahun)</option><option value="custom">Pilih tanggal…</option>
@@ -486,6 +513,7 @@ button.kpi:hover{border-color:var(--accent)}
       <div class="panel"><h2>Status aktivitas <small>jumlah klien · nilai</small></h2><div class="funnel" id="funnel"></div></div>
       <div class="panel"><h2>Follow-up terdekat</h2><div id="fuList"></div></div>
     </div>
+    <div class="panel dup-panel" id="dupPanel" hidden><h2>⚠ Peringatan duplikasi klien <small id="dupCount"></small></h2><div class="list" id="dupList"></div></div>
     <div class="panel"><h2>Daftar klien <small id="listCount"></small></h2><div class="list" id="list"></div></div>
   </section>
 
@@ -594,11 +622,11 @@ function api(fn,...args){
 
 // ---------- Mode demo: meniru server di memori (saat file dibuka di luar Google Apps Script)
 const DEMO=(()=>{
-  const PK=["lapor","rekap","rekapSemua","hapusSemua","aksesData","kelolaUser"];
-  const PL=[["lapor","Isi laporan kunjungan"],["rekap","Lihat Rekap Tim"],["rekapSemua","Rekap semua tim (bukan hanya timnya sendiri)"],["hapusSemua","Hapus laporan milik siapa pun"],["aksesData","Buka Google Sheet & folder foto"],["kelolaUser","Kelola pengguna & otoritas"]];
-  let roles=[{name:"Admin",perms:Object.fromEntries(PK.map(k=>[k,true]))},{name:"Supervisor",perms:{lapor:true,rekap:true}},{name:"Sales",perms:{lapor:true}}];
+  const PK=["lapor","rekap","rekapSemua","hapusSemua","aksesData","kelolaUser","approveKlien"];
+  const PL=[["lapor","Isi laporan kunjungan"],["rekap","Lihat Rekap Tim"],["rekapSemua","Rekap semua tim (bukan hanya timnya sendiri)"],["hapusSemua","Hapus laporan milik siapa pun"],["aksesData","Buka Google Sheet & folder foto"],["kelolaUser","Kelola pengguna & otoritas"],["approveKlien","Setujui pengajuan klien ganda"]];
+  let roles=[{name:"Admin",perms:Object.fromEntries(PK.map(k=>[k,true]))},{name:"Supervisor",perms:{lapor:true,rekap:true,approveKlien:true}},{name:"Sales",perms:{lapor:true}}];
   const users=[{id:"u-admin",username:"admin",nama:"Administrator",tim:"",role:"Admin",aktif:true,pin:"123456",lastLogin:null}];
-  const rows=[], files={}; let n=0; const nn=new Date();
+  const rows=[], files={}, APR=[]; let n=0; const nn=new Date();
   const d8=d=>d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");
   const KPI={periods:[{start:d8(new Date(nn.getFullYear(),nn.getMonth(),1)),end:d8(new Date(nn.getFullYear(),nn.getMonth()+1,0)),targets:{},unsaved:true}],active:0};
   const kpiActive=()=>{ KPI.periods.sort((a,b)=>b.start.localeCompare(a.start)); const t=d8(new Date()); const i=KPI.periods.findIndex(p=>p.start<=t&&t<=p.end); KPI.active=i<0?0:i; return KPI; };
@@ -610,6 +638,11 @@ const DEMO=(()=>{
   const ctx=t=>{ const u=users.find(x=>x.id===String(t||"").split(":")[0]&&t.split(":")[1]===x.pin); if(!u||!u.aktif) throw new Error("SESI: Sesi berakhir. Silakan login lagi.");
     const r=roles.find(r=>r.name===u.role)||{perms:{}}; return {user:u,perms:Object.fromEntries(PK.map(k=>[k,u.role==="Admin"||!!r.perms[k]]))}; };
   const tok=u=>u.id+":"+u.pin;
+  const kk=n=>{ const k=String(n||"").toLowerCase().replace(/\b(pt|cv|tbk|ud|fa|persero|koperasi|toko)\b\.?/g,"").replace(/[^a-z0-9]/g,""); return k.length>=3?k:""; };
+  const pk=t=>{ let d=String(t||"").replace(/\D/g,""); if(d.startsWith("62")) d="0"+d.slice(2); return d.length>=8?d.slice(-9):""; };
+  const summ=()=>{ const m={}; rows.forEach(o=>{ const c=m[o.aktivitasId]; if(!c||o.kunjunganKe>=c.kunjunganKe) m[o.aktivitasId]=o; });
+    return Object.values(m).map(o=>({aktivitasId:o.aktivitasId,userId:o.userId,sales:o.sales,tim:o.tim||"",klien:o.klien,status:o.status,tanggal:o.tanggal,nk:kk(o.klien),pk:pk(o.kontak)})); };
+  const mt=(acts,nk,p,ex,c)=>acts.filter(a=>a.aktivitasId!==ex&&((nk&&a.nk===nk)||(p&&a.pk===p))).map(a=>({aktivitasId:a.aktivitasId,klien:a.klien,sales:a.sales,tim:a.tim,status:a.status,tanggal:a.tanggal,by:nk&&a.nk===nk?"nama":"telepon",mine:a.userId===c.user.id}));
   const scope=(c,o)=>o.userId===c.user.id||(c.perms.rekap&&(c.perms.rekapSemua||(o.tim||"")===(c.user.tim||"")));
   const run=f=>{ try{ return wait(f()); }catch(e){ return fail(e.message); } };
   return {
@@ -643,7 +676,10 @@ const DEMO=(()=>{
       if(!o){ o={id:fid(),createdAt:now,userId:c.user.id,bukti:[],checkIn:null,checkOut:null,hasilAt:null};
         if(p.aktivitasId){ const prev=rows.filter(r=>r.aktivitasId===p.aktivitasId).sort((a,b)=>a.kunjunganKe-b.kunjunganKe); if(!prev.length) throw new Error("Aktivitas tidak ditemukan.");
           const last=prev[prev.length-1]; if(FINALS.includes(last.status)&&last.hasilAt) throw new Error("Aktivitas ini sudah selesai ("+last.status+")."); o.aktivitasId=p.aktivitasId; o.kunjunganKe=last.kunjunganKe+1; }
-        else { o.aktivitasId=o.id; o.kunjunganKe=1; }
+        else { o.aktivitasId=o.id; o.kunjunganKe=1;
+          if(mt(summ(),kk(p.fields.klien),pk(p.fields.kontak),"",c).length){ const a=APR.find(x=>x.id===p.approvalId);
+            const ok=a&&a.userId===c.user.id&&a.status==="Disetujui"&&!a.usedAt&&((kk(a.klien)&&kk(a.klien)===kk(p.fields.klien))||(pk(a.kontak)&&pk(a.kontak)===pk(p.fields.kontak)));
+            if(!ok){ throw new Error("DUP: Klien ini sudah tercatat. Ajukan persetujuan ke Supervisor/Admin dulu sebelum memulai kunjungan."); } a.usedAt=now; a.aktivitasId=o.id; } }
         rows.push(o); }
       Object.assign(o,p.fields,{sales:c.user.nama,tim:c.user.tim});
       const visit=VISIT_TYPES.includes(o.jenis), g=x=>x?{gps:x.lat.toFixed(6)+","+x.lng.toFixed(6),acc:Math.round(x.acc)}:{gps:null,acc:null};
@@ -657,6 +693,20 @@ const DEMO=(()=>{
     apiDashboard:t=>run(()=>{ const c=ctx(t); if(!c.perms.rekap) throw new Error("Kamu tidak punya izin untuk tindakan ini.");
       return {kpi:KPI,sales:salesU().filter(u=>c.perms.rekapSemua||(u.tim||"")===(c.user.tim||"")).map(u=>({id:u.id,nama:u.nama,tim:u.tim||""})),rows:rows.filter(o=>scope(c,o)),scope:c.perms.rekapSemua?"Semua tim":"Tim "+(c.user.tim||"(tanpa tim)"),sheetUrl:c.perms.aksesData?"#":undefined,folderUrl:c.perms.aksesData?"#":undefined}; }),
     apiPhoto:(t,id)=>run(()=>{ const c=ctx(t); if(!rows.some(o=>scope(c,o)&&[o.checkIn&&o.checkIn.photoId,o.checkOut&&o.checkOut.photoId,...o.bukti].includes(id))) throw new Error("Tidak punya akses ke foto ini."); return files[id]; }),
+    apiDeleteUser:(t,id,mode)=>run(()=>{ const c=ctx(t); if(!c.perms.kelolaUser) throw new Error("Kamu tidak punya izin untuk tindakan ini."); if(id===c.user.id) throw new Error("Kamu tidak bisa menghapus akunmu sendiri.");
+      const i=users.findIndex(u=>u.id===id); if(i<0) throw new Error("Pengguna tidak ditemukan."); if(users[i].aktif) throw new Error("Nonaktifkan akun ini dulu sebelum menghapus.");
+      let removed=0; if(mode==="purge"){ for(let k=rows.length-1;k>=0;k--) if(rows[k].userId===id){ rows.splice(k,1); removed++; } }
+      users.splice(i,1); KPI.periods.forEach(p=>delete p.targets[id]); return {users:users.map(pub),roles,perms:PL,kpi:KPI,removed}; }),
+    apiRequestApproval:(t,d)=>run(()=>{ const c=ctx(t); if(!d.alasan) throw new Error("Tulis alasan kenapa klien ini perlu kamu tangani."); const m=mt(summ(),kk(d.klien),pk(d.kontak),"",c);
+      if(!m.length) throw new Error("Klien ini tidak terdeteksi ganda, kamu bisa langsung check-in."); if(APR.some(a=>a.userId===c.user.id&&a.status==="Menunggu"&&kk(a.klien)===kk(d.klien))) throw new Error("Pengajuan untuk klien ini masih menunggu keputusan.");
+      const a={id:fid(),createdAt:Date.now(),userId:c.user.id,sales:c.user.nama,tim:c.user.tim||"",klien:d.klien,kontak:d.kontak,kategori:d.kategori,lokasi:d.lokasi,alasan:d.alasan,status:"Menunggu",cocok:m}; APR.push(a); return a; }),
+    apiMyApprovals:t=>run(()=>{ const c=ctx(t); return APR.filter(a=>a.userId===c.user.id); }),
+    apiApprovals:t=>run(()=>{ const c=ctx(t); if(!c.perms.approveKlien) throw new Error("Kamu tidak punya izin untuk tindakan ini."); return APR.filter(a=>c.perms.rekapSemua||(a.tim||"")===(c.user.tim||"")); }),
+    apiDecideApproval:(t,id,dec,note)=>run(()=>{ const c=ctx(t); if(!c.perms.approveKlien) throw new Error("Kamu tidak punya izin untuk tindakan ini."); const a=APR.find(x=>x.id===id);
+      if(!a) throw new Error("Pengajuan tidak ditemukan."); if(a.status!=="Menunggu") throw new Error("Pengajuan ini sudah diputuskan ("+a.status+")."); if(a.userId===c.user.id) throw new Error("Kamu tidak bisa menyetujui pengajuanmu sendiri.");
+      if(dec==="Ditolak"&&!String(note||"").trim()) throw new Error("Tulis alasan penolakan untuk sales."); Object.assign(a,{status:dec,approverId:c.user.id,approver:c.user.nama,decidedAt:Date.now(),catatan:note}); return a; }),
+    apiDuplicates:t=>run(()=>{ const c=ctx(t), acts=summ(); return acts.filter(a=>a.userId===c.user.id).map(a=>({aktivitasId:a.aktivitasId,klien:a.klien,status:a.status,matches:mt(acts,a.nk,a.pk,a.aktivitasId,c)})).filter(x=>x.matches.length); }),
+    apiCheckKlien:(t,k,p,ex)=>run(()=>{ const c=ctx(t); return mt(summ(),kk(k),pk(p),ex||"",c); }),
     apiDelete:(t,id)=>run(()=>{ const c=ctx(t); const i=rows.findIndex(r=>r.id===id); if(i<0) return true; if(rows[i].userId!==c.user.id&&!c.perms.hapusSemua) throw new Error("Kamu tidak punya izin menghapus laporan ini."); rows.splice(i,1); return true; }),
   };
 })();
@@ -692,12 +742,13 @@ function enter(r){
   ME=r.user; PERM=r.perms||{};
   $("loginView").hidden=true; $("app").hidden=false;
   $("meName").textContent=ME.nama; $("meAv").textContent=initials(ME.nama);
-  $("tabIsi").hidden=!PERM.lapor; $("tabRekap").hidden=!PERM.rekap; $("tabs").hidden=!(PERM.lapor&&PERM.rekap);
+  $("tabIsi").hidden=!PERM.lapor; $("tabRekap").hidden=!(PERM.rekap||PERM.approveKlien); $("tabs").hidden=!(PERM.lapor&&(PERM.rekap||PERM.approveKlien));
   $("gearBtn").hidden=!PERM.kelolaUser;
   $("akunKv").innerHTML=`<dt>Nama</dt><dd>${esc(ME.nama)}</dd><dt>Username</dt><dd>${esc(ME.username)}</dd><dt>Tim / area</dt><dd>${esc(ME.tim||"-")}</dd><dt>Peran</dt><dd>${esc(ME.role)}</dd>`;
   resetForm();
   if(PERM.lapor){ api("apiMine",SESSION).then(rows=>{ mine=rows||[]; renderMine(); }).catch(()=>{});
-    api("apiTargets",SESSION).then(k=>{ MYKPI=k; homePer=null; donePer=null; renderMine(); }).catch(()=>{}); }
+    api("apiTargets",SESSION).then(k=>{ MYKPI=k; homePer=null; donePer=null; renderMine(); }).catch(()=>{}); loadDups(); loadMyAppr(); }
+  APPRS=[]; renderAppr(); loadAppr();
   show(PERM.lapor?"isi":PERM.rekap?"rekap":PERM.kelolaUser?"set":"akun");
 }
 $("meBtn").onclick=()=>show("akun");
@@ -789,7 +840,7 @@ function fillForm(r,{keepHasil=true}={}){
 function lockKlien(on){ ["klien","lokasi"].forEach(id=>{ $(id).readOnly=on; $(id).classList.toggle("readonly",on); }); $("kategori").disabled=on; $("kategori").classList.toggle("readonly",on); $("lockHint").hidden=!on; }
 function updKontak(){ const tel=$("jenis").value==="Telepon / WhatsApp"; $("kontakLbl").textContent=tel?"Nomor Telepon / WhatsApp klien":"Kontak PIC"; $("kontakLbl").className=tel?"req":""; $("kontak").placeholder=tel?"mis. 0812xxxxxxx (wajib)":"No. HP / email"; }
 const telOk=r=>r.jenis!=="Telepon / WhatsApp"||String(r.kontak||"").replace(/\D/g,"").length>=8;
-function startNew(){ cur=newCur(null); fillForm(null); $("tanggal").value=today(); lockKlien(false); updKontak();
+function startNew(){ $("ciDup").hidden=true; cur=newCur(null); fillForm(null); $("tanggal").value=today(); lockKlien(false); updKontak();
   $("ciTitle").textContent="Kunjungan baru"; $("ciLede").textContent="Isi data klien, lalu ambil foto di lokasi untuk check-in.";
   dirty=false; msg($("ciMsg"),""); showScreen("checkin"); renderCheckin(); $("klien").focus(); }
 function startFollowup(act){
@@ -831,15 +882,20 @@ function renderCheckin(){
   if(!cur) return;
   const visit=isVisitJ($("jenis").value), p=cur.pending.checkin, shot=$("inShot"), body=$("inBody");
   $("fsIn").querySelector("legend").lastChild.textContent=visit?"Check-in kedatangan":"Lanjut ke hasil";
-  shot.hidden=!visit;
+  const blocked=!isFollow()&&cur.dup&&cur.dup.length&&!(apprFor($("klien").value,$("kontak").value)||{}).status?.startsWith("Disetujui");
+  shot.hidden=!visit||blocked; $("fsIn").querySelector(".cio").classList.toggle("single",!visit||blocked);
   if(visit){
     shot.innerHTML=p?`<img src="${p}" alt="Foto check-in">`:`<span>${CAM}Ambil foto<br>check-in</span>`; shot.onclick=()=>pick("checkin",true);
-    body.innerHTML=`<span class="hint">Foto di lokasi klien saat tiba (depan kantor / papan nama). Jam check-in dicatat server, lokasi GPS ikut tersimpan. Setelah check-in, timer kunjungan langsung berjalan.</span>
+    const gate=!isFollow()&&cur.dup&&cur.dup.length?apprGate():null;
+    if(gate&&!gate.ok){ body.innerHTML=gate.html; $("apprSend")&&($("apprSend").onclick=sendAppr); body.querySelector("[data-back2]")&&(body.querySelector("[data-back2]").onclick=resetForm); return; }
+    body.innerHTML=(gate?gate.html:"")+`<span class="hint">Foto di lokasi klien saat tiba (depan kantor / papan nama). Jam check-in dicatat server, lokasi GPS ikut tersimpan. Setelah check-in, timer kunjungan langsung berjalan.</span>
       ${p?`<div class="gps">GPS: ${gpsTxt(cur.pending.geoIn)}</div>`:""}
       <button type="button" class="btn go" id="doIn" ${p?"":"disabled"}>Check-in &amp; mulai kunjungan</button>${p?'<button type="button" class="btn sm" id="reIn">Ambil ulang foto</button>':""}`;
     $("doIn").onclick=doCheckin; $("reIn")&&($("reIn").onclick=()=>pick("checkin",true));
   } else {
-    body.innerHTML=`<span class="hint">Aktivitas ${esc($("jenis").value)} tidak memerlukan check-in. Langsung isi hasilnya.</span><button type="button" class="btn primary" id="toHasil">Lanjut isi hasil →</button>`;
+    const gate=!isFollow()&&cur.dup&&cur.dup.length?apprGate():null;
+    if(gate&&!gate.ok){ body.innerHTML=gate.html; $("apprSend")&&($("apprSend").onclick=sendAppr); body.querySelector("[data-back2]")&&(body.querySelector("[data-back2]").onclick=resetForm); return; }
+    body.innerHTML=(gate?gate.html:"")+`<span class="hint">Aktivitas ${esc($("jenis").value)} tidak memerlukan check-in. Langsung isi hasilnya.</span><button type="button" class="btn primary" id="toHasil">Lanjut isi hasil →</button>`;
     $("toHasil").onclick=()=>{ const r=readForm(); if(!r.klien||!r.tanggal) return msg($("ciMsg"),"Isi tanggal dan nama klien dulu.","err");
       if(!telOk(r)){ $("kontak").focus(); return msg($("ciMsg"),"Isi nomor Telepon / WhatsApp klien yang dihubungi (minimal 8 angka).","err"); } showScreen("hasil"); renderHasil(); };
   }
@@ -850,11 +906,11 @@ async function doCheckin(){
   if(!cur.pending.checkin) return msg($("ciMsg"),"Ambil foto check-in dulu.","err");
   saving=true; $("doIn").disabled=true; msg($("ciMsg"),"Mengirim check-in…");
   try{
-    const res=await api("apiSave",SESSION,{id:null,aktivitasId:cur.aktivitasId,action:"checkin",fields:r,geo:cur.pending.geoIn,photos:{checkin:cur.pending.checkin}});
+    const res=await api("apiSave",SESSION,{id:null,aktivitasId:cur.aktivitasId,approvalId:cur.approvalId||null,action:"checkin",fields:r,geo:cur.pending.geoIn,photos:{checkin:cur.pending.checkin}});
     if(res.checkIn) photoCache.set(res.checkIn.photoId,cur.pending.checkin);
-    cur.row=res; cur.aktivitasId=res.aktivitasId; cur.kunjunganKe=res.kunjunganKe; cur.pending.checkin=null; dirty=false; upsertMine(res);
+    loadDups(); if(cur.approvalId) loadMyAppr(); cur.row=res; cur.aktivitasId=res.aktivitasId; cur.kunjunganKe=res.kunjunganKe; cur.pending.checkin=null; dirty=false; upsertMine(res);
     msg($("ciMsg"),""); toast("Check-in tercatat "+hm(res.checkIn.at)+". Timer kunjungan berjalan."); showScreen("timer"); renderTimer();
-  }catch(err){ msg($("ciMsg"),err.message,"err"); if($("doIn")) $("doIn").disabled=false; }
+  }catch(err){ msg($("ciMsg"),err.message,"err"); if($("doIn")) $("doIn").disabled=false; if(/sudah tercatat/.test(err.message)){ loadMyAppr(); checkKlienLive(); } }
   finally{ saving=false; }
 }
 
@@ -950,10 +1006,10 @@ async function saveHasil(){
   if(FINAL.includes(r.status)){ r.rencana=""; r.tglFu=""; }
   saving=true; $("saveBtn").disabled=true; setMsg("Menyimpan ke Google Drive…");
   try{
-    const res=await api("apiSave",SESSION,{id:cur.row?cur.row.id:null,aktivitasId:cur.aktivitasId,action:"hasil",fields:r,removeBukti:cur.removed,photos:{bukti:cur.pending.bukti.map(p=>p.data)}});
+    const res=await api("apiSave",SESSION,{id:cur.row?cur.row.id:null,aktivitasId:cur.aktivitasId,approvalId:cur.approvalId||null,action:"hasil",fields:r,removeBukti:cur.removed,photos:{bukti:cur.pending.bukti.map(p=>p.data)}});
     res.bukti.filter(id=>!cur.bukti.includes(id)).forEach((id,i)=>cur.pending.bukti[i]&&photoCache.set(id,cur.pending.bukti[i].data));
     upsertMine(res); dirty=false;
-    toast(FINAL.includes(res.status)?`Aktivitas ${res.klien} selesai: ${res.status}`:`Hasil kunjungan ${res.klien} tersimpan`);
+    loadDups(); toast(FINAL.includes(res.status)?`Aktivitas ${res.klien} selesai: ${res.status}`:`Hasil kunjungan ${res.klien} tersimpan`);
     resetForm();
   }catch(err){ setMsg(err.message,"err"); }
   finally{ saving=false; $("saveBtn").disabled=false; }
@@ -979,6 +1035,7 @@ function actCard(a){
   const L=a.latest, t=today(), inProg=L.visitStatus==="Di lokasi"||L.visitStatus==="Isi hasil";
   const fu=a.open&&L.tglFu?`<span>Follow-up <b class="${L.tglFu<t?"fu-late":L.tglFu===t?"fu-today":""}">${fmtDate(L.tglFu)}</b></span>`:"";
   return `<article class="act ${a.open?"":a.status==="Diterima"?"won":"lost"}" data-act="${a.id}"><div class="top"><span class="client">${esc(L.klien)}</span>${L.visitStatus==="Di lokasi"?'<span class="pill vs-onsite">Di lokasi</span>':L.visitStatus==="Isi hasil"?'<span class="pill vs-onsite">Hasil belum diisi</span>':""}${stPill(a.status)}</div>
+    ${DUPS.some(d=>d.aktivitasId===a.id)?'<div style="margin-top:4px"><span class="pill dup">⚠ Data klien ganda</span></div>':""}
     <div class="meta"><span class="vcount">${a.rows.length}× kunjungan</span> terakhir ${fmtDate(L.tanggal)}${L.pic?" · PIC "+esc(L.pic):""}</div>
     <div class="nums">${L.nilai?`<span>Penawaran <b>${rp(L.nilai)}</b></span>`:""}${L.nilaiNego?`<span>Negosiasi <b>${rp(L.nilaiNego)}</b></span>`:""}${L.nilaiDeal&&a.status==="Diterima"?`<span>Deal <b>${rp(L.nilaiDeal)}</b></span>`:""}${a.status==="Lead"&&L.lanjut?`<span>Lanjut ke penawaran: <b>${esc(L.lanjut)}</b></span>`:""}${(L.produk||[]).length?`<span>${esc(L.produk.join(", "))}</span>`:""}${fu}</div>
     ${a.open&&L.rencana?`<div class="meta" style="margin-top:6px">Rencana: ${esc(L.rencana)}</div>`:""}
@@ -1000,7 +1057,7 @@ function renderMine(){
   const DP=donePeriod(), done=DP?doneAll.filter(a=>inRange(a.last,DP.start,DP.end)):doneAll;
   const ps=(MYKPI&&MYKPI.periods&&MYKPI.periods.length)?MYKPI.periods:[curMonthPer()], dsel=donePer==="all"?"all":String(ps.indexOf(DP));
   $("doneSel").innerHTML=ps.map((p,i)=>`<option value="${i}">${esc(perLabel(p))}</option>`).join("")+`<option value="all">Semua periode</option>`; $("doneSel").value=dsel;
-  renderMyKpi();
+  renderMyKpi(); renderDupBox();
   const prog=mine.filter(r=>r.visitStatus==="Di lokasi"||r.visitStatus==="Isi hasil"), box=$("resume");
   box.hidden=!prog.length;
   box.innerHTML=`<b>Perlu diselesaikan</b>`+prog.map(r=>`<div class="r"><span>${esc(r.klien)} · ${r.visitStatus==="Di lokasi"?"sedang di lokasi sejak "+hm(r.checkIn&&r.checkIn.at):"sudah check-out, hasil belum diisi"}</span><button type="button" class="btn sm primary" data-row="${r.id}">${r.visitStatus==="Di lokasi"?"Buka timer":"Isi hasil"}</button></div>`).join("");
@@ -1015,6 +1072,79 @@ async function delReport(id,b){
   if(!pendingDel.has(id)){ pendingDel.add(id); b.textContent="Tekan lagi untuk hapus"; setTimeout(()=>{pendingDel.delete(id); if(b.isConnected) b.textContent="Hapus";},3000); return; }
   try{ await api("apiDelete",SESSION,id); mine=mine.filter(x=>x.id!==id); all=all.filter(x=>x.id!==id); if(cur&&cur.row&&cur.row.id===id) resetForm(); renderMine(); if(!$("view-rekap").hidden) render(); toast("Kunjungan dihapus"); }
   catch(err){ toast(err.message||"Gagal menghapus"); } }
+// ----- duplikasi klien
+let DUPS=[];
+const klienKey=n=>{ const k=String(n||"").toLowerCase().replace(/\b(pt|cv|tbk|ud|fa|persero|koperasi|toko)\b\.?/g,"").replace(/[^a-z0-9]/g,""); return k.length>=3?k:""; };
+const phoneKey=t=>{ let d=String(t||"").replace(/\D/g,""); if(d.startsWith("62")) d="0"+d.slice(2); return d.length>=8?d.slice(-9):""; };
+function loadDups(){ if(!PERM.lapor) return; api("apiDuplicates",SESSION).then(d=>{ DUPS=d||[]; if(screen==="list") renderMine(); }).catch(()=>{}); }
+const dupWho=m=>(m.mine?`aktivitasmu yang lain`:`<b>${esc(m.sales)}</b>${m.tim?" ("+esc(m.tim)+")":""}`)+` sebagai “${esc(m.klien)}” · ${esc(m.status||"-")}, ${fmtDate(m.tanggal)}${m.by==="telepon"?" · nomor telepon sama":""}`;
+function renderDupBox(){
+  const box=$("dupBox"); box.hidden=!DUPS.length; if(!DUPS.length) return;
+  box.innerHTML=`<b>⚠ ${DUPS.length} klien terdeteksi ganda</b><ul>${DUPS.map(d=>`<li><b>${esc(d.klien)}</b> juga tercatat di ${d.matches.map(dupWho).join("; ")}</li>`).join("")}</ul>
+    <p class="hint" style="margin:8px 0 0">Koordinasikan dengan admin/rekan agar satu klien ditangani satu sales. Kalau ternyata kliennya berbeda, ubah nama lengkapnya lewat <b>Edit klien</b>.</p>`;
+}
+let ciT=null;
+function checkKlienLive(){ clearTimeout(ciT); ciT=setTimeout(async()=>{ const k=$("klien").value.trim(), t=$("kontak").value.trim(), el=$("ciDup");
+  if(screen!=="checkin"||(!klienKey(k)&&!phoneKey(t))){ el.hidden=true; if(cur){ cur.dup=[]; renderCheckin(); } return; }
+  try{ const m=await api("apiCheckKlien",SESSION,k,t,cur&&cur.aktivitasId||""); el.hidden=!m.length; if(cur&&!isFollow()){ cur.dup=m; renderCheckin(); }
+    el.innerHTML=m.length?`<b>⚠ Klien ini mungkin sudah tercatat:</b><br>${m.slice(0,5).map(x=>`• ${dupWho(x)}`).join("<br>")}<br><span class="hint">Kalau ini klienmu sendiri, gunakan <b>Kunjungan lanjutan</b> dari kartu klien yang sudah ada. Kalau tetap ingin membuat kunjungan baru, ajukan persetujuan ke Supervisor/Admin di bagian check-in.</span>`:""; }catch(e){ el.hidden=true; } },700); }
+["klien","kontak"].forEach(id=>$(id).addEventListener("input",checkKlienLive));
+// ----- pengajuan klien ganda
+let MYAPPR=[], APPRS=[];
+const isFollow=()=>!!(cur&&cur.aktivitasId);
+function apprFor(k,t){ const nk=klienKey(k), pk=phoneKey(t), m=MYAPPR.filter(a=>!a.usedAt&&a.status!=="Ditolak"&&((nk&&klienKey(a.klien)===nk)||(pk&&phoneKey(a.kontak)===pk)));
+  return m.find(a=>a.status==="Disetujui")||m.find(a=>a.status==="Menunggu")||MYAPPR.find(a=>!a.usedAt&&a.status==="Ditolak"&&nk&&klienKey(a.klien)===nk)||null; }
+function loadMyAppr(){ if(!PERM.lapor) return; api("apiMyApprovals",SESSION).then(d=>{ MYAPPR=d||[]; renderMyAppr(); if(screen==="checkin") renderCheckin(); }).catch(()=>{}); }
+const apPill=s=>`<span class="pill ap-${esc(s)}">${s==="Menunggu"?"⏳ Menunggu":s==="Disetujui"?"✓ Disetujui":"✕ Ditolak"}</span>`;
+function renderMyAppr(){
+  const list=MYAPPR.filter(a=>!a.usedAt).sort((a,b)=>(b.createdAt||0)-(a.createdAt||0));
+  $("apprZone").hidden=!list.length; $("apprCount").textContent=list.length?`(${list.length})`:"";
+  $("myApprList").innerHTML=list.map(a=>`<article class="act"><div class="top"><span class="client">${esc(a.klien)}</span>${apPill(a.status)}</div>
+    <div class="meta">Diajukan ${dt(a.createdAt)}${a.approver?` · diputuskan ${esc(a.approver)}, ${dt(a.decidedAt)}`:""}</div>
+    <div class="meta" style="margin-top:4px">Alasan: ${esc(a.alasan)}</div>
+    ${a.catatan?`<div class="meta" style="margin-top:4px;color:var(--fg)"><b>Catatan ${esc(a.approver||"")}:</b> ${esc(a.catatan)}</div>`:""}
+    ${a.status==="Disetujui"?`<div class="row-actions"><button class="btn sm primary" data-useappr="${a.id}">Mulai kunjungan</button></div>`:""}</article>`).join("");
+}
+$("myApprList").addEventListener("click",e=>{ const b=e.target.closest("[data-useappr]"); if(!b) return; const a=MYAPPR.find(x=>x.id===b.dataset.useappr); if(!a) return;
+  startNew(); $("klien").value=a.klien; $("kontak").value=a.kontak||""; $("kategori").value=a.kategori||""; $("lokasi").value=a.lokasi||""; cur.dup=a.cocok||[]; renderCheckin(); });
+function apprGate(){ // HTML pengganti tombol check-in bila klien ganda
+  const r=readForm(), a=apprFor(r.klien,r.kontak);
+  if(a&&a.status==="Disetujui"){ cur.approvalId=a.id; return {ok:true,html:`<div class="apprbox ok"><b>✓ Pengajuan disetujui ${esc(a.approver||"")}</b>${a.catatan?`<span>${esc(a.catatan)}</span>`:""}</div>`}; }
+  cur.approvalId=null;
+  if(a&&a.status==="Menunggu") return {ok:false,html:`<div class="apprbox"><b>⏳ Menunggu persetujuan</b><span>Pengajuan dikirim ${dt(a.createdAt)}. Hasilnya muncul di halaman awal. Setelah disetujui, tekan <b>Mulai kunjungan</b> di sana.</span><button type="button" class="btn sm" data-back2>Kembali ke daftar</button></div>`};
+  const rej=a&&a.status==="Ditolak"?`<span><b>Pengajuan sebelumnya ditolak</b>${a.catatan?": "+esc(a.catatan):""}. Kamu bisa mengajukan ulang dengan alasan baru.</span>`:"";
+  return {ok:false,html:`<div class="apprbox"><b>Perlu persetujuan Supervisor / Admin</b><span>Klien ini sudah tercatat (lihat peringatan di atas). Kunjungan baru bisa dimulai setelah pengajuanmu disetujui.</span>${rej}
+    <label style="font-weight:600">Alasan pengajuan<textarea id="apprAlasan" placeholder="mis. Klien menghubungi saya langsung / cabang berbeda / sudah koordinasi dengan sales sebelumnya"></textarea></label>
+    <button type="button" class="btn primary" id="apprSend">Ajukan persetujuan</button><span class="msg" id="apprMsg"></span></div>`};
+}
+async function sendAppr(){ const r=readForm(), al=$("apprAlasan").value.trim(), m=$("apprMsg");
+  if(!al) return msg(m,"Tulis alasan pengajuan.","err");
+  $("apprSend").disabled=true; msg(m,"Mengirim…");
+  try{ const a=await api("apiRequestApproval",SESSION,{klien:r.klien,kontak:r.kontak,kategori:r.kategori,lokasi:r.lokasi,pic:r.pic,alasan:al});
+    MYAPPR.unshift(a); dirty=false; renderMyAppr(); toast("Pengajuan klien "+r.klien+" dikirim ke Supervisor/Admin"); renderCheckin(); }
+  catch(err){ msg(m,err.message,"err"); $("apprSend").disabled=false; } }
+// ----- persetujuan (Supervisor/Admin)
+function loadAppr(){ if(!PERM.approveKlien) return; api("apiApprovals",SESSION).then(d=>{ APPRS=d||[]; renderAppr(); }).catch(()=>{}); }
+function renderAppr(){
+  const pend=APPRS.filter(a=>a.status==="Menunggu"), done=APPRS.filter(a=>a.status!=="Menunggu").sort((a,b)=>(b.decidedAt||0)-(a.decidedAt||0));
+  $("apprBadge").hidden=!pend.length; $("apprBadge").textContent=pend.length;
+  $("apprPanel").hidden=!PERM.approveKlien||!APPRS.length; $("apprPanelCount").textContent=pend.length?`${pend.length} menunggu keputusan`:"tidak ada yang menunggu";
+  const card=a=>`<article class="act"><div class="top"><span class="client">${esc(a.klien)}</span>${apPill(a.status)}</div>
+    <div class="meta">Diajukan <b>${esc(a.sales)}</b>${a.tim?" ("+esc(a.tim)+")":""} · ${dt(a.createdAt)}${a.kontak?" · "+esc(a.kontak):""}${a.lokasi?" · "+esc(a.lokasi):""}</div>
+    <div class="meta" style="margin-top:6px;color:var(--fg)"><b>Alasan:</b> ${esc(a.alasan)}</div>
+    <div class="meta" style="margin-top:6px"><b>Sudah tercatat sebagai:</b><br>${(a.cocok||[]).map(x=>`• “${esc(x.klien)}” — ${esc(x.sales)}${x.tim?" ("+esc(x.tim)+")":""} · ${esc(x.status||"-")} · ${fmtDate(x.tanggal)}${x.by==="telepon"?" · nomor telepon sama":""}`).join("<br>")}</div>
+    ${a.status==="Menunggu"?(ME&&a.userId===ME.id?`<p class="hint">Pengajuanmu sendiri harus diputuskan penyetuju lain.</p>`:`<div style="margin-top:10px;display:flex;flex-direction:column;gap:8px"><input placeholder="Catatan untuk sales (wajib jika ditolak)" data-note="${a.id}">
+      <div class="row-actions" style="margin:0"><button class="btn sm go" data-dec="Disetujui" data-id="${a.id}">Setujui</button><button class="btn sm danger" data-dec="Ditolak" data-id="${a.id}">Tolak</button></div></div>`)
+      :`<div class="meta" style="margin-top:6px">${esc(a.approver||"")} · ${dt(a.decidedAt)}${a.catatan?" · "+esc(a.catatan):""}${a.usedAt?" · sudah dipakai untuk kunjungan":""}</div>`}</article>`;
+  $("apprList").innerHTML=pend.map(card).join("")+(done.length?`<details><summary class="hint" style="cursor:pointer;font-weight:600">Keputusan 30 hari terakhir (${done.length})</summary><div class="list" style="margin-top:10px">${done.map(card).join("")}</div></details>`:"");
+}
+$("apprList").addEventListener("click",async e=>{ const b=e.target.closest("[data-dec]"); if(!b) return;
+  const note=(document.querySelector(`[data-note="${b.dataset.id}"]`)||{}).value||"";
+  if(b.dataset.dec==="Ditolak"&&!note.trim()) return toast("Tulis catatan alasan penolakan untuk sales.");
+  b.disabled=true;
+  try{ const a=await api("apiDecideApproval",SESSION,b.dataset.id,b.dataset.dec,note); const i=APPRS.findIndex(x=>x.id===a.id); if(i>=0) APPRS[i]=a; renderAppr(); toast(`Pengajuan ${a.klien} ${a.status.toLowerCase()}`); }
+  catch(err){ toast(err.message); b.disabled=false; } });
+setInterval(()=>{ if(!SESSION) return; loadAppr(); if(screen==="list"||screen==="checkin") loadMyAppr(); },90000);
 // ----- KPI & target
 const TKEYS=[["kunjungan","Kunjungan"],["klienBaru","Klien baru"],["deal","Deal"],["nilaiDeal","Nilai deal"]];
 let MYKPI=null, homePer=null, donePer=null;
@@ -1069,7 +1199,7 @@ function openEditKlien(id){ const a=groupActs(mine).find(x=>x.id===id); if(!a) r
 $("ekSave").onclick=async()=>{ if(!ekAct) return; const v={klien:$("ekKlien").value.trim(),kategori:$("ekKategori").value,lokasi:$("ekLokasi").value.trim(),pic:$("ekPic").value.trim(),kontak:$("ekKontak").value.trim()};
   if(!v.klien) return msg($("ekMsg"),"Nama klien wajib diisi.","err");
   $("ekSave").disabled=true; msg($("ekMsg"),"Menyimpan…");
-  try{ const rows=await api("apiEditKlien",SESSION,ekAct.id,v); rows.forEach(upsertMine); toast("Data klien "+v.klien+" disimpan"); resetForm(); }
+  try{ const rows=await api("apiEditKlien",SESSION,ekAct.id,v); rows.forEach(upsertMine); loadDups(); toast("Data klien "+v.klien+" disimpan"); resetForm(); }
   catch(err){ msg($("ekMsg"),err.message,"err"); } finally{ $("ekSave").disabled=false; } };
 function onListClick(e){ const b=e.target.closest("button"); if(!b) return;
   if(b.dataset.eklien) return openEditKlien(b.dataset.eklien);
@@ -1084,7 +1214,7 @@ function show(v){
   document.querySelectorAll("#tabs button").forEach(b=>b.setAttribute("aria-selected",b.dataset.view===v));
   ["isi","rekap","set","akun"].forEach(x=>$("view-"+x).hidden=x!==v);
   $("savebar").hidden=!(v==="isi"&&screen==="hasil"); $("gearBtn").setAttribute("aria-pressed",v==="set"); window.scrollTo(0,0);
-  if(v==="rekap") loadDash(); if(v==="set") loadSettings();
+  if(v==="rekap"){ loadDash(); loadAppr(); } if(v==="set") loadSettings();
 }
 document.querySelectorAll("#tabs button").forEach(b=>b.onclick=()=>show(b.dataset.view));
 
@@ -1173,6 +1303,14 @@ function render(){
     return `<div class="item" style="padding:9px 12px"><div class="top"><span class="client" style="font-size:14px">${esc(L.klien)}</span><span class="num ${cls}">${lbl}${fmtDate(L.tglFu)}</span></div><div class="meta">${esc(L.sales)} · kunjungan ke-${a.rows.length+1} · ${esc(L.rencana||"Belum ada rencana tertulis")}</div></div>`; }).join("")}</div>`
     :`<div class="empty" style="padding:20px"><b>Tidak ada follow-up terjadwal</b>Tanggal follow-up diisi sales di halaman hasil kunjungan.</div>`;
   // Daftar klien (kartu per klien berisi kunjungan)
+  // duplikasi klien (semua data dalam cakupan, tanpa filter periode)
+  const ga=groupActs(all), seen=new Map(), groups=[];
+  ga.forEach(a=>{ const ks=[klienKey(a.latest.klien)&&"n:"+klienKey(a.latest.klien),phoneKey(a.latest.kontak)&&"p:"+phoneKey(a.latest.kontak)].filter(Boolean);
+    let g=null; ks.forEach(k=>{ if(seen.has(k)) g=seen.get(k); }); if(!g){ g=[]; groups.push(g); } if(!g.includes(a)) g.push(a); ks.forEach(k=>seen.set(k,g)); });
+  const dups=groups.filter(g=>g.length>1);
+  $("dupPanel").hidden=!dups.length; $("dupCount").textContent=dups.length?dups.length+" kelompok klien":"";
+  $("dupList").innerHTML=dups.map(g=>{ const ss=new Set(g.map(a=>a.latest.sales)); return `<div class="item"><div class="top"><span class="client">${esc([...new Set(g.map(a=>a.latest.klien))].join(" / "))}</span><span class="pill dup">${ss.size>1?"antar sales":"sales yang sama"}</span></div>
+    <div class="meta">${g.map(a=>`${esc(a.latest.klien)} — <b>${esc(a.latest.sales)}</b>${a.latest.tim?" ("+esc(a.latest.tim)+")":""} · ${esc(a.status||"-")} · ${a.rows.length}× kunjungan · ${fmtDate(a.latest.tanggal)}${a.latest.kontak?" · "+esc(a.latest.kontak):""}`).join("<br>")}</div></div>`; }).join("");
   $("listCount").textContent=actsInPeriod.length?actsInPeriod.length+" klien · "+visits.length+" kunjungan":"";
   $("list").innerHTML=actsInPeriod.length?actsInPeriod.slice(0,150).map(a=>{ const L=a.latest;
     const vr=a.rows.slice().reverse().map(r=>{ const n=(r.checkIn?1:0)+(r.checkOut?1:0)+(r.bukti||[]).length, canDel=PERM.hapusSemua||(ME&&r.userId===ME.id);
@@ -1226,8 +1364,19 @@ function openEditor(u){
     <label><span class="req">Peran</span><select id="euRole">${SET.roles.map(r=>`<option${(u?u.role:"Sales")===r.name?" selected":""}>${esc(r.name)}</option>`).join("")}</select></label>
     <label>${u?'PIN baru <span class="hint">Kosongkan jika tidak diubah</span>':'<span class="req">PIN awal</span> <span class="hint">4–8 angka, berikan ke pengguna</span>'}<input id="euPin" class="pinput" inputmode="numeric" autocomplete="off" placeholder="${u?"tidak diubah":"mis. 4821"}"></label>
     <label class="switch"><input type="checkbox" id="euAktif" ${!u||u.aktif?"checked":""}> Akun aktif (bisa login)</label>
+    ${u&&u.id!==ME.id?(u.aktif?`<p class="hint full" style="margin:0">Untuk menghapus pengguna ini, nonaktifkan akunnya dulu lalu simpan.</p>`
+      :`<div class="dangerzone"><b>Hapus pengguna nonaktif</b>
+        <label><input type="radio" name="euMode" value="keep" checked> <span><b style="color:var(--fg)">Pertahankan data klien &amp; kunjungannya</b><br><span class="hint">Tetap tampil di dashboard &amp; Google Sheet atas nama ${esc(u.nama)}.</span></span></label>
+        <label><input type="radio" name="euMode" value="purge"> <span><b style="color:var(--fg)">Hapus juga semua data klien &amp; kunjungannya</b><br><span class="hint">Baris di Google Sheet dihapus, foto dipindah ke Sampah Google Drive. Tidak bisa dibatalkan dari aplikasi.</span></span></label>
+        <div><button class="btn danger" type="button" id="euDel">Hapus pengguna</button></div></div>`):""}
     <div class="full" style="display:flex;gap:10px;flex-wrap:wrap;align-items:center"><button class="btn primary" type="button" id="euSave">${u?"Simpan perubahan":"Tambah pengguna"}</button><button class="btn" type="button" id="euCancel">Batal</button><span class="msg" id="euMsg"></span></div>`;
   $("euCancel").onclick=closeEditor; $("euSave").onclick=saveUser; $("euNama").focus();
+  $("euDel")&&($("euDel").onclick=async()=>{ const b=$("euDel"), mode=(document.querySelector('input[name="euMode"]:checked')||{}).value||"keep";
+    if(Date.now()-(b._armed||0)>5000){ b._armed=Date.now(); b.textContent=mode==="purge"?"Yakin? Tekan lagi untuk hapus pengguna + datanya":"Tekan lagi untuk hapus pengguna"; return; }
+    b.disabled=true; msg($("euMsg"),"Menghapus…");
+    try{ const r=await api("apiDeleteUser",SESSION,u.id,mode); applySettings(r); closeEditor(); all=[];
+      toast(`Pengguna ${u.nama} dihapus`+(mode==="purge"?` beserta ${r.removed||0} kunjungan`:", datanya dipertahankan")); }
+    catch(err){ msg($("euMsg"),err.message,"err"); b.disabled=false; } });
 }
 function closeEditor(){ editingUser=null; $("userEditor").hidden=true; $("userEditor").innerHTML=""; }
 async function saveUser(){
@@ -1239,7 +1388,7 @@ async function saveUser(){
   try{ const s=await api("apiSaveUser",SESSION,u); const isNew=!editingUser; applySettings(s); closeEditor();
     toast(isNew?`Pengguna ${u.nama} ditambahkan. Username: ${u.username}`:"Data pengguna disimpan"); if(u.id===ME.id){ const me=await api("apiMe",SESSION); enterPerms(me); } }
   catch(err){ msg(m,err.message,"err"); if($("euSave")) $("euSave").disabled=false; } }
-function enterPerms(r){ ME=r.user; PERM=r.perms; $("tabIsi").hidden=!PERM.lapor; $("tabRekap").hidden=!PERM.rekap; $("tabs").hidden=!(PERM.lapor&&PERM.rekap); $("gearBtn").hidden=!PERM.kelolaUser; }
+function enterPerms(r){ ME=r.user; PERM=r.perms; $("tabIsi").hidden=!PERM.lapor; $("tabRekap").hidden=!(PERM.rekap||PERM.approveKlien); $("tabs").hidden=!(PERM.lapor&&(PERM.rekap||PERM.approveKlien)); $("gearBtn").hidden=!PERM.kelolaUser; }
 let kpiIdx=null, kpiDraftNew=false;
 function renderKpiSet(){
   const k=SET.kpi; $("kpiPanel").hidden=!k; if(!k) return;
