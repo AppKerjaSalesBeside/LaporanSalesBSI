@@ -297,6 +297,9 @@ button.kpi:hover{border-color:var(--accent)}
 .appr-panel{border-color:var(--warn)}
 .ap-Menunggu{background:var(--warn-soft);color:var(--warn)} .ap-Disetujui{background:var(--good-soft);color:var(--good)} .ap-Ditolak{background:var(--bad-soft);color:var(--bad)}
 .cio.single{grid-template-columns:minmax(0,1fr)}
+.deleditor{border-color:var(--bad);background:var(--surface)}
+.notice.okver{background:var(--good-soft);color:var(--good)}
+.utable .actions{flex-wrap:wrap}
 .st-Diterima{background:var(--good-soft);color:var(--good)}
 .st-Ditolak{background:var(--bad-soft);color:var(--bad)}
 </style>
@@ -312,6 +315,7 @@ button.kpi:hover{border-color:var(--accent)}
     <button class="btn primary" type="submit" id="lgBtn">Masuk</button>
     <span class="msg err" id="lgMsg"></span>
     <span class="hint">Lupa PIN? Minta admin mengatur ulang PIN dari menu Pengaturan.</span>
+    <span class="hint" style="text-align:center;opacity:.7">Versi 2026.11.22-h</span>
   </form>
 </div>
 
@@ -520,6 +524,7 @@ button.kpi:hover{border-color:var(--accent)}
   <!-- PENGATURAN -->
   <section id="view-set" hidden>
     <h1>Pengaturan otoritas pengguna</h1>
+    <div id="verNote" class="notice" hidden></div>
     <p class="lede">Atur siapa saja yang bisa masuk, tim mereka, dan apa yang boleh dilakukan tiap peran. Perubahan berlaku saat pengguna membuka aplikasi berikutnya.</p>
     <div class="panel">
       <h2>Pengguna <button class="btn sm primary" type="button" id="addUserBtn">+ Tambah pengguna</button></h2>
@@ -590,6 +595,7 @@ button.kpi:hover{border-color:var(--accent)}
 <div class="toast" id="toast" hidden></div>
 <div class="lightbox" id="lightbox" hidden><img id="lbImg" alt="Foto"></div>
 <script>
+const APP_VERSION="2026.11.22-h";
 const PRODUK=["Event activation","Sponsorship event","Iklan media online","Iklan radio","Konten IG / TikTok","Aktivasi komunitas","Event services / produksi","Lainnya"];
 const STATUSES=[["Lead","var(--accent)","var(--accent-soft)","Perkenalan"],["Penawaran","var(--info)","var(--info-soft)","Penawaran dikirim"],["Negosiasi","var(--warn)","var(--warn-soft)","Tawar-menawar"],["Diterima","var(--good)","var(--good-soft)","Final · deal"],["Ditolak","var(--bad)","var(--bad-soft)","Final · tidak lanjut"]];
 const VISIT_TYPES=["Kunjungan (visit)","Meeting","Presentasi / pitching"];
@@ -638,6 +644,7 @@ const DEMO=(()=>{
   const ctx=t=>{ const u=users.find(x=>x.id===String(t||"").split(":")[0]&&t.split(":")[1]===x.pin); if(!u||!u.aktif) throw new Error("SESI: Sesi berakhir. Silakan login lagi.");
     const r=roles.find(r=>r.name===u.role)||{perms:{}}; return {user:u,perms:Object.fromEntries(PK.map(k=>[k,u.role==="Admin"||!!r.perms[k]]))}; };
   const tok=u=>u.id+":"+u.pin;
+  const cnt=()=>{ const c={}; rows.forEach(o=>{ const x=c[o.userId]??={kunjungan:0,klien:new Set()}; x.kunjungan++; x.klien.add(o.aktivitasId); }); Object.values(c).forEach(x=>x.klien=x.klien.size); return c; };
   const kk=n=>{ const k=String(n||"").toLowerCase().replace(/\b(pt|cv|tbk|ud|fa|persero|koperasi|toko)\b\.?/g,"").replace(/[^a-z0-9]/g,""); return k.length>=3?k:""; };
   const pk=t=>{ let d=String(t||"").replace(/\D/g,""); if(d.startsWith("62")) d="0"+d.slice(2); return d.length>=8?d.slice(-9):""; };
   const summ=()=>{ const m={}; rows.forEach(o=>{ const c=m[o.aktivitasId]; if(!c||o.kunjunganKe>=c.kunjunganKe) m[o.aktivitasId]=o; });
@@ -649,13 +656,13 @@ const DEMO=(()=>{
     apiLogin:(u,p)=>run(()=>{ const x=users.find(z=>z.username===String(u).trim().toLowerCase()); if(!x||x.pin!==String(p)) throw new Error("Username atau PIN salah."); if(!x.aktif) throw new Error("Akun ini dinonaktifkan. Hubungi admin."); x.lastLogin=Date.now(); return {token:tok(x),user:pub(x),perms:ctx(tok(x)).perms}; }),
     apiMe:t=>run(()=>{ const c=ctx(t); return {user:pub(c.user),perms:c.perms}; }),
     apiChangePin:(t,o,nw)=>run(()=>{ const c=ctx(t); if(c.user.pin!==String(o)) throw new Error("PIN lama salah."); if(!/^\d{4,8}$/.test(nw)) throw new Error("PIN baru harus 4–8 angka."); c.user.pin=String(nw); return {token:tok(c.user)}; }),
-    apiSettings:t=>run(()=>{ const c=ctx(t); if(!c.perms.kelolaUser) throw new Error("Kamu tidak punya izin untuk tindakan ini."); return {users:users.map(pub),roles,perms:PL,kpi:KPI}; }),
+    apiSettings:t=>run(()=>{ const c=ctx(t); if(!c.perms.kelolaUser) throw new Error("Kamu tidak punya izin untuk tindakan ini."); return {users:users.map(pub),roles,perms:PL,kpi:KPI,counts:cnt()}; }),
     apiTargets:t=>run(()=>{ const c=ctx(t); kpiActive(); return {active:KPI.active,periods:KPI.periods.map(p=>({start:p.start,end:p.end,target:p.targets[c.user.id]||null}))}; }),
     apiSaveTargets:(t,d)=>run(()=>{ const c=ctx(t); if(!c.perms.kelolaUser) throw new Error("Kamu tidak punya izin untuk tindakan ini."); if(!d.start||!d.end||d.start>d.end) throw new Error("Periode tidak valid.");
       const oa=d.origStart||d.start, ob=d.origEnd||d.end; const clash=KPI.periods.find(p=>!p.unsaved&&!(p.start===oa&&p.end===ob)&&p.start<=d.end&&d.start<=p.end);
       if(clash) throw new Error("Periode bertabrakan dengan periode "+clash.start+" s.d. "+clash.end+".");
-      KPI.periods=KPI.periods.filter(p=>!p.unsaved&&!(p.start===oa&&p.end===ob)); KPI.periods.push({start:d.start,end:d.end,targets:d.targets||{}}); kpiActive(); return {users:users.map(pub),roles,perms:PL,kpi:KPI}; }),
-    apiDeleteTargetPeriod:(t,a,b)=>run(()=>{ ctx(t); KPI.periods=KPI.periods.filter(p=>!(p.start===a&&p.end===b)); if(!KPI.periods.length) KPI.periods=[{start:d8(new Date(nn.getFullYear(),nn.getMonth(),1)),end:d8(new Date(nn.getFullYear(),nn.getMonth()+1,0)),targets:{},unsaved:true}]; kpiActive(); return {users:users.map(pub),roles,perms:PL,kpi:KPI}; }),
+      KPI.periods=KPI.periods.filter(p=>!p.unsaved&&!(p.start===oa&&p.end===ob)); KPI.periods.push({start:d.start,end:d.end,targets:d.targets||{}}); kpiActive(); return {users:users.map(pub),roles,perms:PL,kpi:KPI,counts:cnt()}; }),
+    apiDeleteTargetPeriod:(t,a,b)=>run(()=>{ ctx(t); KPI.periods=KPI.periods.filter(p=>!(p.start===a&&p.end===b)); if(!KPI.periods.length) KPI.periods=[{start:d8(new Date(nn.getFullYear(),nn.getMonth(),1)),end:d8(new Date(nn.getFullYear(),nn.getMonth()+1,0)),targets:{},unsaved:true}]; kpiActive(); return {users:users.map(pub),roles,perms:PL,kpi:KPI,counts:cnt()}; }),
     apiEditKlien:(t,id,v)=>run(()=>{ const c=ctx(t); const rs=rows.filter(r=>r.aktivitasId===id); if(!rs.length) throw new Error("Aktivitas tidak ditemukan."); if(rs[0].userId!==c.user.id) throw new Error("Klien ini milik sales lain.");
       if(!v.klien) throw new Error("Nama klien wajib diisi."); rs.forEach(r=>Object.assign(r,v,{updatedAt:Date.now()})); return rs; }),
     apiSaveUser:(t,u)=>run(()=>{ const c=ctx(t); if(!c.perms.kelolaUser) throw new Error("Kamu tidak punya izin untuk tindakan ini.");
@@ -665,11 +672,11 @@ const DEMO=(()=>{
       if(r.id===c.user.id){ if(!u.aktif) throw new Error("Kamu tidak bisa menonaktifkan akunmu sendiri."); const nr=roles.find(x=>x.name===u.role); if(!(u.role==="Admin"||nr.perms.kelolaUser)) throw new Error("Kamu tidak bisa mencabut hak Pengaturan dari akunmu sendiri."); }
       if(u.pin){ if(!/^\d{4,8}$/.test(u.pin)) throw new Error("PIN harus 4–8 angka."); r.pin=String(u.pin); }
       Object.assign(r,{username:un,nama:String(u.nama).trim(),tim:String(u.tim||"").trim(),role:u.role,aktif:!!u.aktif});
-      const res={users:users.map(pub),roles,perms:PL,kpi:KPI}; if(r.id===c.user.id&&u.pin) res.token=tok(r); return res; }),
+      const res={users:users.map(pub),roles,perms:PL,kpi:KPI,counts:cnt()}; if(r.id===c.user.id&&u.pin) res.token=tok(r); return res; }),
     apiSaveRoles:(t,rs)=>run(()=>{ const c=ctx(t); if(!c.perms.kelolaUser) throw new Error("Kamu tidak punya izin untuk tindakan ini.");
       if(!rs.some(r=>r.name==="Admin")) throw new Error('Peran "Admin" tidak boleh dihapus.');
       const used=users.map(u=>u.role).filter(r=>!rs.some(x=>x.name===r)); if(used.length) throw new Error(`Peran "${used[0]}" masih dipakai pengguna. Pindahkan penggunanya dulu.`);
-      roles=rs.map(r=>({name:r.name,perms:Object.fromEntries(PK.map(k=>[k,r.name==="Admin"||!!r.perms[k]]))})); return {users:users.map(pub),roles,perms:PL,kpi:KPI}; }),
+      roles=rs.map(r=>({name:r.name,perms:Object.fromEntries(PK.map(k=>[k,r.name==="Admin"||!!r.perms[k]]))})); return {users:users.map(pub),roles,perms:PL,kpi:KPI,counts:cnt()}; }),
     apiSave:(t,p)=>run(()=>{ const c=ctx(t); if(!c.perms.lapor) throw new Error("Kamu tidak punya izin untuk tindakan ini.");
       let o=rows.find(r=>r.id===p.id); const now=Date.now();
       if(o&&o.userId!==c.user.id) throw new Error("Laporan ini milik pengguna lain dan tidak bisa diubah.");
@@ -694,9 +701,9 @@ const DEMO=(()=>{
       return {kpi:KPI,sales:salesU().filter(u=>c.perms.rekapSemua||(u.tim||"")===(c.user.tim||"")).map(u=>({id:u.id,nama:u.nama,tim:u.tim||""})),rows:rows.filter(o=>scope(c,o)),scope:c.perms.rekapSemua?"Semua tim":"Tim "+(c.user.tim||"(tanpa tim)"),sheetUrl:c.perms.aksesData?"#":undefined,folderUrl:c.perms.aksesData?"#":undefined}; }),
     apiPhoto:(t,id)=>run(()=>{ const c=ctx(t); if(!rows.some(o=>scope(c,o)&&[o.checkIn&&o.checkIn.photoId,o.checkOut&&o.checkOut.photoId,...o.bukti].includes(id))) throw new Error("Tidak punya akses ke foto ini."); return files[id]; }),
     apiDeleteUser:(t,id,mode)=>run(()=>{ const c=ctx(t); if(!c.perms.kelolaUser) throw new Error("Kamu tidak punya izin untuk tindakan ini."); if(id===c.user.id) throw new Error("Kamu tidak bisa menghapus akunmu sendiri.");
-      const i=users.findIndex(u=>u.id===id); if(i<0) throw new Error("Pengguna tidak ditemukan."); if(users[i].aktif) throw new Error("Nonaktifkan akun ini dulu sebelum menghapus.");
+      const i=users.findIndex(u=>u.id===id); if(i<0) throw new Error("Pengguna tidak ditemukan."); 
       let removed=0; if(mode==="purge"){ for(let k=rows.length-1;k>=0;k--) if(rows[k].userId===id){ rows.splice(k,1); removed++; } }
-      users.splice(i,1); KPI.periods.forEach(p=>delete p.targets[id]); return {users:users.map(pub),roles,perms:PL,kpi:KPI,removed}; }),
+      users.splice(i,1); KPI.periods.forEach(p=>delete p.targets[id]); return {users:users.map(pub),roles,perms:PL,kpi:KPI,counts:cnt(),removed}; }),
     apiRequestApproval:(t,d)=>run(()=>{ const c=ctx(t); if(!d.alasan) throw new Error("Tulis alasan kenapa klien ini perlu kamu tangani."); const m=mt(summ(),kk(d.klien),pk(d.kontak),"",c);
       if(!m.length) throw new Error("Klien ini tidak terdeteksi ganda, kamu bisa langsung check-in."); if(APR.some(a=>a.userId===c.user.id&&a.status==="Menunggu"&&kk(a.klien)===kk(d.klien))) throw new Error("Pengajuan untuk klien ini masih menunggu keputusan.");
       const a={id:fid(),createdAt:Date.now(),userId:c.user.id,sales:c.user.nama,tim:c.user.tim||"",klien:d.klien,kontak:d.kontak,kategori:d.kategori,lokasi:d.lokasi,alasan:d.alasan,status:"Menunggu",cocok:m}; APR.push(a); return a; }),
@@ -744,7 +751,7 @@ function enter(r){
   $("meName").textContent=ME.nama; $("meAv").textContent=initials(ME.nama);
   $("tabIsi").hidden=!PERM.lapor; $("tabRekap").hidden=!(PERM.rekap||PERM.approveKlien); $("tabs").hidden=!(PERM.lapor&&(PERM.rekap||PERM.approveKlien));
   $("gearBtn").hidden=!PERM.kelolaUser;
-  $("akunKv").innerHTML=`<dt>Nama</dt><dd>${esc(ME.nama)}</dd><dt>Username</dt><dd>${esc(ME.username)}</dd><dt>Tim / area</dt><dd>${esc(ME.tim||"-")}</dd><dt>Peran</dt><dd>${esc(ME.role)}</dd>`;
+  $("akunKv").innerHTML=`<dt>Versi aplikasi</dt><dd>${APP_VERSION}</dd><dt>Nama</dt><dd>${esc(ME.nama)}</dd><dt>Username</dt><dd>${esc(ME.username)}</dd><dt>Tim / area</dt><dd>${esc(ME.tim||"-")}</dd><dt>Peran</dt><dd>${esc(ME.role)}</dd>`;
   resetForm();
   if(PERM.lapor){ api("apiMine",SESSION).then(rows=>{ mine=rows||[]; renderMine(); }).catch(()=>{});
     api("apiTargets",SESSION).then(k=>{ MYKPI=k; homePer=null; donePer=null; renderMine(); }).catch(()=>{}); loadDups(); loadMyAppr(); }
@@ -1345,6 +1352,8 @@ async function loadSettings(){
   try{ applySettings(await api("apiSettings",SESSION)); }catch(err){ $("userRows").innerHTML=`<tr><td colspan="7" class="msg err">${esc(err.message)}</td></tr>`; } }
 function applySettings(s){
   if(s.token){ SESSION=s.token; ls("session",SESSION); }
+  if(s.version!==undefined||LIVE||REMOTE){ const vn=$("verNote"); vn.hidden=false; vn.className="notice"+(s.version===APP_VERSION?" okver":"");
+    vn.innerHTML=s.version===APP_VERSION?`Versi tampilan &amp; server sama: <b>${APP_VERSION}</b>`:`<b>Versi tidak sama.</b> Tampilan: ${APP_VERSION} · Server (Code.gs): ${esc(s.version||"lama / belum diperbarui")}. Perbarui Code.gs lalu <b>Deploy → New version</b>, atau unggah ulang index.html ke GitHub.`; }
   SET=s; rolesDraft=JSON.parse(JSON.stringify(s.roles)); rolesDirty=false; $("saveRolesBtn").disabled=true; renderUsers(); renderMatrix(); renderKpiSet();
   const me=s.users.find(u=>u.id===ME.id); if(me){ ME=Object.assign(ME,me); $("meName").textContent=ME.nama; $("meAv").textContent=initials(ME.nama); }
 }
@@ -1352,7 +1361,7 @@ function renderUsers(){
   const list=[...SET.users].sort((a,b)=>(b.aktif-a.aktif)||a.nama.localeCompare(b.nama,"id"));
   $("userRows").innerHTML=list.map(u=>`<tr><td><b>${esc(u.nama)}</b>${u.id===ME.id?' <span class="hint">(kamu)</span>':""}</td><td>${esc(u.username)}</td><td>${esc(u.tim||"-")}</td>
     <td><span class="pill role-pill">${esc(u.role)}</span></td><td>${u.aktif?'<span class="pill on-pill">Aktif</span>':'<span class="pill off-pill">Nonaktif</span>'}</td>
-    <td class="num">${u.lastLogin?dt(u.lastLogin):"belum pernah"}</td><td><div class="actions"><button class="btn sm" data-edit-user="${u.id}">Edit</button></div></td></tr>`).join("");
+    <td class="num">${u.lastLogin?dt(u.lastLogin):"belum pernah"}</td><td><div class="actions"><button class="btn sm" data-edit-user="${u.id}">Edit</button>${u.id!==ME.id?`<button class="btn sm danger" data-del-user="${u.id}">Hapus</button>`:""}</div></td></tr>`).join("");
 }
 function teamList(){ return [...new Set(SET.users.map(u=>u.tim).filter(Boolean))].sort(); }
 function openEditor(u){
@@ -1364,19 +1373,10 @@ function openEditor(u){
     <label><span class="req">Peran</span><select id="euRole">${SET.roles.map(r=>`<option${(u?u.role:"Sales")===r.name?" selected":""}>${esc(r.name)}</option>`).join("")}</select></label>
     <label>${u?'PIN baru <span class="hint">Kosongkan jika tidak diubah</span>':'<span class="req">PIN awal</span> <span class="hint">4–8 angka, berikan ke pengguna</span>'}<input id="euPin" class="pinput" inputmode="numeric" autocomplete="off" placeholder="${u?"tidak diubah":"mis. 4821"}"></label>
     <label class="switch"><input type="checkbox" id="euAktif" ${!u||u.aktif?"checked":""}> Akun aktif (bisa login)</label>
-    ${u&&u.id!==ME.id?(u.aktif?`<p class="hint full" style="margin:0">Untuk menghapus pengguna ini, nonaktifkan akunnya dulu lalu simpan.</p>`
-      :`<div class="dangerzone"><b>Hapus pengguna nonaktif</b>
-        <label><input type="radio" name="euMode" value="keep" checked> <span><b style="color:var(--fg)">Pertahankan data klien &amp; kunjungannya</b><br><span class="hint">Tetap tampil di dashboard &amp; Google Sheet atas nama ${esc(u.nama)}.</span></span></label>
-        <label><input type="radio" name="euMode" value="purge"> <span><b style="color:var(--fg)">Hapus juga semua data klien &amp; kunjungannya</b><br><span class="hint">Baris di Google Sheet dihapus, foto dipindah ke Sampah Google Drive. Tidak bisa dibatalkan dari aplikasi.</span></span></label>
-        <div><button class="btn danger" type="button" id="euDel">Hapus pengguna</button></div></div>`):""}
+    ${u&&u.id!==ME.id?`<div class="full"><button class="btn sm danger" type="button" id="euDelOpen">Hapus pengguna ini…</button></div>`:""}
     <div class="full" style="display:flex;gap:10px;flex-wrap:wrap;align-items:center"><button class="btn primary" type="button" id="euSave">${u?"Simpan perubahan":"Tambah pengguna"}</button><button class="btn" type="button" id="euCancel">Batal</button><span class="msg" id="euMsg"></span></div>`;
   $("euCancel").onclick=closeEditor; $("euSave").onclick=saveUser; $("euNama").focus();
-  $("euDel")&&($("euDel").onclick=async()=>{ const b=$("euDel"), mode=(document.querySelector('input[name="euMode"]:checked')||{}).value||"keep";
-    if(Date.now()-(b._armed||0)>5000){ b._armed=Date.now(); b.textContent=mode==="purge"?"Yakin? Tekan lagi untuk hapus pengguna + datanya":"Tekan lagi untuk hapus pengguna"; return; }
-    b.disabled=true; msg($("euMsg"),"Menghapus…");
-    try{ const r=await api("apiDeleteUser",SESSION,u.id,mode); applySettings(r); closeEditor(); all=[];
-      toast(`Pengguna ${u.nama} dihapus`+(mode==="purge"?` beserta ${r.removed||0} kunjungan`:", datanya dipertahankan")); }
-    catch(err){ msg($("euMsg"),err.message,"err"); b.disabled=false; } });
+  $("euDelOpen")&&($("euDelOpen").onclick=()=>openDelUser(u));
 }
 function closeEditor(){ editingUser=null; $("userEditor").hidden=true; $("userEditor").innerHTML=""; }
 async function saveUser(){
@@ -1426,7 +1426,27 @@ $("kpiSave").onclick=async()=>{ const start=$("kpiStart").value, end=$("kpiEnd")
     if(PERM.lapor) api("apiTargets",SESSION).then(k=>{ MYKPI=k; renderMine(); }).catch(()=>{}); }
   catch(err){ msg($("kpiMsg"),err.message,"err"); } finally{ $("kpiSave").disabled=false; } };
 $("addUserBtn").onclick=()=>openEditor(null);
-$("userRows").addEventListener("click",e=>{ const b=e.target.closest("[data-edit-user]"); if(b){ openEditor(SET.users.find(u=>u.id===b.dataset.editUser)); $("userEditor").scrollIntoView({behavior:"smooth",block:"start"}); } });
+function openDelUser(u){
+  editingUser=null; const ed=$("userEditor"), c=(SET.counts||{})[u.id]||{kunjungan:0,klien:0}; ed.hidden=false; ed.className="editor deleditor";
+  ed.innerHTML=`<h3 style="color:var(--bad)">Hapus pengguna · ${esc(u.nama)}</h3>
+    <p class="full" style="margin:0;font-size:13px">${esc(u.username)} · ${esc(u.role)}${u.tim?" · "+esc(u.tim):""} · memiliki <b>${c.klien} klien</b> dan <b>${c.kunjungan} kunjungan</b>.</p>
+    ${u.aktif?`<p class="full hint" style="margin:0;color:var(--warn)">Akun ini masih <b>aktif</b>. Setelah dihapus, ${esc(u.nama)} tidak bisa login lagi.</p>`:""}
+    <div class="dangerzone"><b>Apa yang dilakukan dengan data klien &amp; kunjungannya?</b>
+      <label><input type="radio" name="euMode" value="keep" checked> <span><b style="color:var(--fg)">Pertahankan data klien &amp; kunjungannya</b><br><span class="hint">Tetap tampil di dashboard &amp; Google Sheet atas nama ${esc(u.nama)}.</span></span></label>
+      <label><input type="radio" name="euMode" value="purge"> <span><b style="color:var(--fg)">Hapus juga semua data klien &amp; kunjungannya</b><br><span class="hint">${c.kunjungan} baris di Google Sheet dihapus, fotonya dipindah ke Sampah Google Drive. Tidak bisa dibatalkan dari aplikasi.</span></span></label>
+    </div>
+    <div class="full" style="display:flex;gap:10px;flex-wrap:wrap;align-items:center"><button class="btn danger" type="button" id="euDel">Hapus pengguna</button><button class="btn" type="button" id="euCancel">Batal</button><span class="msg" id="euMsg"></span></div>`;
+  $("euCancel").onclick=closeEditor;
+  $("euDel").onclick=async()=>{ const b=$("euDel"), mode=(document.querySelector('input[name="euMode"]:checked')||{}).value||"keep";
+    if(Date.now()-(b._armed||0)>5000){ b._armed=Date.now(); b.textContent=mode==="purge"?"Yakin? Tekan lagi untuk hapus pengguna + semua datanya":"Yakin? Tekan lagi untuk hapus pengguna"; return; }
+    b.disabled=true; msg($("euMsg"),"Menghapus…");
+    try{ const r=await api("apiDeleteUser",SESSION,u.id,mode); applySettings(r); closeEditor(); all=[];
+      toast(`Pengguna ${u.nama} dihapus`+(mode==="purge"?` beserta ${r.removed||0} kunjungan`:", datanya dipertahankan")); }
+    catch(err){ msg($("euMsg"),err.message,"err"); b.disabled=false; b.textContent="Hapus pengguna"; } };
+  ed.scrollIntoView({behavior:"smooth",block:"start"});
+}
+$("userRows").addEventListener("click",e=>{ const d=e.target.closest("[data-del-user]"); if(d){ const u=SET.users.find(x=>x.id===d.dataset.delUser); if(u) openDelUser(u); return; }
+  const b=e.target.closest("[data-edit-user]"); if(b){ openEditor(SET.users.find(u=>u.id===b.dataset.editUser)); $("userEditor").scrollIntoView({behavior:"smooth",block:"start"}); } });
 
 function renderMatrix(){
   const used=r=>SET.users.some(u=>u.role===r);
