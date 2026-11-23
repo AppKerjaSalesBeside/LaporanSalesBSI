@@ -342,6 +342,17 @@ button.kpi:hover{border-color:var(--accent)}
 .sheet{position:fixed;inset:0;z-index:40;background:var(--scrim);display:flex;align-items:flex-end;justify-content:center;padding:16px;padding-bottom:max(16px,env(safe-area-inset-bottom,0px))}
 .sheetbox{background:var(--surface);color:var(--fg);border-radius:14px;padding:18px;width:100%;max-width:420px;display:flex;flex-direction:column;gap:10px}
 .sheetbox b{font-size:16px}
+.combo{position:relative;display:flex;flex-direction:column;gap:6px;min-width:0}
+.combo>label{font-weight:600;font-size:13px}
+.dropl{position:absolute;left:0;right:0;top:100%;margin-top:4px;z-index:8;background:var(--surface);border:1px solid var(--line);border-radius:10px;box-shadow:0 10px 28px rgba(0,0,0,.18);max-height:320px;overflow:auto;padding:4px}
+.dropl .opt{display:flex;flex-direction:column;gap:2px;width:100%;text-align:left;border:0;background:transparent;color:var(--fg);font:inherit;padding:9px 10px;border-radius:8px;cursor:pointer}
+.dropl .opt:hover,.dropl .opt.act{background:var(--accent-soft)}
+.dropl .opt .r1{display:flex;gap:8px;align-items:center;justify-content:space-between;font-weight:600;font-size:14px}
+.dropl .opt .r2{font-size:12px;color:var(--muted)}
+.dropl .opt.new{border-top:1px dashed var(--line);border-radius:0 0 8px 8px;color:var(--accent);font-weight:600}
+.dropl .dh{font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);padding:6px 10px 2px}
+.ownbox{background:var(--info-soft);border:1px solid var(--info);border-radius:8px;padding:10px 12px;font-size:13px;display:flex;flex-direction:column;gap:8px}
+.ownbox b{color:var(--info)}
 .st-Diterima{background:var(--good-soft);color:var(--good)}
 .st-Ditolak{background:var(--bad-soft);color:var(--bad)}
 </style>
@@ -357,7 +368,7 @@ button.kpi:hover{border-color:var(--accent)}
     <button class="btn primary" type="submit" id="lgBtn">Masuk</button>
     <span class="msg err" id="lgMsg"></span>
     <span class="hint">Lupa PIN? Minta admin mengatur ulang PIN dari menu Pengaturan.</span>
-    <span class="hint" style="text-align:center;opacity:.7">Versi 2026.11.23-j</span>
+    <span class="hint" style="text-align:center;opacity:.7">Versi 2026.11.23-k</span>
   </form>
 </div>
 
@@ -441,7 +452,10 @@ button.kpi:hover{border-color:var(--accent)}
           <legend><span class="step">1</span>Sales &amp; klien</legend>
           <label>Nama sales<input id="sales" class="readonly" readonly tabindex="-1"></label>
           <label><span class="req">Tanggal</span><input id="tanggal" type="date"></label>
-          <label><span class="req">Nama klien / brand</span><input id="klien" placeholder="mis. PT Maju Jaya / Brand X" list="klienList"><datalist id="klienList"></datalist></label>
+          <div class="combo"><label for="klien"><span class="req">Nama klien / brand</span></label>
+            <input id="klien" placeholder="Ketik untuk mencari klienmu, atau tulis nama baru" autocomplete="off" role="combobox" aria-autocomplete="list" aria-controls="klienDrop" aria-expanded="false"><datalist id="klienList"></datalist>
+            <div class="dropl" id="klienDrop" role="listbox" hidden></div></div>
+          <div class="full ownbox" id="ciOwn" hidden></div>
           <div class="full dupwarn" id="ciDup" hidden></div>
           <label><span class="req">Jenis aktivitas</span>
             <select id="jenis">
@@ -665,7 +679,7 @@ button.kpi:hover{border-color:var(--accent)}
 <div class="toast" id="toast" hidden></div>
 <div class="lightbox" id="lightbox" hidden><img id="lbImg" alt="Foto"></div>
 <script>
-const APP_VERSION="2026.11.23-j";
+const APP_VERSION="2026.11.23-k";
 const PRODUK=["Event activation","Sponsorship event","Iklan media online","Iklan radio","Konten IG / TikTok","Aktivasi komunitas","Event services / produksi","Lainnya"];
 const STATUSES=[["Lead","var(--accent)","var(--accent-soft)","Perkenalan"],["Penawaran","var(--info)","var(--info-soft)","Penawaran dikirim"],["Negosiasi","var(--warn)","var(--warn-soft)","Tawar-menawar"],["Diterima","var(--good)","var(--good-soft)","Final · deal"],["Ditolak","var(--bad)","var(--bad-soft)","Final · tidak lanjut"]];
 const ADMIN_J="Administrasi pasca-deal";
@@ -787,7 +801,9 @@ const DEMO=(()=>{
       if(!a) throw new Error("Pengajuan tidak ditemukan."); if(a.status!=="Menunggu") throw new Error("Pengajuan ini sudah diputuskan ("+a.status+")."); if(a.userId===c.user.id) throw new Error("Kamu tidak bisa menyetujui pengajuanmu sendiri.");
       if(dec==="Ditolak"&&!String(note||"").trim()) throw new Error("Tulis alasan penolakan untuk sales."); Object.assign(a,{status:dec,approverId:c.user.id,approver:c.user.nama,decidedAt:Date.now(),catatan:note}); return a; }),
     apiDuplicates:t=>run(()=>{ const c=ctx(t), acts=summ(); return acts.filter(a=>a.userId===c.user.id).map(a=>({aktivitasId:a.aktivitasId,klien:a.klien,status:a.status,matches:mt(acts,a.nk,a.pk,a.aktivitasId,c).filter(x=>!x.mine)})).filter(x=>x.matches.length); }),
-    apiCheckKlien:(t,k,p,ex)=>run(()=>{ const c=ctx(t); return mt(summ(),kk(k),pk(p),ex||"",c); }),
+    apiCheckKlien:(t,k,p,ex)=>run(()=>{ const c=ctx(t), acts=summ(), e=mt(acts,kk(k),pk(p),ex||"",c), nk=kk(k), seen=new Set(e.map(x=>x.aktivitasId));
+      const l=nk.length>=5?acts.filter(a=>!seen.has(a.aktivitasId)&&a.aktivitasId!==ex&&a.userId!==c.user.id&&a.nk.length>=5&&(a.nk.includes(nk)||nk.includes(a.nk))).slice(0,5).map(a=>({aktivitasId:a.aktivitasId,klien:a.klien,sales:a.sales,tim:a.tim,status:a.status,tanggal:a.tanggal,by:"mirip",loose:true,mine:false})):[];
+      return e.concat(l); }),
     apiDelete:(t,id)=>run(()=>{ const c=ctx(t); const i=rows.findIndex(r=>r.id===id); if(i<0) return true; if(rows[i].userId!==c.user.id&&!c.perms.hapusSemua) throw new Error("Kamu tidak punya izin menghapus laporan ini."); rows.splice(i,1); return true; }),
   };
 })();
@@ -939,18 +955,18 @@ function fillForm(r,{keepHasil=true}={}){
 function lockKlien(on){ ["klien","lokasi"].forEach(id=>{ $(id).readOnly=on; $(id).classList.toggle("readonly",on); }); $("kategori").disabled=on; $("kategori").classList.toggle("readonly",on); $("lockHint").hidden=!on; }
 function updKontak(){ const tel=$("jenis").value==="Telepon / WhatsApp"; $("kontakLbl").textContent=tel?"Nomor Telepon / WhatsApp klien":"Kontak PIC"; $("kontakLbl").className=tel?"req":""; $("kontak").placeholder=tel?"mis. 0812xxxxxxx (wajib)":"No. HP / email"; }
 const telOk=r=>r.jenis!=="Telepon / WhatsApp"||String(r.kontak||"").replace(/\D/g,"").length>=8;
-function startNew(){ $("ciDup").hidden=true; $("jenis").disabled=false; cur=newCur(null); fillForm(null); $("tanggal").value=today(); lockKlien(false); updKontak();
+function startNew(){ $("ciDup").hidden=true; $("ciOwn").hidden=true; $("klienDrop").hidden=true; $("jenis").disabled=false; cur=newCur(null); fillForm(null); $("tanggal").value=today(); lockKlien(false); updKontak();
   $("ciTitle").textContent="Kunjungan baru"; $("ciLede").textContent="Isi data klien, lalu ambil foto di lokasi untuk check-in.";
   dirty=false; msg($("ciMsg"),""); showScreen("checkin"); renderCheckin(); $("klien").focus(); }
 function startFollowup(act){
   const base=act.latest; cur=newCur(base); fillForm(base,{keepHasil:false}); $("tanggal").value=today();
-  lockKlien(true); $("jenis").disabled=false; if($("jenis").value===ADMIN_J) $("jenis").value="Kunjungan (visit)"; updKontak();
+  $("ciOwn").hidden=true; $("klienDrop").hidden=true; lockKlien(true); $("jenis").disabled=false; if($("jenis").value===ADMIN_J) $("jenis").value="Kunjungan (visit)"; updKontak();
   $("ciTitle").textContent=`Kunjungan ke-${cur.kunjunganKe} · ${base.klien}`;
   $("ciLede").textContent=`Lanjutan dari ${act.rows.length} kunjungan sebelumnya (status terakhir: ${normSt(base.status)||"-"}). Data penawaran terakhir akan terbawa dan bisa diperbarui setelah check-out.`;
   dirty=false; msg($("ciMsg"),""); showScreen("checkin"); renderCheckin(); }
 function startAdminVisit(a){
   const base=Object.assign({},a.close||a.latest,{jenis:ADMIN_J}); cur=newCur(a.latest); fillForm(base,{keepHasil:false}); $("jenis").value=ADMIN_J; $("tanggal").value=today();
-  lockKlien(true); $("jenis").disabled=true; updKontak(); $("ciDup").hidden=true;
+  $("ciOwn").hidden=true; $("klienDrop").hidden=true; lockKlien(true); $("jenis").disabled=true; updKontak(); $("ciDup").hidden=true;
   $("ciTitle").textContent="Kunjungan administrasi · "+a.latest.klien;
   $("ciLede").textContent="Kunjungan setelah deal, mis. menyerahkan surat tagihan, kwitansi, atau bukti tayang. Status klien tetap Diterima.";
   dirty=false; msg($("ciMsg"),""); showScreen("checkin"); renderCheckin(); }
@@ -1220,7 +1236,7 @@ let DUPS=[];
 const klienKey=n=>{ const k=String(n||"").toLowerCase().replace(/\b(pt|cv|tbk|ud|fa|persero|koperasi|toko)\b\.?/g,"").replace(/[^a-z0-9]/g,""); return k.length>=3?k:""; };
 const phoneKey=t=>{ let d=String(t||"").replace(/\D/g,""); if(d.startsWith("62")) d="0"+d.slice(2); return d.length>=8?d.slice(-9):""; };
 function loadDups(){ if(!PERM.lapor) return; api("apiDuplicates",SESSION).then(d=>{ DUPS=d||[]; if(screen==="list") renderMine(); }).catch(()=>{}); }
-const dupWho=m=>(m.mine?`aktivitasmu yang lain`:`<b>${esc(m.sales)}</b>${m.tim?" ("+esc(m.tim)+")":""}`)+` sebagai “${esc(m.klien)}” · ${esc(m.status||"-")}, ${fmtDate(m.tanggal)}${m.by==="telepon"?" · nomor telepon sama":""}`;
+const dupWho=m=>m.by==="mirip"?`<b>${esc(m.sales)}</b>${m.tim?" ("+esc(m.tim)+")":""} sebagai “${esc(m.klien)}” · ${esc(m.status||"-")}, ${fmtDate(m.tanggal)}`:(m.mine?`aktivitasmu yang lain`:`<b>${esc(m.sales)}</b>${m.tim?" ("+esc(m.tim)+")":""}`)+` sebagai “${esc(m.klien)}” · ${esc(m.status||"-")}, ${fmtDate(m.tanggal)}${m.by==="telepon"?" · nomor telepon sama":""}`;
 function renderDupBox(){
   const box=$("dupBox"); box.hidden=!DUPS.length; if(!DUPS.length) return;
   box.innerHTML=`<b>⚠ ${DUPS.length} klien terdeteksi ganda</b><ul>${DUPS.map(d=>`<li><b>${esc(d.klien)}</b> juga tercatat di ${d.matches.map(dupWho).join("; ")}</li>`).join("")}</ul>
@@ -1229,10 +1245,11 @@ function renderDupBox(){
 let ciT=null;
 function checkKlienLive(){ clearTimeout(ciT); ciT=setTimeout(async()=>{ const k=$("klien").value.trim(), t=$("kontak").value.trim(), el=$("ciDup");
   if(screen!=="checkin"||(!klienKey(k)&&!phoneKey(t))){ el.hidden=true; if(cur){ cur.dup=[]; renderCheckin(); } return; }
-  try{ const m=await api("apiCheckKlien",SESSION,k,t,cur&&cur.aktivitasId||""), oth=m.filter(x=>!x.mine), own=m.filter(x=>x.mine);
-    el.hidden=!m.length; if(cur&&!isFollow()){ cur.dup=oth; renderCheckin(); }
+  try{ const m=await api("apiCheckKlien",SESSION,k,t,cur&&cur.aktivitasId||""), oth=m.filter(x=>!x.mine&&!x.loose), own=m.filter(x=>x.mine&&!x.loose&&!(cur&&cur.fromClient)), mir=m.filter(x=>x.loose);
+    el.hidden=!(oth.length||own.length||mir.length); if(cur&&!isFollow()){ cur.dup=oth; renderCheckin(); if(!$("klienDrop").hidden) renderDrop(); }
     el.innerHTML=(oth.length?`<b>⚠ Klien ini sudah tercatat oleh sales lain:</b><br>${oth.slice(0,5).map(x=>`• ${dupWho(x)}`).join("<br>")}<br><span class="hint">Kunjungan baru butuh persetujuan Supervisor/Admin. Ajukan di bagian check-in di bawah.</span>`:"")
-      +(own.length?`${oth.length?"<br><br>":""}<b style="color:var(--info)">ℹ Klien ini pernah kamu tangani:</b><br>${own.slice(0,5).map(x=>`• “${esc(x.klien)}” · ${esc(x.status||"-")} · ${fmtDate(x.tanggal)}`).join("<br>")}<br><span class="hint">Boleh dilanjutkan. Kalau aktivitas lamanya masih berjalan, lebih baik pakai <b>+ Kunjungan lanjutan</b> di kartu klien tersebut.</span>`:""); }catch(e){ el.hidden=true; } },700); }
+      +(own.length?`${oth.length?"<br><br>":""}<b style="color:var(--info)">ℹ Klien ini pernah kamu tangani:</b><br>${own.slice(0,5).map(x=>`• “${esc(x.klien)}” · ${esc(x.status||"-")} · ${fmtDate(x.tanggal)}`).join("<br>")}<br><span class="hint">Boleh dilanjutkan. Kalau aktivitas lamanya masih berjalan, lebih baik pakai <b>+ Kunjungan lanjutan</b> di kartu klien tersebut.</span>`:"")
+      +(mir.length?`${oth.length||own.length?"<br><br>":""}<b>ℹ Nama mirip dengan klien yang dikunjungi sales lain:</b><br>${mir.map(x=>`• ${dupWho(x)}`).join("<br>")}<br><span class="hint">Pastikan ini klien yang berbeda. Kalau sama, gunakan nama yang persis sama agar bisa diajukan persetujuan.</span>`:""); }catch(e){ el.hidden=true; } },700); }
 ["klien","kontak"].forEach(id=>$(id).addEventListener("input",checkKlienLive));
 // ----- pengajuan klien ganda
 let MYAPPR=[], APPRS=[];
@@ -1290,6 +1307,50 @@ $("apprList").addEventListener("click",async e=>{ const b=e.target.closest("[dat
   try{ const a=await api("apiDecideApproval",SESSION,b.dataset.id,b.dataset.dec,note); const i=APPRS.findIndex(x=>x.id===a.id); if(i>=0) APPRS[i]=a; renderAppr(); toast(`Pengajuan ${a.klien} ${a.status.toLowerCase()}`); }
   catch(err){ toast(err.message); b.disabled=false; } });
 setInterval(()=>{ if(!SESSION) return; loadAppr(); if(screen==="list"||screen==="checkin") loadMyAppr(); },90000);
+// ----- pilihan klien (dropdown klien milik sendiri)
+function myClients(){
+  const by={}; groupActs(mine).forEach(a=>{ const k=klienKey(a.latest.klien)||a.id; (by[k]??={key:k,acts:[]}).acts.push(a); });
+  return Object.values(by).map(c=>{ c.acts.sort((x,y)=>y.last.localeCompare(x.last)); c.a=c.acts[0]; c.klien=c.a.latest.klien; c.last=c.a.last;
+    c.openAct=c.acts.find(x=>x.open)||null; c.visits=c.acts.reduce((n,x)=>n+x.rows.length,0); return c; }).sort((x,y)=>y.last.localeCompare(x.last));
+}
+let dropIdx=-1, dropItems=[];
+function renderDrop(){
+  const el=$("klienDrop"), inp=$("klien");
+  if(inp.readOnly||screen!=="checkin"){ el.hidden=true; inp.setAttribute("aria-expanded","false"); return; }
+  const txt=inp.value.trim(), q=klienKey(txt)||txt.toLowerCase().replace(/[^a-z0-9]/g,"");
+  const all=myClients(), list=(q?all.filter(c=>c.key.includes(q)||c.klien.toLowerCase().includes(txt.toLowerCase())):all).slice(0,8);
+  const exact=all.some(c=>klienKey(txt)&&c.key===klienKey(txt));
+  dropItems=list.map(c=>({c})); if(txt&&!exact) dropItems.push({nw:txt});
+  if(!dropItems.length){ el.hidden=true; inp.setAttribute("aria-expanded","false"); return; }
+  el.innerHTML=(list.length?`<div class="dh">${q?"Klienmu yang cocok":"Klien yang pernah kamu kunjungi"}</div>`:"")+dropItems.map((it,i)=>it.c?`<button type="button" class="opt${i===dropIdx?" act":""}" data-i="${i}" role="option"><span class="r1"><span>${esc(it.c.klien)}</span>${stPill((it.c.openAct||it.c.a).status)}</span>
+      <span class="r2">${it.c.visits}× kunjungan · terakhir ${fmtDate(it.c.last)}${it.c.a.latest.lokasi?" · "+esc(it.c.a.latest.lokasi):""}${it.c.openAct?" · masih berjalan":""}</span></button>`
+    :`<button type="button" class="opt new${i===dropIdx?" act":""}" data-i="${i}" role="option">+ Buat klien baru “${esc(it.nw)}”${cur&&cur.dup&&cur.dup.length?`<span class="r2" style="color:var(--warn);font-weight:600">⚠ Sudah tercatat oleh ${esc([...new Set(cur.dup.map(x=>x.sales))].join(", "))} — butuh persetujuan</span>`:""}</button>`).join("");
+  el.hidden=false; inp.setAttribute("aria-expanded","true");
+}
+function chooseClient(it){
+  $("klienDrop").hidden=true; dropIdx=-1;
+  if(it.nw){ $("klien").value=it.nw; $("ciOwn").hidden=true; cur.fromClient=null; checkKlienLive(); return; }
+  const c=it.c, L=c.a.latest; ["klien","kategori","lokasi","pic","kontak"].forEach(k=>$(k).value=L[k]||""); cur.fromClient=c.key; dirty=true;
+  const box=$("ciOwn"), oa=c.openAct, won=c.acts.find(a=>!a.open&&a.status==="Diterima");
+  box.hidden=false;
+  box.innerHTML=oa?`<span><b>Klien ini masih punya prospek berjalan</b> (${esc(oa.status||"-")}, ${oa.rows.length}× kunjungan). Sebaiknya lanjutkan aktivitas itu supaya riwayatnya tetap satu.</span>
+      <div class="row-actions" style="margin:0"><button type="button" class="btn sm primary" data-own="follow">Lanjutkan sebagai kunjungan ke-${oa.rows.length+1}</button><button type="button" class="btn sm" data-own="new">Tetap buat aktivitas baru</button></div>`
+    :`<span><b>Data klien diisi dari kunjungan terakhir.</b> ${won?"Klien ini sudah deal, jadi kunjungan ini dicatat sebagai <b>penawaran baru</b>.":"Kunjungan ini dicatat sebagai <b>penawaran baru</b>."}</span>
+      ${won?`<div class="row-actions" style="margin:0"><button type="button" class="btn sm" data-own="admin">Ini kunjungan administrasi (tagihan / kwitansi / bukti tayang)</button></div>`:""}`;
+  box.querySelectorAll("[data-own]").forEach(b=>b.onclick=()=>{ const k=b.dataset.own;
+    if(k==="follow") startFollowup(oa); else if(k==="admin") startAdminVisit(won); else { box.hidden=true; } });
+  checkKlienLive();
+}
+$("klien").addEventListener("focus",()=>{ dropIdx=-1; renderDrop(); });
+$("klien").addEventListener("input",()=>{ dropIdx=-1; $("ciOwn").hidden=true; if(cur) cur.fromClient=null; renderDrop(); });
+$("klien").addEventListener("blur",()=>setTimeout(()=>{ if(document.activeElement&&document.activeElement.closest&&document.activeElement.closest("#klienDrop")) return; $("klienDrop").hidden=true; $("klien").setAttribute("aria-expanded","false"); },180));
+$("klien").addEventListener("keydown",e=>{ if($("klienDrop").hidden) return;
+  if(e.key==="ArrowDown"){ e.preventDefault(); dropIdx=Math.min(dropItems.length-1,dropIdx+1); renderDrop(); }
+  else if(e.key==="ArrowUp"){ e.preventDefault(); dropIdx=Math.max(0,dropIdx-1); renderDrop(); }
+  else if(e.key==="Enter"&&dropIdx>=0){ e.preventDefault(); chooseClient(dropItems[dropIdx]); }
+  else if(e.key==="Escape"){ $("klienDrop").hidden=true; } });
+$("klienDrop").addEventListener("mousedown",e=>e.preventDefault());
+$("klienDrop").addEventListener("click",e=>{ const b=e.target.closest("[data-i]"); if(b) chooseClient(dropItems[Number(b.dataset.i)]); });
 // ----- KPI & target
 const TKEYS=[["kunjungan","Kunjungan"],["klienBaru","Klien baru"],["deal","Deal"],["nilaiDeal","Nilai deal"]];
 let MYKPI=null, homePer=null, donePer=null;
