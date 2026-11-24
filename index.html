@@ -376,6 +376,9 @@ button.kpi:hover{border-color:var(--accent)}
 .pmsum b{font-family:var(--font-num)}
 .leaflet-container{font:12px var(--font-ui)}
 @media (max-width:720px){ .mvsum{grid-template-columns:repeat(2,minmax(0,1fr))} .mvmap{height:240px} }
+.zone-lay{background:var(--info-soft);border:1px solid var(--info)} .zone-lay .zdot{background:var(--info)} .zone-lay .sec{color:var(--info)}
+.pill.lay{background:var(--info-soft);color:var(--info)}
+.ekreq{display:flex;flex-direction:column;gap:10px}
 .st-Diterima{background:var(--good-soft);color:var(--good)}
 .st-Ditolak{background:var(--bad-soft);color:var(--bad)}
 </style>
@@ -391,7 +394,7 @@ button.kpi:hover{border-color:var(--accent)}
     <button class="btn primary" type="submit" id="lgBtn">Masuk</button>
     <span class="msg err" id="lgMsg"></span>
     <span class="hint">Lupa PIN? Minta admin mengatur ulang PIN dari menu Pengaturan.</span>
-    <span class="hint" style="text-align:center;opacity:.7">Versi 2026.11.24-m</span>
+    <span class="hint" style="text-align:center;opacity:.7">Versi 2026.11.24-n</span>
   </form>
 </div>
 
@@ -420,17 +423,22 @@ button.kpi:hover{border-color:var(--accent)}
       <div id="resume" class="resume" hidden></div>
       <div id="dupBox" class="dupbox" role="alert" hidden></div>
       <div class="listhead"><div><h1>Aktivitas saya</h1><p class="lede" style="margin:0">Satu aktivitas = satu prospek klien. Bisa berisi beberapa kunjungan sampai hasilnya <b>Diterima</b> atau <b>Ditolak</b>.</p></div>
-        <button class="btn primary" type="button" id="newVisitBtn">+ Kunjungan baru</button></div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn primary" type="button" id="newVisitBtn">+ Kunjungan baru</button><button class="btn" type="button" id="newLayBtn">+ Aktivitas layanan</button></div></div>
       <div class="kpibox" id="myKpi"></div>
       <div class="kpis mystats" id="myStats"></div>
       <section class="zone zone-appr" id="apprZone" hidden>
-        <h2 class="sec"><span class="zdot"></span>Pengajuan klien ganda <span class="hint" id="apprCount"></span></h2>
+        <h2 class="sec"><span class="zdot"></span>Pengajuan ke Supervisor / Admin <span class="hint" id="apprCount"></span></h2>
         <div class="list" id="myApprList"></div>
       </section>
       <section class="zone zone-open">
         <h2 class="sec"><span class="zdot"></span>Prospek berjalan <span class="hint" id="openCount"></span></h2>
         <p class="hint" style="margin:-4px 0 10px">Tetap tampil sampai hasilnya Diterima atau Ditolak, walaupun periode target sudah berganti.</p>
         <div class="list" id="openList"></div>
+      </section>
+      <section class="zone zone-lay" id="layZone">
+        <details id="layBox"><summary class="sec"><span class="zdot"></span>Aktivitas layanan / client service <span class="hint" id="layCount"></span></summary>
+          <p class="hint" style="margin:10px 0">Kegiatan tanpa penawaran produk, mis. menemani shooting podcast, talkshow, atau pelayanan klien. Mengikuti periode target yang dipilih.</p>
+          <div class="list" id="layList"></div></details>
       </section>
       <section class="zone zone-done">
         <details id="doneBox"><summary class="sec"><span class="zdot"></span>Aktivitas selesai <span class="hint" id="doneCount"></span></summary>
@@ -455,7 +463,9 @@ button.kpi:hover{border-color:var(--accent)}
       <form id="fEk" novalidate>
         <fieldset>
           <legend>Data klien</legend>
-          <label class="full"><span class="req">Nama klien / brand</span><input id="ekKlien"></label>
+          <label class="full">Nama klien / brand <span class="hint">Nama hanya bisa diubah lewat pengajuan ke Administrator</span><input id="ekKlien" class="readonly" readonly></label>
+          <div class="full ekreq"><div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn sm" type="button" data-ekreq="ubahNama">Ajukan ubah nama…</button><button class="btn sm danger" type="button" data-ekreq="hapus">Ajukan hapus klien…</button></div>
+            <div id="ekReqBox" hidden></div></div>
           <label>Kategori klien<select id="ekKategori"></select></label>
           <label>Alamat / lokasi klien<input id="ekLokasi"></label>
           <label>Nama PIC<input id="ekPic"></label>
@@ -483,7 +493,7 @@ button.kpi:hover{border-color:var(--accent)}
           <label><span class="req">Jenis aktivitas</span>
             <select id="jenis">
               <option>Kunjungan (visit)</option><option>Meeting</option><option>Presentasi / pitching</option>
-              <option>Telepon / WhatsApp</option><option>Email / proposal</option><option>Lainnya</option><option hidden>Administrasi pasca-deal</option>
+              <option>Telepon / WhatsApp</option><option>Email / proposal</option><option>Lainnya</option><option hidden>Administrasi pasca-deal</option><option hidden>Layanan / client service</option>
             </select></label>
           <label>Kategori klien
             <select id="kategori">
@@ -525,6 +535,13 @@ button.kpi:hover{border-color:var(--accent)}
       <h1 id="hsTitle">Hasil kunjungan</h1>
       <div class="visitsum" id="hsSum"></div>
       <form id="fHasil" novalidate>
+        <fieldset id="fsLay" hidden>
+          <legend><span class="step">4</span>Laporan aktivitas layanan</legend>
+          <div class="full"><label style="margin-bottom:8px"><span class="req">Jenis kegiatan</span> <span class="hint">Boleh pilih lebih dari satu</span></label><div class="chips" id="kegChips"></div></div>
+          <label class="full">Divisi / tim yang didampingi<input id="divisi" placeholder="mis. Tim Podcast Buletin Media, Pilar Radio"></label>
+          <label class="full"><span class="req">Catatan kegiatan</span><textarea id="hasilLay" placeholder="mis. Mendampingi shooting podcast bersama owner klien, durasi 2 episode, materi disetujui"></textarea></label>
+          <p class="hint full" style="margin:0">Aktivitas ini tidak dihitung sebagai penawaran atau kunjungan sales di target KPI, tapi tercatat di pergerakan harian dan laporan.</p>
+        </fieldset>
         <fieldset id="fsAdm" hidden>
           <legend><span class="step">4</span>Keperluan kunjungan administrasi</legend>
           <div class="full"><label style="margin-bottom:8px"><span class="req">Keperluan</span> <span class="hint">Boleh pilih lebih dari satu</span></label>
@@ -571,7 +588,7 @@ button.kpi:hover{border-color:var(--accent)}
   <section id="view-rekap" hidden>
     <h1>Dashboard sales</h1>
     <p class="lede"><span id="scopeTxt"></span> · data langsung dari Google Sheets. <span id="lastLoad"></span></p>
-    <div class="panel appr-panel" id="apprPanel" hidden><h2>Persetujuan klien ganda <small id="apprPanelCount"></small></h2><div class="list" id="apprList"></div></div>
+    <div class="panel appr-panel" id="apprPanel" hidden><h2>Persetujuan pengajuan sales <small id="apprPanelCount"></small></h2><div class="list" id="apprList"></div></div>
     <div class="filters">
       <label>Periode<select id="fPeriode">
         <option value="kpi" selected>Periode KPI</option><option value="today">Hari ini</option><option value="7">7 hari terakhir</option><option value="month">Bulan ini</option><option value="30">30 hari terakhir</option><option value="all">Semua (≤ 1 tahun)</option><option value="custom">Pilih tanggal…</option>
@@ -725,11 +742,12 @@ button.kpi:hover{border-color:var(--accent)}
 <div class="toast" id="toast" hidden></div>
 <div class="lightbox" id="lightbox" hidden><img id="lbImg" alt="Foto"></div>
 <script>
-const APP_VERSION="2026.11.24-m";
+const APP_VERSION="2026.11.24-n";
 const PRODUK=["Event activation","Sponsorship event","Iklan media online","Iklan radio","Konten IG / TikTok","Aktivasi komunitas","Event services / produksi","Lainnya"];
 const STATUSES=[["Lead","var(--accent)","var(--accent-soft)","Perkenalan"],["Penawaran","var(--info)","var(--info-soft)","Penawaran dikirim"],["Negosiasi","var(--warn)","var(--warn-soft)","Tawar-menawar"],["Diterima","var(--good)","var(--good-soft)","Final · deal"],["Ditolak","var(--bad)","var(--bad-soft)","Final · tidak lanjut"]];
-const ADMIN_J="Administrasi pasca-deal";
-const VISIT_TYPES=["Kunjungan (visit)","Meeting","Presentasi / pitching",ADMIN_J];
+const ADMIN_J="Administrasi pasca-deal", LAY_J="Layanan / client service";
+const isLay=r=>r&&r.jenis===LAY_J;
+const VISIT_TYPES=["Kunjungan (visit)","Meeting","Presentasi / pitching",ADMIN_J,LAY_J];
 const FINALS=["Diterima","Ditolak"];
 const MAX_BUKTI=4;
 const FIELDS=["tanggal","jenis","lokasi","klien","kategori","pic","kontak","status","hasil","rencana","tglFu","kendala"];
@@ -759,8 +777,8 @@ function api(fn,...args){
 
 // ---------- Mode demo: meniru server di memori (saat file dibuka di luar Google Apps Script)
 const DEMO=(()=>{
-  const PK=["lapor","rekap","rekapSemua","hapusSemua","aksesData","kelolaUser","approveKlien"];
-  const PL=[["lapor","Isi laporan kunjungan"],["rekap","Lihat Rekap Tim"],["rekapSemua","Rekap semua tim (bukan hanya timnya sendiri)"],["hapusSemua","Hapus laporan milik siapa pun"],["aksesData","Buka Google Sheet & folder foto"],["kelolaUser","Kelola pengguna & otoritas"],["approveKlien","Setujui pengajuan klien ganda"]];
+  const PK=["lapor","rekap","rekapSemua","hapusSemua","aksesData","kelolaUser","approveKlien","approveDataKlien"];
+  const PL=[["lapor","Isi laporan kunjungan"],["rekap","Lihat Rekap Tim"],["rekapSemua","Rekap semua tim (bukan hanya timnya sendiri)"],["hapusSemua","Hapus laporan milik siapa pun"],["aksesData","Buka Google Sheet & folder foto"],["kelolaUser","Kelola pengguna & otoritas"],["approveKlien","Setujui pengajuan klien ganda"],["approveDataKlien","Setujui ubah nama / hapus klien"]];
   let roles=[{name:"Admin",perms:Object.fromEntries(PK.map(k=>[k,true]))},{name:"Supervisor",perms:{lapor:true,rekap:true,approveKlien:true}},{name:"Sales",perms:{lapor:true}}];
   const users=[{id:"u-admin",username:"admin",nama:"Administrator",tim:"",role:"Admin",aktif:true,pin:"123456",lastLogin:null}];
   const rows=[], files={}, APR=[]; let n=0; const nn=new Date();
@@ -778,7 +796,7 @@ const DEMO=(()=>{
   const cnt=()=>{ const c={}; rows.forEach(o=>{ const x=c[o.userId]??={kunjungan:0,klien:new Set()}; x.kunjungan++; x.klien.add(o.aktivitasId); }); Object.values(c).forEach(x=>x.klien=x.klien.size); return c; };
   const kk=n=>{ const k=String(n||"").toLowerCase().replace(/\b(pt|cv|tbk|ud|fa|persero|koperasi|toko)\b\.?/g,"").replace(/[^a-z0-9]/g,""); return k.length>=3?k:""; };
   const pk=t=>{ let d=String(t||"").replace(/\D/g,""); if(d.startsWith("62")) d="0"+d.slice(2); return d.length>=8?d.slice(-9):""; };
-  const summ=()=>{ const m={}; rows.forEach(o=>{ const c=m[o.aktivitasId]; if(!c||o.kunjunganKe>=c.kunjunganKe) m[o.aktivitasId]=o; });
+  const summ=()=>{ const m={}; rows.forEach(o=>{ if(o.jenis===LAY_J) return; const c=m[o.aktivitasId]; if(!c||o.kunjunganKe>=c.kunjunganKe) m[o.aktivitasId]=o; });
     return Object.values(m).map(o=>({aktivitasId:o.aktivitasId,userId:o.userId,sales:o.sales,tim:o.tim||"",klien:o.klien,status:o.status,tanggal:o.tanggal,nk:kk(o.klien),pk:pk(o.kontak)})); };
   const mt=(acts,nk,p,ex,c)=>acts.filter(a=>a.aktivitasId!==ex&&((nk&&a.nk===nk)||(p&&a.pk===p))).map(a=>({aktivitasId:a.aktivitasId,klien:a.klien,sales:a.sales,tim:a.tim,status:a.status,tanggal:a.tanggal,by:nk&&a.nk===nk?"nama":"telepon",mine:a.userId===c.user.id}));
   const scope=(c,o)=>o.userId===c.user.id||(c.perms.rekap&&(c.perms.rekapSemua||(o.tim||"")===(c.user.tim||"")));
@@ -794,7 +812,7 @@ const DEMO=(()=>{
       if(clash) throw new Error("Periode bertabrakan dengan periode "+clash.start+" s.d. "+clash.end+".");
       KPI.periods=KPI.periods.filter(p=>!p.unsaved&&!(p.start===oa&&p.end===ob)); KPI.periods.push({start:d.start,end:d.end,targets:d.targets||{}}); kpiActive(); return {users:users.map(pub),roles,perms:PL,kpi:KPI,counts:cnt()}; }),
     apiDeleteTargetPeriod:(t,a,b)=>run(()=>{ ctx(t); KPI.periods=KPI.periods.filter(p=>!(p.start===a&&p.end===b)); if(!KPI.periods.length) KPI.periods=[{start:d8(new Date(nn.getFullYear(),nn.getMonth(),1)),end:d8(new Date(nn.getFullYear(),nn.getMonth()+1,0)),targets:{},unsaved:true}]; kpiActive(); return {users:users.map(pub),roles,perms:PL,kpi:KPI,counts:cnt()}; }),
-    apiEditKlien:(t,id,v)=>run(()=>{ const c=ctx(t); const rs=rows.filter(r=>r.aktivitasId===id); if(!rs.length) throw new Error("Aktivitas tidak ditemukan."); if(rs[0].userId!==c.user.id) throw new Error("Klien ini milik sales lain.");
+    apiEditKlien:(t,id,v)=>run(()=>{ const c=ctx(t); const rs=rows.filter(r=>r.aktivitasId===id); if(rs.length&&kk(v.klien)!==kk(rs[0].klien)) throw new Error("Perubahan nama klien harus diajukan dan disetujui Administrator."); if(!rs.length) throw new Error("Aktivitas tidak ditemukan."); if(rs[0].userId!==c.user.id) throw new Error("Klien ini milik sales lain.");
       if(!v.klien) throw new Error("Nama klien wajib diisi."); rs.forEach(r=>Object.assign(r,v,{updatedAt:Date.now()})); return rs; }),
     apiSaveUser:(t,u)=>run(()=>{ const c=ctx(t); if(!c.perms.kelolaUser) throw new Error("Kamu tidak punya izin untuk tindakan ini.");
       const un=String(u.username||"").trim().toLowerCase(); if(!/^[a-z0-9._]{3,30}$/.test(un)) throw new Error("Username 3–30 karakter: huruf kecil, angka, titik, atau garis bawah.");
@@ -816,7 +834,7 @@ const DEMO=(()=>{
           const last=prev[prev.length-1], cl=prev.find(r=>r.hasilAt&&FINALS.includes(r.status)&&r.jenis!==ADMIN_J);
           if(cl&&!(cl.status==="Diterima"&&p.fields.jenis===ADMIN_J)) throw new Error("Aktivitas ini sudah selesai. Gunakan + Penawaran baru."); if(false&&FINALS.includes(last.status)&&last.hasilAt) throw new Error("Aktivitas ini sudah selesai ("+last.status+")."); o.aktivitasId=p.aktivitasId; o.kunjunganKe=last.kunjunganKe+1; }
         else { o.aktivitasId=o.id; o.kunjunganKe=1;
-          if(mt(summ(),kk(p.fields.klien),pk(p.fields.kontak),"",c).some(x=>!x.mine)){ const a=APR.find(x=>x.id===p.approvalId);
+          if(p.fields.jenis!==LAY_J&&mt(summ(),kk(p.fields.klien),pk(p.fields.kontak),"",c).some(x=>!x.mine)){ const a=APR.find(x=>x.id===p.approvalId);
             const ok=a&&a.userId===c.user.id&&a.status==="Disetujui"&&!a.usedAt&&((kk(a.klien)&&kk(a.klien)===kk(p.fields.klien))||(pk(a.kontak)&&pk(a.kontak)===pk(p.fields.kontak)));
             if(!ok){ throw new Error("DUP: Klien ini sudah tercatat. Ajukan persetujuan ke Supervisor/Admin dulu sebelum memulai kunjungan."); } a.usedAt=now; a.aktivitasId=o.id; } }
         rows.push(o); }
@@ -824,12 +842,13 @@ const DEMO=(()=>{
       const visit=VISIT_TYPES.includes(o.jenis), g=x=>x?{gps:x.lat.toFixed(6)+","+x.lng.toFixed(6),acc:Math.round(x.acc)}:{gps:null,acc:null};
       if(p.action==="checkin"&&!o.checkIn){ if(!p.photos.checkin) throw new Error("Foto check-in wajib."); const id=fid(); files[id]=p.photos.checkin; o.checkIn={at:now,...g(p.geo),photoId:id}; }
       if(p.action==="checkout"&&!o.checkOut){ if(!o.checkIn) throw new Error("Belum check-in."); const id=fid(); files[id]=p.photos.checkout; o.checkOut={at:now,...g(p.geo),photoId:id}; }
-      const adm=o.jenis===ADMIN_J; if(adm) o.status="Diterima";
-      if(p.action==="hasil"&&adm){ if(!o.keperluan) throw new Error("Pilih keperluan kunjungan administrasi."); o.hasilAt=now; }
+      const adm=o.jenis===ADMIN_J, lay=o.jenis===LAY_J; if(adm) o.status="Diterima"; if(lay){ o.status=""; o.nilai=o.nilaiNego=o.nilaiDeal=0; o.produk=[]; }
+      if(p.action==="hasil"&&lay){ if(!o.keperluan) throw new Error("Pilih jenis kegiatan."); o.hasilAt=now; }
+      else if(p.action==="hasil"&&adm){ if(!o.keperluan) throw new Error("Pilih keperluan kunjungan administrasi."); o.hasilAt=now; }
       else if(p.action==="hasil"){ if(!o.status) throw new Error("Pilih status penawaran."); if(o.jenis==="Telepon / WhatsApp"&&String(o.kontak||"").replace(/\D/g,"").length<8) throw new Error("Isi nomor Telepon / WhatsApp klien yang dihubungi."); if(visit&&!o.checkOut) throw new Error("Lakukan check-out dulu sebelum mengisi hasil."); o.hasilAt=now; }
       o.bukti=o.bukti.filter(x=>!(p.removeBukti||[]).includes(x)); ((p.photos&&p.photos.bukti)||[]).forEach(d=>{const id=fid(); files[id]=d; o.bukti.push(id);});
       o.visitStatus=o.hasilAt?"Selesai":o.checkOut?"Isi hasil":o.checkIn?"Di lokasi":"Draf";
-      o.statusAktivitas=adm||(o.hasilAt&&FINALS.includes(o.status))?"Selesai":"Berjalan"; o.updatedAt=now; return o; }),
+      o.statusAktivitas=lay?"Layanan":adm||(o.hasilAt&&FINALS.includes(o.status))?"Selesai":"Berjalan"; o.updatedAt=now; return o; }),
     apiMine:t=>run(()=>{ const c=ctx(t); return rows.filter(r=>r.userId===c.user.id); }),
     apiDashboard:t=>run(()=>{ const c=ctx(t); if(!c.perms.rekap) throw new Error("Kamu tidak punya izin untuk tindakan ini.");
       return {kpi:KPI,sales:salesU().filter(u=>c.perms.rekapSemua||(u.tim||"")===(c.user.tim||"")).map(u=>({id:u.id,nama:u.nama,tim:u.tim||""})),rows:rows.filter(o=>scope(c,o)),scope:c.perms.rekapSemua?"Semua tim":"Tim "+(c.user.tim||"(tanpa tim)"),sheetUrl:c.perms.aksesData?"#":undefined,folderUrl:c.perms.aksesData?"#":undefined}; }),
@@ -842,10 +861,19 @@ const DEMO=(()=>{
       if(!m.length) throw new Error("Klien ini tidak terdeteksi ganda, kamu bisa langsung check-in."); if(APR.some(a=>a.userId===c.user.id&&a.status==="Menunggu"&&kk(a.klien)===kk(d.klien))) throw new Error("Pengajuan untuk klien ini masih menunggu keputusan.");
       const a={id:fid(),createdAt:Date.now(),userId:c.user.id,sales:c.user.nama,tim:c.user.tim||"",klien:d.klien,kontak:d.kontak,kategori:d.kategori,lokasi:d.lokasi,alasan:d.alasan,status:"Menunggu",cocok:m}; APR.push(a); return a; }),
     apiMyApprovals:t=>run(()=>{ const c=ctx(t); return APR.filter(a=>a.userId===c.user.id); }),
-    apiApprovals:t=>run(()=>{ const c=ctx(t); if(!c.perms.approveKlien) throw new Error("Kamu tidak punya izin untuk tindakan ini."); return APR.filter(a=>c.perms.rekapSemua||(a.tim||"")===(c.user.tim||"")); }),
+    apiApprovals:t=>run(()=>{ const c=ctx(t); if(!c.perms.approveKlien&&!c.perms.approveDataKlien) throw new Error("Kamu tidak punya izin untuk tindakan ini."); return APR.filter(a=>((a.tipe||"ganda")==="ganda"?c.perms.approveKlien:c.perms.approveDataKlien)&&(c.perms.rekapSemua||(a.tim||"")===(c.user.tim||""))); }),
+    apiRequestKlienChange:(t,d)=>run(()=>{ const c=ctx(t); if(!d.alasan) throw new Error("Tulis alasan pengajuan."); const base=rows.find(r=>r.aktivitasId===d.aktivitasId&&r.userId===c.user.id); if(!base) throw new Error("Klien tidak ditemukan.");
+      if(APR.some(a=>a.userId===c.user.id&&a.status==="Menunggu"&&a.tipe===d.tipe&&a.aktivitasId===d.aktivitasId)) throw new Error("Pengajuan yang sama masih menunggu keputusan.");
+      const nk=kk(base.klien), rs=rows.filter(r=>r.userId===c.user.id&&r.jenis!==LAY_J&&(r.aktivitasId===d.aktivitasId||(nk&&kk(r.klien)===nk)));
+      const a={id:fid(),createdAt:Date.now(),userId:c.user.id,sales:c.user.nama,tim:c.user.tim||"",klien:base.klien,kontak:base.kontak,lokasi:base.lokasi,alasan:d.alasan,status:"Menunggu",tipe:d.tipe,namaBaru:d.namaBaru||"",aktivitasId:d.aktivitasId,info:rs.length+" kunjungan",
+        cocok:d.tipe==="ubahNama"?mt(summ(),kk(d.namaBaru),"",d.aktivitasId,c).filter(x=>!x.mine):[]}; APR.push(a); return a; }),
     apiDecideApproval:(t,id,dec,note)=>run(()=>{ const c=ctx(t); if(!c.perms.approveKlien) throw new Error("Kamu tidak punya izin untuk tindakan ini."); const a=APR.find(x=>x.id===id);
       if(!a) throw new Error("Pengajuan tidak ditemukan."); if(a.status!=="Menunggu") throw new Error("Pengajuan ini sudah diputuskan ("+a.status+")."); if(a.userId===c.user.id) throw new Error("Kamu tidak bisa menyetujui pengajuanmu sendiri.");
-      if(dec==="Ditolak"&&!String(note||"").trim()) throw new Error("Tulis alasan penolakan untuk sales."); Object.assign(a,{status:dec,approverId:c.user.id,approver:c.user.nama,decidedAt:Date.now(),catatan:note}); return a; }),
+      if(dec==="Ditolak"&&!String(note||"").trim()) throw new Error("Tulis alasan penolakan untuk sales.");
+      if(dec==="Disetujui"&&(a.tipe==="ubahNama"||a.tipe==="hapus")){ const base=rows.find(r=>r.aktivitasId===a.aktivitasId), nk=base?kk(base.klien):"";
+        const tgt=rows.filter(r=>r.userId===a.userId&&r.jenis!==LAY_J&&(r.aktivitasId===a.aktivitasId||(nk&&kk(r.klien)===nk)));
+        if(a.tipe==="ubahNama") tgt.forEach(r=>r.klien=a.namaBaru); else tgt.forEach(r=>rows.splice(rows.indexOf(r),1)); a.info=tgt.length+(a.tipe==="hapus"?" kunjungan dihapus":" kunjungan diganti namanya"); a.usedAt=Date.now(); }
+      Object.assign(a,{status:dec,approverId:c.user.id,approver:c.user.nama,decidedAt:Date.now(),catatan:note}); return a; }),
     apiDuplicates:t=>run(()=>{ const c=ctx(t), acts=summ(); return acts.filter(a=>a.userId===c.user.id).map(a=>({aktivitasId:a.aktivitasId,klien:a.klien,status:a.status,matches:mt(acts,a.nk,a.pk,a.aktivitasId,c).filter(x=>!x.mine)})).filter(x=>x.matches.length); }),
     apiCheckKlien:(t,k,p,ex)=>run(()=>{ const c=ctx(t), acts=summ(), e=mt(acts,kk(k),pk(p),ex||"",c), nk=kk(k), seen=new Set(e.map(x=>x.aktivitasId));
       const l=nk.length>=5?acts.filter(a=>!seen.has(a.aktivitasId)&&a.aktivitasId!==ex&&a.userId!==c.user.id&&a.nk.length>=5&&(a.nk.includes(nk)||nk.includes(a.nk))).slice(0,5).map(a=>({aktivitasId:a.aktivitasId,klien:a.klien,sales:a.sales,tim:a.tim,status:a.status,tanggal:a.tanggal,by:"mirip",loose:true,mine:false})):[];
@@ -885,7 +913,7 @@ function enter(r){
   ME=r.user; PERM=r.perms||{};
   $("loginView").hidden=true; $("app").hidden=false;
   $("meName").textContent=ME.nama; $("meAv").textContent=initials(ME.nama);
-  $("tabIsi").hidden=!PERM.lapor; $("tabRekap").hidden=!(PERM.rekap||PERM.approveKlien); $("tabs").hidden=!(PERM.lapor&&(PERM.rekap||PERM.approveKlien));
+  $("tabIsi").hidden=!PERM.lapor; $("tabRekap").hidden=!(PERM.rekap||PERM.approveKlien||PERM.approveDataKlien); $("tabs").hidden=!(PERM.lapor&&(PERM.rekap||PERM.approveKlien||PERM.approveDataKlien));
   $("gearBtn").hidden=!PERM.kelolaUser;
   $("akunKv").innerHTML=`<dt>Versi aplikasi</dt><dd>${APP_VERSION}</dd><dt>Nama</dt><dd>${esc(ME.nama)}</dd><dt>Username</dt><dd>${esc(ME.username)}</dd><dt>Tim / area</dt><dd>${esc(ME.tim||"-")}</dd><dt>Peran</dt><dd>${esc(ME.role)}</dd>`;
   resetForm();
@@ -956,7 +984,9 @@ function newCur(base){ return {row:null,aktivitasId:base?base.aktivitasId:null,k
 const isVisitJ=j=>VISIT_TYPES.includes(j);
 const KEPERLUAN=["Serah surat tagihan / invoice","Serah kwitansi","Serah bukti tayang / laporan pekerjaan","Tanda tangan BAST / dokumen","Penagihan pembayaran","Lainnya"];
 $("kepChips").innerHTML=KEPERLUAN.map(p=>`<label class="chip"><input type="checkbox" name="keperluan" value="${p}"><span>${p}</span></label>`).join("");
-const isAdmJ=()=>$("jenis").value===ADMIN_J;
+const isAdmJ=()=>$("jenis").value===ADMIN_J, isLayJ=()=>$("jenis").value===LAY_J;
+const KEGIATAN=["Menemani shooting podcast","Menemani talkshow","Pendampingan liputan / event","Pelayanan klien (client service)","Koordinasi dengan divisi lain","Lainnya"];
+$("kegChips").innerHTML=KEGIATAN.map(p=>`<label class="chip"><input type="checkbox" name="kegiatan" value="${p}"><span>${p}</span></label>`).join("");
 $("produkChips").innerHTML=PRODUK.map(p=>`<label class="chip"><input type="checkbox" name="produk" value="${p}"><span>${p}</span></label>`).join("");
 $("statusGrid").innerHTML=STATUSES.map(([s,c,bg,d])=>`<label class="stopt" style="--sc:${c};--scs:${bg}"><input type="radio" name="status" value="${s}"><span>${s}<small>${d}</small></span></label>`).join("");
 
@@ -982,6 +1012,7 @@ function readForm(){ const v=id=>$(id).value.trim(); const o={};
   const lj=document.querySelector('input[name="lanjut"]:checked'); o.lanjut=lj?lj.value:"";
   o.keperluan=[...document.querySelectorAll('input[name="keperluan"]:checked')].map(x=>x.value).join(", ");
   if(o.jenis===ADMIN_J){ o.hasil=$("hasilAdm").value.trim(); o.status="Diterima"; }
+  if(o.jenis===LAY_J){ o.keperluan=[...document.querySelectorAll('input[name="kegiatan"]:checked')].map(x=>x.value).join(", "); o.hasil=$("hasilLay").value.trim(); o.divisi=$("divisi").value.trim(); o.status=""; if(!o.klien) o.klien="Internal"; }
   return o; }
 function fillForm(r,{keepHasil=true}={}){
   $("fKlien").reset(); $("fHasil").reset();
@@ -993,6 +1024,8 @@ function fillForm(r,{keepHasil=true}={}){
   const lj=r&&keepHasil?r.lanjut:""; document.querySelectorAll('input[name="lanjut"]').forEach(x=>x.checked=x.value===lj);
   const kp=r&&keepHasil?String(r.keperluan||"").split(", "):[]; document.querySelectorAll('input[name="keperluan"]').forEach(x=>x.checked=kp.includes(x.value));
   $("hasilAdm").value=r&&keepHasil&&r.jenis===ADMIN_J?(r.hasil||""):"";
+  const kg=r&&keepHasil&&r.jenis===LAY_J?String(r.keperluan||"").split(", "):[]; document.querySelectorAll('input[name="kegiatan"]').forEach(x=>x.checked=kg.includes(x.value));
+  $("hasilLay").value=r&&keepHasil&&r.jenis===LAY_J?(r.hasil||""):""; $("divisi").value=r&&r.jenis===LAY_J?(r.divisi||""):"";
   document.querySelectorAll('input[name="produk"]').forEach(x=>x.checked=!!(r&&(r.produk||[]).includes(x.value)));
   $("sales").value=ME?ME.nama+(ME.tim?" · "+ME.tim:""):"";
 }
@@ -1001,7 +1034,11 @@ function fillForm(r,{keepHasil=true}={}){
 function lockKlien(on){ ["klien","lokasi"].forEach(id=>{ $(id).readOnly=on; $(id).classList.toggle("readonly",on); }); $("kategori").disabled=on; $("kategori").classList.toggle("readonly",on); $("lockHint").hidden=!on; }
 function updKontak(){ const tel=$("jenis").value==="Telepon / WhatsApp"; $("kontakLbl").textContent=tel?"Nomor Telepon / WhatsApp klien":"Kontak PIC"; $("kontakLbl").className=tel?"req":""; $("kontak").placeholder=tel?"mis. 0812xxxxxxx (wajib)":"No. HP / email"; }
 const telOk=r=>r.jenis!=="Telepon / WhatsApp"||String(r.kontak||"").replace(/\D/g,"").length>=8;
-function startNew(){ $("ciDup").hidden=true; $("ciOwn").hidden=true; $("klienDrop").hidden=true; $("jenis").disabled=false; cur=newCur(null); fillForm(null); $("tanggal").value=today(); lockKlien(false); updKontak();
+function startLayanan(){ startNew(); $("jenis").value=LAY_J; $("jenis").disabled=true;
+  $("ciTitle").textContent="Aktivitas layanan / client service";
+  $("ciLede").textContent="Untuk kegiatan tanpa penawaran produk, mis. menemani shooting podcast atau talkshow. Klien boleh dikosongkan jika kegiatan internal.";
+  $("klien").placeholder="Klien / pihak terkait (opsional)"; $("klienDrop").hidden=true; updKontak(); renderCheckin(); }
+function startNew(){ $("klien").placeholder="Ketik untuk mencari klienmu, atau tulis nama baru"; $("ciDup").hidden=true; $("ciOwn").hidden=true; $("klienDrop").hidden=true; $("jenis").disabled=false; cur=newCur(null); fillForm(null); $("tanggal").value=today(); lockKlien(false); updKontak();
   $("ciTitle").textContent="Kunjungan baru"; $("ciLede").textContent="Isi data klien, lalu ambil foto di lokasi untuk check-in.";
   dirty=false; msg($("ciMsg"),""); showScreen("checkin"); renderCheckin(); $("klien").focus(); }
 function startFollowup(act){
@@ -1100,7 +1137,7 @@ function renderCheckin(){
 }
 async function doCheckin(){
   if(saving) return; const r=readForm();
-  if(!r.klien||!r.tanggal) return msg($("ciMsg"),"Isi tanggal dan nama klien dulu.","err");
+  if(!r.tanggal||(!r.klien&&r.jenis!==LAY_J)) return msg($("ciMsg"),"Isi tanggal dan nama klien dulu.","err");
   if(!cur.pending.checkin) return msg($("ciMsg"),"Ambil foto check-in dulu.","err");
   saving=true; $("doIn").disabled=true; msg($("ciMsg"),"Mengirim check-in…");
   try{
@@ -1150,8 +1187,9 @@ function renderHasil(){
   const prev=cur.aktivitasId?groupActs(mine).find(a=>a.id===cur.aktivitasId):null, before=prev?prev.rows.filter(x=>!r||x.id!==r.id):[];
   if(before.length) parts.push(`<span style="flex-basis:100%">Riwayat: ${before.map(x=>`#${x.kunjunganKe} ${esc(normSt(x.status)||"-")} (${fmtDate(x.tanggal)})`).join(" → ")}</span>`);
   $("hsSum").innerHTML=parts.join("");
-  const adm=isAdmJ(); $("fsAdm").hidden=!adm; $("fsStatus").hidden=adm;
-  if(adm){ $("fsDetail").hidden=true; $("pickFirst").hidden=true; $("hsTitle").textContent="Hasil kunjungan administrasi · "+(r?r.klien:f.klien); renderBukti(); }
+  const adm=isAdmJ(), lay=isLayJ(); $("fsAdm").hidden=!adm; $("fsLay").hidden=!lay; $("fsStatus").hidden=adm||lay;
+  if(lay){ $("fsDetail").hidden=true; $("pickFirst").hidden=true; $("hsTitle").textContent="Laporan aktivitas layanan · "+(r?r.klien:f.klien); renderBukti(); }
+  else if(adm){ $("fsDetail").hidden=true; $("pickFirst").hidden=true; $("hsTitle").textContent="Hasil kunjungan administrasi · "+(r?r.klien:f.klien); renderBukti(); }
   else { renderFinalNote(); renderBukti(); }
   setMsg(r&&r.hasilAt?"Tersimpan · "+hm(r.updatedAt):"Hasil belum disimpan", r&&r.hasilAt?"ok":"");
   $("saveBtn").textContent=r&&r.hasilAt?"Simpan perubahan":"Simpan hasil";
@@ -1197,7 +1235,8 @@ function renderBukti(){
 async function saveHasil(){
   if(saving||!cur) return; const r=readForm();
   if(!telOk(r)) return setMsg("Nomor Telepon / WhatsApp klien wajib diisi. Kembali ke data klien untuk mengisinya.","err");
-  if(r.jenis===ADMIN_J){ if(!r.keperluan) return setMsg("Pilih keperluan kunjungan administrasi.","err"); if(!r.hasil) return setMsg("Isi catatan kunjungan.","err"); }
+  if(r.jenis===LAY_J){ if(!r.keperluan) return setMsg("Pilih jenis kegiatan.","err"); if(!r.hasil) return setMsg("Isi catatan kegiatan.","err"); }
+  else if(r.jenis===ADMIN_J){ if(!r.keperluan) return setMsg("Pilih keperluan kunjungan administrasi.","err"); if(!r.hasil) return setMsg("Isi catatan kunjungan.","err"); }
   else {
   if(!r.status) return setMsg("Pilih status penawaran dulu.","err");
   if(!r.hasil) return setMsg("Isi hasil kunjungan ini.","err");
@@ -1212,18 +1251,19 @@ async function saveHasil(){
     const res=await api("apiSave",SESSION,{id:cur.row?cur.row.id:null,aktivitasId:cur.aktivitasId,approvalId:cur.approvalId||null,action:"hasil",fields:r,removeBukti:cur.removed,photos:{bukti:cur.pending.bukti.map(p=>p.data)}});
     res.bukti.filter(id=>!cur.bukti.includes(id)).forEach((id,i)=>cur.pending.bukti[i]&&photoCache.set(id,cur.pending.bukti[i].data));
     upsertMine(res); dirty=false; clearDraft();
-    loadDups(); toast(FINAL.includes(res.status)?`Aktivitas ${res.klien} selesai: ${res.status}`:`Hasil kunjungan ${res.klien} tersimpan`);
+    loadDups(); toast(res.jenis===LAY_J?`Laporan aktivitas layanan tersimpan`:FINAL.includes(res.status)?`Aktivitas ${res.klien} selesai: ${res.status}`:`Hasil kunjungan ${res.klien} tersimpan`);
     resetForm();
   }catch(err){ setMsg(err.message,"err"); }
   finally{ saving=false; $("saveBtn").disabled=false; }
 }
 $("saveBtn").onclick=saveHasil;
+$("newLayBtn").onclick=()=>{ const on=mine.find(r=>r.visitStatus==="Di lokasi"); if(on){ toast("Selesaikan dulu kunjungan ke "+on.klien+"."); return openRow(on); } startLayanan(); };
 $("newVisitBtn").onclick=()=>{ const on=mine.find(r=>r.visitStatus==="Di lokasi"); if(on){ toast("Selesaikan dulu kunjungan ke "+on.klien+" (belum check-out)."); return openRow(on); } startNew(); };
 window.addEventListener("beforeunload",e=>{ if(dirty){ e.preventDefault(); e.returnValue=""; } });
 
 // ----- daftar aktivitas
 function groupActs(rows){
-  const m={}; rows.forEach(r=>{ (m[r.aktivitasId||r.id]??=[]).push(r); });
+  const m={}; rows.forEach(r=>{ if(isLay(r)) return; (m[r.aktivitasId||r.id]??=[]).push(r); });
   return Object.entries(m).map(([id,rs])=>{ rs.sort((a,b)=>(a.kunjunganKe||1)-(b.kunjunganKe||1)||(a.createdAt||0)-(b.createdAt||0));
     const latest=rs[rs.length-1], close=rs.find(r=>r.hasilAt&&FINAL.includes(normSt(r.status))&&r.jenis!==ADMIN_J);
     const st=close?normSt(close.status):normSt(latest.status);
@@ -1254,8 +1294,13 @@ function renderMine(){
   const acts=groupActs(mine), open=acts.filter(a=>a.open), doneAll=acts.filter(a=>!a.open), P=homePeriod(), pl=perLabel(P);
   const inP=a=>inRange(a.closed,P.start,P.end);
   const won=doneAll.filter(a=>a.status==="Diterima"&&inP(a)), lost=doneAll.filter(a=>a.status==="Ditolak"&&inP(a));
-  const vPer=mine.filter(r=>inRange(r.tanggal,P.start,P.end)).length;
-  $("myStats").innerHTML=`<button type="button" class="kpi" data-detail="visits"><div class="k">Kunjungan · ${esc(pl)}</div><div class="v">${vPer}</div><div class="s">${new Set(mine.filter(r=>inRange(r.tanggal,P.start,P.end)).map(r=>r.aktivitasId)).size} klien</div></button>
+  const vPer=mine.filter(r=>!isLay(r)&&inRange(r.tanggal,P.start,P.end)).length, layP=mine.filter(r=>isLay(r)&&inRange(r.tanggal,P.start,P.end)).sort((a,b)=>(b.checkIn?b.checkIn.at:0)-(a.checkIn?a.checkIn.at:0));
+  $("layCount").textContent=`(${layP.length} · ${perLabel(P)})`;
+  $("layList").innerHTML=layP.length?layP.map(r=>`<article class="act"><div class="top"><span class="client">${esc(r.keperluan||"Aktivitas layanan")}</span>${r.visitStatus==="Di lokasi"?'<span class="pill vs-onsite">Berlangsung</span>':r.visitStatus==="Isi hasil"?'<span class="pill vs-onsite">Laporan belum diisi</span>':'<span class="pill lay">Layanan</span>'}</div>
+      <div class="meta">${fmtDate(r.tanggal)}${r.checkIn?` · ${hm(r.checkIn.at)}–${r.checkOut?hm(r.checkOut.at):"…"}${r.checkOut?" ("+dur(vDur(r))+")":""}`:""} · ${esc(r.klien)}${r.divisi?" · "+esc(r.divisi):""}</div>
+      ${r.hasil?`<div class="meta" style="margin-top:4px">${esc(r.hasil)}</div>`:""}<div class="row-actions"><button class="btn sm" data-row="${r.id}">${r.visitStatus==="Di lokasi"?"Lanjutkan":r.visitStatus==="Isi hasil"?"Isi laporan":"Lihat / ubah"}</button><button class="btn sm danger" data-del="${r.id}">Hapus</button></div></article>`).join("")
+    :`<div class="empty" style="padding:16px">Belum ada aktivitas layanan di periode ini.</div>`;
+  $("myStats").innerHTML=`<button type="button" class="kpi" data-detail="visits"><div class="k">Kunjungan · ${esc(pl)}</div><div class="v">${vPer}</div><div class="s">${new Set(mine.filter(r=>!isLay(r)&&inRange(r.tanggal,P.start,P.end)).map(r=>r.aktivitasId)).size} klien${layP.length?` · ${layP.length} layanan`:""}</div></button>
     <button type="button" class="kpi" data-detail="open"><div class="k">Prospek berjalan</div><div class="v">${open.length}</div><div class="s">${rpShort(open.reduce((x,a)=>x+valOpen(a.latest),0))} · semua periode</div></button>
     <button type="button" class="kpi good" data-detail="won"><div class="k">Deal · ${esc(pl)}</div><div class="v">${won.length}</div><div class="s">${rpShort(won.reduce((x,a)=>x+valDeal(a.latest),0))}</div></button>
     <button type="button" class="kpi bad" data-detail="lost"><div class="k">Ditolak · ${esc(pl)}</div><div class="v">${lost.length}</div><div class="s">${won.length+lost.length?Math.round(won.length/(won.length+lost.length)*100)+"% tingkat deal":"belum ada hasil final"}</div></button>`;
@@ -1290,6 +1335,7 @@ function renderDupBox(){
 }
 let ciT=null;
 function checkKlienLive(){ clearTimeout(ciT); ciT=setTimeout(async()=>{ const k=$("klien").value.trim(), t=$("kontak").value.trim(), el=$("ciDup");
+  if(isLayJ()){ el.hidden=true; if(cur){ cur.dup=[]; } return; }
   if(screen!=="checkin"||(!klienKey(k)&&!phoneKey(t))){ el.hidden=true; if(cur){ cur.dup=[]; renderCheckin(); } return; }
   try{ const m=await api("apiCheckKlien",SESSION,k,t,cur&&cur.aktivitasId||""), oth=m.filter(x=>!x.mine&&!x.loose), own=m.filter(x=>x.mine&&!x.loose&&!(cur&&cur.fromClient)), mir=m.filter(x=>x.loose);
     el.hidden=!(oth.length||own.length||mir.length); if(cur&&!isFollow()){ cur.dup=oth; renderCheckin(); if(!$("klienDrop").hidden) renderDrop(); }
@@ -1300,18 +1346,25 @@ function checkKlienLive(){ clearTimeout(ciT); ciT=setTimeout(async()=>{ const k=
 // ----- pengajuan klien ganda
 let MYAPPR=[], APPRS=[];
 const isFollow=()=>!!(cur&&cur.aktivitasId);
-function apprFor(k,t){ const nk=klienKey(k), pk=phoneKey(t), m=MYAPPR.filter(a=>!a.usedAt&&a.status!=="Ditolak"&&((nk&&klienKey(a.klien)===nk)||(pk&&phoneKey(a.kontak)===pk)));
-  return m.find(a=>a.status==="Disetujui")||m.find(a=>a.status==="Menunggu")||MYAPPR.find(a=>!a.usedAt&&a.status==="Ditolak"&&nk&&klienKey(a.klien)===nk)||null; }
-function loadMyAppr(){ if(!PERM.lapor) return; api("apiMyApprovals",SESSION).then(d=>{ MYAPPR=d||[]; renderMyAppr(); if(screen==="checkin") renderCheckin(); }).catch(()=>{}); }
+const tipeOf=a=>a.tipe||"ganda";
+function apprFor(k,t){ const nk=klienKey(k), pk=phoneKey(t), m=MYAPPR.filter(a=>tipeOf(a)==="ganda"&&!a.usedAt&&a.status!=="Ditolak"&&((nk&&klienKey(a.klien)===nk)||(pk&&phoneKey(a.kontak)===pk)));
+  return m.find(a=>a.status==="Disetujui")||m.find(a=>a.status==="Menunggu")||MYAPPR.find(a=>tipeOf(a)==="ganda"&&!a.usedAt&&a.status==="Ditolak"&&nk&&klienKey(a.klien)===nk)||null; }
+let apprSig=null;
+function loadMyAppr(){ if(!PERM.lapor) return; api("apiMyApprovals",SESSION).then(d=>{ MYAPPR=d||[];
+  const sig=MYAPPR.filter(a=>tipeOf(a)!=="ganda"&&a.status==="Disetujui").map(a=>a.id).sort().join(",");
+  if(apprSig!==null&&sig!==apprSig) api("apiMine",SESSION).then(rows=>{ mine=rows||[]; renderMine(); loadDups(); toast("Pengajuan data klien disetujui, daftar klien diperbarui"); }).catch(()=>{});
+  apprSig=sig; renderMyAppr(); if(screen==="checkin") renderCheckin(); }).catch(()=>{}); }
+const tipeTxt=a=>({ganda:"Klien ganda",ubahNama:"Ubah nama klien",hapus:"Hapus klien"})[tipeOf(a)];
 const apPill=s=>`<span class="pill ap-${esc(s)}">${s==="Menunggu"?"⏳ Menunggu":s==="Disetujui"?"✓ Disetujui":"✕ Ditolak"}</span>`;
 function renderMyAppr(){
-  const list=MYAPPR.filter(a=>!a.usedAt).sort((a,b)=>(b.createdAt||0)-(a.createdAt||0));
+  const list=MYAPPR.filter(a=>tipeOf(a)==="ganda"?!a.usedAt:(a.status==="Menunggu"||Date.now()-(a.decidedAt||0)<7*864e5)).sort((a,b)=>(b.createdAt||0)-(a.createdAt||0));
   $("apprZone").hidden=!list.length; $("apprCount").textContent=list.length?`(${list.length})`:"";
-  $("myApprList").innerHTML=list.map(a=>`<article class="act"><div class="top"><span class="client">${esc(a.klien)}</span>${apPill(a.status)}</div>
+  $("myApprList").innerHTML=list.map(a=>`<article class="act"><div class="top"><span class="client">${esc(a.klien)}${tipeOf(a)==="ubahNama"?` → ${esc(a.namaBaru)}`:""}</span>${apPill(a.status)}</div>
+    <div class="meta"><span class="pill ${tipeOf(a)==="hapus"?"st-Ditolak":tipeOf(a)==="ubahNama"?"lay":"dup"}">${tipeTxt(a)}</span>${a.info?" · "+esc(a.info):""}</div>
     <div class="meta">Diajukan ${dt(a.createdAt)}${a.approver?` · diputuskan ${esc(a.approver)}, ${dt(a.decidedAt)}`:""}</div>
     <div class="meta" style="margin-top:4px">Alasan: ${esc(a.alasan)}</div>
     ${a.catatan?`<div class="meta" style="margin-top:4px;color:var(--fg)"><b>Catatan ${esc(a.approver||"")}:</b> ${esc(a.catatan)}</div>`:""}
-    ${a.status==="Disetujui"?`<div class="row-actions"><button class="btn sm primary" data-useappr="${a.id}">Mulai kunjungan</button></div>`:""}</article>`).join("");
+    ${a.status==="Disetujui"?(tipeOf(a)==="ganda"?`<div class="row-actions"><button class="btn sm primary" data-useappr="${a.id}">Mulai kunjungan</button></div>`:`<div class="meta" style="color:var(--good);margin-top:4px">✓ Sudah diterapkan</div>`):""}</article>`).join("");
 }
 $("myApprList").addEventListener("click",e=>{ const b=e.target.closest("[data-useappr]"); if(!b) return; const a=MYAPPR.find(x=>x.id===b.dataset.useappr); if(!a) return;
   startNew(); $("klien").value=a.klien; $("kontak").value=a.kontak||""; $("kategori").value=a.kategori||""; $("lokasi").value=a.lokasi||""; cur.dup=a.cocok||[]; renderCheckin(); });
@@ -1332,15 +1385,16 @@ async function sendAppr(){ const r=readForm(), al=$("apprAlasan").value.trim(), 
     MYAPPR.unshift(a); dirty=false; renderMyAppr(); toast("Pengajuan klien "+r.klien+" dikirim ke Supervisor/Admin"); renderCheckin(); }
   catch(err){ msg(m,err.message,"err"); $("apprSend").disabled=false; } }
 // ----- persetujuan (Supervisor/Admin)
-function loadAppr(){ if(!PERM.approveKlien) return; api("apiApprovals",SESSION).then(d=>{ APPRS=d||[]; renderAppr(); }).catch(()=>{}); }
+function loadAppr(){ if(!PERM.approveKlien&&!PERM.approveDataKlien) return; api("apiApprovals",SESSION).then(d=>{ APPRS=d||[]; renderAppr(); }).catch(()=>{}); }
 function renderAppr(){
   const pend=APPRS.filter(a=>a.status==="Menunggu"), done=APPRS.filter(a=>a.status!=="Menunggu").sort((a,b)=>(b.decidedAt||0)-(a.decidedAt||0));
   $("apprBadge").hidden=!pend.length; $("apprBadge").textContent=pend.length;
-  $("apprPanel").hidden=!PERM.approveKlien||!APPRS.length; $("apprPanelCount").textContent=pend.length?`${pend.length} menunggu keputusan`:"tidak ada yang menunggu";
-  const card=a=>`<article class="act"><div class="top"><span class="client">${esc(a.klien)}</span>${apPill(a.status)}</div>
+  $("apprPanel").hidden=!(PERM.approveKlien||PERM.approveDataKlien)||!APPRS.length; $("apprPanelCount").textContent=pend.length?`${pend.length} menunggu keputusan`:"tidak ada yang menunggu";
+  const card=a=>`<article class="act"><div class="top"><span class="client">${esc(a.klien)}${tipeOf(a)==="ubahNama"?` → <span style="color:var(--accent)">${esc(a.namaBaru)}</span>`:""}</span>${apPill(a.status)}</div>
+    <div class="meta"><span class="pill ${tipeOf(a)==="hapus"?"st-Ditolak":tipeOf(a)==="ubahNama"?"lay":"dup"}">${tipeTxt(a)}</span>${a.info?" · "+esc(a.info):""}${tipeOf(a)==="hapus"&&a.status==="Menunggu"?' · <b style="color:var(--bad)">data &amp; foto akan dihapus permanen</b>':""}</div>
     <div class="meta">Diajukan <b>${esc(a.sales)}</b>${a.tim?" ("+esc(a.tim)+")":""} · ${dt(a.createdAt)}${a.kontak?" · "+esc(a.kontak):""}${a.lokasi?" · "+esc(a.lokasi):""}</div>
     <div class="meta" style="margin-top:6px;color:var(--fg)"><b>Alasan:</b> ${esc(a.alasan)}</div>
-    <div class="meta" style="margin-top:6px"><b>Sudah tercatat sebagai:</b><br>${(a.cocok||[]).map(x=>`• “${esc(x.klien)}” — ${esc(x.sales)}${x.tim?" ("+esc(x.tim)+")":""} · ${esc(x.status||"-")} · ${fmtDate(x.tanggal)}${x.by==="telepon"?" · nomor telepon sama":""}`).join("<br>")}</div>
+    ${tipeOf(a)!=="ganda"&&!(a.cocok||[]).length?"":`<div class="meta" style="margin-top:6px"><b>${tipeOf(a)==="ubahNama"?"⚠ Nama baru sama dengan klien sales lain:":"Sudah tercatat sebagai:"}</b><br>${(a.cocok||[]).map(x=>`• “${esc(x.klien)}” — ${esc(x.sales)}${x.tim?" ("+esc(x.tim)+")":""} · ${esc(x.status||"-")} · ${fmtDate(x.tanggal)}${x.by==="telepon"?" · nomor telepon sama":""}`).join("<br>")}</div>`}
     ${a.status==="Menunggu"?(ME&&a.userId===ME.id?`<p class="hint">Pengajuanmu sendiri harus diputuskan penyetuju lain.</p>`:`<div style="margin-top:10px;display:flex;flex-direction:column;gap:8px"><input placeholder="Catatan untuk sales (wajib jika ditolak)" data-note="${a.id}">
       <div class="row-actions" style="margin:0"><button class="btn sm go" data-dec="Disetujui" data-id="${a.id}">Setujui</button><button class="btn sm danger" data-dec="Ditolak" data-id="${a.id}">Tolak</button></div></div>`)
       :`<div class="meta" style="margin-top:6px">${esc(a.approver||"")} · ${dt(a.decidedAt)}${a.catatan?" · "+esc(a.catatan):""}${a.usedAt?" · sudah dipakai untuk kunjungan":""}</div>`}</article>`;
@@ -1350,7 +1404,7 @@ $("apprList").addEventListener("click",async e=>{ const b=e.target.closest("[dat
   const note=(document.querySelector(`[data-note="${b.dataset.id}"]`)||{}).value||"";
   if(b.dataset.dec==="Ditolak"&&!note.trim()) return toast("Tulis catatan alasan penolakan untuk sales.");
   b.disabled=true;
-  try{ const a=await api("apiDecideApproval",SESSION,b.dataset.id,b.dataset.dec,note); const i=APPRS.findIndex(x=>x.id===a.id); if(i>=0) APPRS[i]=a; renderAppr(); toast(`Pengajuan ${a.klien} ${a.status.toLowerCase()}`); }
+  try{ const a=await api("apiDecideApproval",SESSION,b.dataset.id,b.dataset.dec,note); const i=APPRS.findIndex(x=>x.id===a.id); if(i>=0) APPRS[i]=a; renderAppr(); toast(`Pengajuan ${a.klien} ${a.status.toLowerCase()}`); if(tipeOf(a)!=="ganda"&&a.status==="Disetujui") loadDash(); }
   catch(err){ toast(err.message); b.disabled=false; } });
 setInterval(()=>{ if(!SESSION) return; loadAppr(); if(screen==="list"||screen==="checkin") loadMyAppr(); },90000);
 // ----- pilihan klien (dropdown klien milik sendiri)
@@ -1362,7 +1416,7 @@ function myClients(){
 let dropIdx=-1, dropItems=[];
 function renderDrop(){
   const el=$("klienDrop"), inp=$("klien");
-  if(inp.readOnly||screen!=="checkin"){ el.hidden=true; inp.setAttribute("aria-expanded","false"); return; }
+  if(inp.readOnly||screen!=="checkin"||isLayJ()){ el.hidden=true; inp.setAttribute("aria-expanded","false"); return; }
   const txt=inp.value.trim(), q=klienKey(txt)||txt.toLowerCase().replace(/[^a-z0-9]/g,"");
   const all=myClients(), list=(q?all.filter(c=>c.key.includes(q)||c.klien.toLowerCase().includes(txt.toLowerCase())):all).slice(0,8);
   const exact=all.some(c=>klienKey(txt)&&c.key===klienKey(txt));
@@ -1410,7 +1464,7 @@ const inRange=(d,a,b)=>!!d&&(!a||d>=a)&&(!b||d<=b);
 function achieve(rows,a,b){ const acts=groupActs(rows), won=acts.filter(x=>!x.open&&x.status==="Diterima"&&inRange(x.closed,a,b));
   // klien baru = aktivitas pertama ke klien tsb (penawaran ulang ke klien lama tidak dihitung)
   const firstSeen={}; acts.slice().sort((x,y)=>(x.rows[0].tanggal||"").localeCompare(y.rows[0].tanggal||"")).forEach(x=>{ const k=(x.latest.userId||x.latest.sales)+"|"+(klienKey(x.latest.klien)||x.id); if(!firstSeen[k]) firstSeen[k]=x.id; });
-  return {kunjungan:rows.filter(r=>inRange(r.tanggal,a,b)).length, klienBaru:acts.filter(x=>inRange(x.rows[0].tanggal,a,b)&&firstSeen[(x.latest.userId||x.latest.sales)+"|"+(klienKey(x.latest.klien)||x.id)]===x.id).length,
+  return {kunjungan:rows.filter(r=>!isLay(r)&&inRange(r.tanggal,a,b)).length, klienBaru:acts.filter(x=>inRange(x.rows[0].tanggal,a,b)&&firstSeen[(x.latest.userId||x.latest.sales)+"|"+(klienKey(x.latest.klien)||x.id)]===x.id).length,
     deal:won.length, nilaiDeal:won.reduce((s,x)=>s+valDeal(x.latest),0)}; }
 const fmtK=(k,v)=>k==="nilaiDeal"?rpShort(v):String(v);
 function kpiRowsHtml(ach,tgt){ return TKEYS.map(([k,l])=>{ const t=tgt&&tgt[k]||0, v=ach[k]||0, p=t?Math.round(v/t*100):null;
@@ -1435,7 +1489,7 @@ function openDetail(kind){
     won:["Deal · "+pl,"Klien yang penawarannya diterima pada periode "+fmtRange(P.start,P.end)+"."],lost:["Ditolak · "+pl,"Klien yang penawarannya ditolak pada periode "+fmtRange(P.start,P.end)+"."]}[kind];
   $("detTitle").textContent=T[0]; $("detLede").textContent=T[1];
   let html="";
-  if(kind==="visits"){ const rs=mine.filter(r=>inRange(r.tanggal,P.start,P.end)).sort((a,b)=>(b.tanggal||"").localeCompare(a.tanggal||"")||(b.createdAt||0)-(a.createdAt||0));
+  if(kind==="visits"){ const rs=mine.filter(r=>!isLay(r)&&inRange(r.tanggal,P.start,P.end)).sort((a,b)=>(b.tanggal||"").localeCompare(a.tanggal||"")||(b.createdAt||0)-(a.createdAt||0));
     html=rs.map(r=>`<article class="act"><div class="top"><span class="client">${esc(r.klien)} <span class="hint">· kunjungan ke-${r.kunjunganKe||1}</span></span>${stPill(normSt(r.status))}</div>
       <div class="meta">${fmtDate(r.tanggal)} · ${esc(r.jenis||"-")}${r.checkIn?` · ${hm(r.checkIn.at)}–${r.checkOut?hm(r.checkOut.at):"…"}${r.checkOut?" ("+dur(r.checkOut.at-r.checkIn.at)+")":""}`:""}</div>
       ${r.hasil?`<div class="meta" style="margin-top:4px">${esc(r.hasil)}</div>`:""}<div class="row-actions"><button class="btn sm" data-row="${r.id}">Buka</button></div></article>`).join(""); }
@@ -1449,7 +1503,24 @@ let ekAct=null;
 function openEditKlien(id){ const a=groupActs(mine).find(x=>x.id===id); if(!a) return; ekAct=a; const L=a.latest;
   $("ekKategori").innerHTML=[...$("kategori").options].map(o=>`<option value="${esc(o.value)}">${esc(o.text)}</option>`).join("");
   $("ekKlien").value=L.klien||""; $("ekKategori").value=L.kategori||""; $("ekLokasi").value=L.lokasi||""; $("ekPic").value=L.pic||""; $("ekKontak").value=L.kontak||""; msg($("ekMsg"),"");
+  $("ekReqBox").hidden=true; $("ekReqBox").innerHTML="";
+  const pend=MYAPPR.filter(x=>tipeOf(x)!=="ganda"&&x.status==="Menunggu"&&x.aktivitasId===a.id);
+  if(pend.length){ $("ekReqBox").hidden=false; $("ekReqBox").innerHTML=pend.map(x=>`<div class="apprbox"><b>⏳ ${tipeTxt(x)} menunggu persetujuan Administrator</b><span>Diajukan ${dt(x.createdAt)}${x.namaBaru?" · nama baru: "+esc(x.namaBaru):""}</span></div>`).join(""); }
   showScreen("klien"); }
+document.querySelectorAll("[data-ekreq]").forEach(b=>b.onclick=()=>{ if(!ekAct) return; const t=b.dataset.ekreq, box=$("ekReqBox"); box.hidden=false;
+  box.innerHTML=`<div class="apprbox ${t==="hapus"?"no":""}"><b>${t==="hapus"?"Ajukan hapus klien":"Ajukan ubah nama klien"}</b>
+    <span>${t==="hapus"?`Semua kunjungan ke <b>${esc(ekAct.latest.klien)}</b> beserta fotonya akan dihapus setelah disetujui Administrator.`:`Nama akan diganti di semua kunjungan ke <b>${esc(ekAct.latest.klien)}</b> setelah disetujui Administrator.`}</span>
+    ${t==="ubahNama"?`<label style="font-weight:600">Nama klien yang benar<input id="ekNewName" value="${esc(ekAct.latest.klien)}"></label>`:""}
+    <label style="font-weight:600">Alasan<textarea id="ekReason" placeholder="${t==="hapus"?"mis. Salah input, klien ini dobel / tidak pernah dikunjungi":"mis. Salah ketik, nama resmi klien adalah …"}"></textarea></label>
+    <div style="display:flex;gap:8px;flex-wrap:wrap"><button type="button" class="btn ${t==="hapus"?"danger":"primary"}" id="ekReqSend">Kirim pengajuan</button><button type="button" class="btn" id="ekReqCancel">Batal</button></div><span class="msg" id="ekReqMsg"></span></div>`;
+  $("ekReqCancel").onclick=()=>{ box.hidden=true; box.innerHTML=""; };
+  $("ekReqSend").onclick=async()=>{ const al=$("ekReason").value.trim(), nn=t==="ubahNama"?$("ekNewName").value.trim():"";
+    if(t==="ubahNama"&&(!nn||nn===ekAct.latest.klien)) return msg($("ekReqMsg"),"Tulis nama klien yang benar.","err");
+    if(!al) return msg($("ekReqMsg"),"Tulis alasan pengajuan.","err");
+    $("ekReqSend").disabled=true; msg($("ekReqMsg"),"Mengirim…");
+    try{ const a=await api("apiRequestKlienChange",SESSION,{tipe:t,aktivitasId:ekAct.id,namaBaru:nn,alasan:al}); MYAPPR.unshift(a); renderMyAppr();
+      toast(`Pengajuan ${t==="hapus"?"hapus":"ubah nama"} klien dikirim ke Administrator`); resetForm(); }
+    catch(err){ msg($("ekReqMsg"),err.message,"err"); $("ekReqSend").disabled=false; } }; });
 $("ekSave").onclick=async()=>{ if(!ekAct) return; const v={klien:$("ekKlien").value.trim(),kategori:$("ekKategori").value,lokasi:$("ekLokasi").value.trim(),pic:$("ekPic").value.trim(),kontak:$("ekKontak").value.trim()};
   if(!v.klien) return msg($("ekMsg"),"Nama klien wajib diisi.","err");
   $("ekSave").disabled=true; msg($("ekMsg"),"Menyimpan…");
@@ -1464,7 +1535,7 @@ function onListClick(e){ const b=e.target.closest("button"); if(!b) return;
   if(b.dataset.follow){ const a=groupActs(mine).find(x=>x.id===b.dataset.follow); if(a){ const on=mine.find(r=>r.visitStatus==="Di lokasi"); if(on){ toast("Selesaikan dulu kunjungan ke "+on.klien+"."); return openRow(on); } startFollowup(a); } }
   if(b.dataset.hist){ const h=b.closest(".act").querySelector(".hist"); h.hidden=!h.hidden; }
   if(b.dataset.del) delReport(b.dataset.del,b); }
-["openList","doneList","resume","detList"].forEach(id=>$(id).addEventListener("click",onListClick));
+["openList","doneList","resume","detList","layList"].forEach(id=>$(id).addEventListener("click",onListClick));
 
 // ---------- navigasi
 function show(v){
@@ -1511,7 +1582,7 @@ $("rkList").addEventListener("click",e=>{ const d=e.target.closest("[data-rdel]"
 function showRkList(title,lede,html){ RK.kind=null; $("rkTitle").textContent=title; $("rkLede").textContent=lede; $("rkList").innerHTML=html||`<div class="empty" style="padding:18px"><b>Tidak ada data</b>untuk pilihan ini.</div>`; $("rkDetail").hidden=false; $("rkDetail").scrollIntoView({behavior:"smooth",block:"start"}); }
 const dayOf=r=>r.checkIn?ymd(new Date(r.checkIn.at)):(r.tanggal||"");
 function visitItem(r){ return `<div class="item"><div class="top"><span class="client">${esc(r.klien)} <span class="hint">· kunjungan ke-${r.kunjunganKe}</span></span>${pills(r)}</div>
-    <div class="meta">${fmtDate(r.tanggal)} · ${esc(r.jenis===ADMIN_J?(r.keperluan||ADMIN_J):(r.jenis||"-"))} · <b>${esc(r.sales)}</b>${r.tim?" ("+esc(r.tim)+")":""}${r.checkIn?` · ${hm(r.checkIn.at)}–${r.checkOut?hm(r.checkOut.at):"…"}${r.checkOut?" ("+dur(vDur(r))+")":""}`:""}${r.checkIn&&r.checkIn.gps?" · "+mapLink(r.checkIn.gps):""}</div>${r.hasil?`<div class="meta" style="margin-top:4px;color:var(--fg)">${esc(r.hasil)}</div>`:""}
+    <div class="meta">${fmtDate(r.tanggal)} · ${esc(r.jenis===ADMIN_J||isLay(r)?(r.keperluan||r.jenis):(r.jenis||"-"))}${isLay(r)&&r.divisi?" · "+esc(r.divisi):""} · <b>${esc(r.sales)}</b>${r.tim?" ("+esc(r.tim)+")":""}${r.checkIn?` · ${hm(r.checkIn.at)}–${r.checkOut?hm(r.checkOut.at):"…"}${r.checkOut?" ("+dur(vDur(r))+")":""}`:""}${r.checkIn&&r.checkIn.gps?" · "+mapLink(r.checkIn.gps):""}</div>${r.hasil?`<div class="meta" style="margin-top:4px;color:var(--fg)">${esc(r.hasil)}</div>`:""}
     ${(r.checkIn||r.checkOut||(r.bukti||[]).length)?`<div class="gallery" data-gal="${r.id}" hidden></div><div class="row-actions"><button class="btn sm" data-foto="${r.id}">Lihat foto (${(r.checkIn?1:0)+(r.checkOut?1:0)+(r.bukti||[]).length})</button></div>`:""}</div>`; }
 const salesNames=()=>[...new Set((RK.salesIn||[]).map(u=>u.nama).concat((RK.base||[]).map(r=>r.sales)).filter(Boolean))].sort((a,b)=>a.localeCompare(b,"id"));
 function fillSel(sel,list,first){ const c=sel.value; sel.innerHTML=(first?`<option value="">${first}</option>`:"")+list.map(n=>`<option${n===c?" selected":""}>${esc(n)}</option>`).join(""); if(!first&&!list.includes(c)&&list.length) sel.value=list[0]; }
@@ -1540,7 +1611,7 @@ function renderMove(){
       if(gapMs>0) travel+=gapMs; if(k!=null) dist+=k;
       html+=`<div class="gap">↓ jeda ${gapMs>0?dur(gapMs):"-"}${k!=null?" · ±"+fkm(k)+" garis lurus":""}</div>`; }
     html+=`<div class="stop"><span class="no">${i+1}</span><div class="card"><div class="t1"><b>${esc(r.klien)}</b><span class="tm">${hm(r.checkIn.at)}–${r.checkOut?hm(r.checkOut.at):"sekarang"} · ${r.checkOut?dur(vDur(r)):dur(Date.now()-r.checkIn.at)+" (berlangsung)"}</span></div>
-      <div class="meta">${esc(r.jenis===ADMIN_J?"Administrasi: "+(r.keperluan||"-"):r.jenis)} · kunjungan ke-${r.kunjunganKe} ${pills(r)}</div>
+      <div class="meta">${esc(r.jenis===ADMIN_J?"Administrasi: "+(r.keperluan||"-"):isLay(r)?"Layanan: "+(r.keperluan||"-")+(r.divisi?" · "+r.divisi:""):r.jenis)}${isLay(r)?"":" · kunjungan ke-"+r.kunjunganKe} ${pills(r)}</div>
       <div class="meta">Masuk ${mapLink(r.checkIn.gps)}${r.checkIn.acc?" (±"+r.checkIn.acc+" m)":""}${r.checkOut?` · Keluar ${mapLink(r.checkOut.gps)}`:""}${r.lokasi?" · "+esc(r.lokasi):""}</div>
       ${r.hasil?`<div class="meta" style="color:var(--fg)">${esc(r.hasil)}</div>`:""}</div></div>`; });
   const tot=vis.reduce((s,r)=>s+(r.checkOut?vDur(r):0),0), pts=vis.map(r=>geoOf(r.checkIn.gps)).filter(Boolean);
@@ -1610,6 +1681,7 @@ function evalSales(x){
   } else { verdict=["Target belum diatur","#5D6479","#EDEFF5"]; ev.push("Target KPI untuk periode ini belum diatur, sehingga evaluasi didasarkan pada aktivitas."); }
   if(!x.nVisit) ev.push("Belum ada kunjungan tercatat pada periode ini. Perlu dipastikan sales aktif turun ke lapangan dan mengisi laporan.");
   else ev.push(`Melakukan <b>${x.nVisit} kunjungan</b> ke <b>${x.nKlien} klien</b> (rata-rata ${(x.nVisit/Math.max(1,x.nKlien)).toLocaleString("id-ID",{maximumFractionDigits:1})} kunjungan per klien)${x.avgDur>=60000?`, durasi rata-rata ${dur(x.avgDur)}`:""}${x.nAdm?`, termasuk ${x.nAdm} kunjungan administrasi pasca-deal`:""}.`);
+  if(x.nLay) ev.push(`Melakukan <b>${x.nLay} aktivitas layanan / client service</b>${x.durLay>=60000?` (total ${dur(x.durLay)})`:""} di luar kunjungan penawaran.`);
   if(x.won+x.lost){ const r=Math.round(x.won/(x.won+x.lost)*100), tr=x.teamRate;
     ev.push(`Tingkat deal <b>${r}%</b> (${x.won} deal dari ${x.won+x.lost} hasil final)`+(tr!==null?`, ${r>tr?"di atas":r<tr?"di bawah":"sama dengan"} rata-rata tim (${tr}%).`:".")); }
   else ev.push("Belum ada klien yang mencapai hasil final (deal / ditolak) pada periode ini.");
@@ -1624,10 +1696,11 @@ function buildReport(name){
   const teamFinal=groupActs(base).filter(a=>!a.open&&inRange(a.closed,A,B)), teamRate=teamFinal.length?Math.round(teamFinal.filter(a=>a.status==="Diterima").length/teamFinal.length*100):null;
   const pages=names.map(n=>{
     const rows=base.filter(r=>r.sales===n), u=(RK.salesIn||[]).find(x=>x.nama===n)||DASH.sales.find(x=>x.nama===n), acts=groupActs(rows);
-    const vis=rows.filter(r=>inRange(r.tanggal,A,B)), actsP=acts.filter(a=>a.rows.some(r=>inRange(r.tanggal,A,B)));
+    const vis=rows.filter(r=>!isLay(r)&&inRange(r.tanggal,A,B)), actsP=acts.filter(a=>a.rows.some(r=>inRange(r.tanggal,A,B)));
     const open=acts.filter(a=>a.open), wonA=acts.filter(a=>!a.open&&a.status==="Diterima"&&inRange(a.closed,A,B)), lostA=acts.filter(a=>!a.open&&a.status==="Ditolak"&&inRange(a.closed,A,B));
     const dd=vis.filter(r=>vDur(r)>0), t=today();
-    const x={ach:achieve(rows,A,B),tg:u&&KP?KP.targets[u.id]:null,nVisit:vis.length,nKlien:actsP.length,avgDur:dd.length?dd.reduce((s,r)=>s+vDur(r),0)/dd.length:0,nAdm:vis.filter(r=>r.jenis===ADMIN_J).length,
+    const lay=rows.filter(r=>isLay(r)&&inRange(r.tanggal,A,B));
+    const x={nLay:lay.length,durLay:lay.reduce((s,r)=>s+vDur(r),0),ach:achieve(rows,A,B),tg:u&&KP?KP.targets[u.id]:null,nVisit:vis.length,nKlien:actsP.length,avgDur:dd.length?dd.reduce((s,r)=>s+vDur(r),0)/dd.length:0,nAdm:vis.filter(r=>r.jenis===ADMIN_J).length,
       won:wonA.length,lost:lostA.length,teamRate,open,late:open.filter(a=>a.latest.tglFu&&a.latest.tglFu<t),lostActs:lostA};
     const E=evalSales(x), tim=(u&&u.tim)||(rows[0]&&rows[0].tim)||"-";
     const stRows=STATUSES.map(([s])=>{ const g=actsP.filter(a=>a.status===s); return `<tr><td>${s}</td><td class="n">${g.length}</td><td class="n">${rp(g.reduce((v,a)=>v+valOf(a.latest),0))}</td></tr>`; }).join("");
@@ -1677,7 +1750,7 @@ $("fPeriode").addEventListener("change",()=>{ applyPreset(); render(); });
 ["fFrom","fTo"].forEach(id=>$(id).addEventListener("change",()=>{ $("fPeriode").value="custom"; render(); }));
 ["fTim","fSales","fStatus"].forEach(id=>$(id).addEventListener("change",render)); $("fCari").addEventListener("input",render);
 const vDur=r=>r.checkIn&&r.checkOut?r.checkOut.at-r.checkIn.at:0;
-const pills=r=>r.jenis===ADMIN_J?'<span class="pill adm">Administrasi</span>'+(r.visitStatus==="Di lokasi"?' <span class="pill vs-onsite">Di lokasi</span>':""):(r.visitStatus==="Di lokasi"?'<span class="pill vs-onsite">Di lokasi</span>':r.visitStatus==="Isi hasil"?'<span class="pill vs-onsite">Hasil belum diisi</span>':"")+stPill(normSt(r.status));
+const pills=r=>isLay(r)?'<span class="pill lay">Layanan</span>'+(r.visitStatus==="Di lokasi"?' <span class="pill vs-onsite">Di lokasi</span>':""):r.jenis===ADMIN_J?'<span class="pill adm">Administrasi</span>'+(r.visitStatus==="Di lokasi"?' <span class="pill vs-onsite">Di lokasi</span>':""):(r.visitStatus==="Di lokasi"?'<span class="pill vs-onsite">Di lokasi</span>':r.visitStatus==="Isi hasil"?'<span class="pill vs-onsite">Hasil belum diisi</span>':"")+stPill(normSt(r.status));
 function opts(sel,list,label){ const c=sel.value; sel.innerHTML=`<option value="">${label}</option>`+list.map(n=>`<option${n===c?" selected":""}>${esc(n)}</option>`).join(""); }
 const pct=(a,b)=>b?Math.round(a/b*100):0;
 function render(){
@@ -1692,9 +1765,10 @@ function render(){
   const visits=base.filter(r=>inRange(r.tanggal,A,B)&&acts.some(a=>a.id===r.aktivitasId));
   const open=acts.filter(a=>a.open), won=acts.filter(a=>!a.open&&a.status==="Diterima"&&inRange(a.closed,A,B)), lost=acts.filter(a=>!a.open&&a.status==="Ditolak"&&inRange(a.closed,A,B));
   const done=visits.filter(r=>vDur(r)>0), onsite=visits.filter(r=>r.visitStatus==="Di lokasi").length;
-  RK={A,B,base,visits,open,won,lost};
+  const layR=base.filter(r=>isLay(r)&&inRange(r.tanggal,A,B));
+  RK={A,B,base,visits,open,won,lost,layR};
   // KPI tiles
-  $("kAkt").textContent=visits.length; $("kAktS").textContent=`${actsInPeriod.length} klien · rata2 ${done.length?dur(done.reduce((a,r)=>a+vDur(r),0)/done.length):"-"}`+(onsite?` · ${onsite} di lokasi`:"");
+  $("kAkt").textContent=visits.length; $("kAktS").textContent=`${actsInPeriod.length} klien · rata2 ${done.length?dur(done.reduce((a,r)=>a+vDur(r),0)/done.length):"-"}`+(layR.length?` · ${layR.length} layanan`:"")+(onsite?` · ${onsite} di lokasi`:"");
   $("kVisit").textContent=open.length; $("kVisitS").textContent=rpShort(open.reduce((a,x)=>a+valOpen(x.latest),0))+" nilai berjalan";
   $("kPipe").textContent=won.length; $("kPipeS").textContent=rpShort(won.reduce((a,x)=>a+valDeal(x.latest),0));
   $("kClose").textContent=lost.length; $("kCloseS").textContent=(won.length+lost.length)?pct(won.length,won.length+lost.length)+"% tingkat deal":"belum ada hasil final";
@@ -1803,7 +1877,7 @@ async function saveUser(){
   try{ const s=await api("apiSaveUser",SESSION,u); const isNew=!editingUser; applySettings(s); closeEditor();
     toast(isNew?`Pengguna ${u.nama} ditambahkan. Username: ${u.username}`:"Data pengguna disimpan"); if(u.id===ME.id){ const me=await api("apiMe",SESSION); enterPerms(me); } }
   catch(err){ msg(m,err.message,"err"); if($("euSave")) $("euSave").disabled=false; } }
-function enterPerms(r){ ME=r.user; PERM=r.perms; $("tabIsi").hidden=!PERM.lapor; $("tabRekap").hidden=!(PERM.rekap||PERM.approveKlien); $("tabs").hidden=!(PERM.lapor&&(PERM.rekap||PERM.approveKlien)); $("gearBtn").hidden=!PERM.kelolaUser; }
+function enterPerms(r){ ME=r.user; PERM=r.perms; $("tabIsi").hidden=!PERM.lapor; $("tabRekap").hidden=!(PERM.rekap||PERM.approveKlien||PERM.approveDataKlien); $("tabs").hidden=!(PERM.lapor&&(PERM.rekap||PERM.approveKlien||PERM.approveDataKlien)); $("gearBtn").hidden=!PERM.kelolaUser; }
 let kpiIdx=null, kpiDraftNew=false;
 function renderKpiSet(){
   const k=SET.kpi; $("kpiPanel").hidden=!k; if(!k) return;
