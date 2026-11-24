@@ -353,6 +353,29 @@ button.kpi:hover{border-color:var(--accent)}
 .dropl .dh{font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);padding:6px 10px 2px}
 .ownbox{background:var(--info-soft);border:1px solid var(--info);border-radius:8px;padding:10px 12px;font-size:13px;display:flex;flex-direction:column;gap:8px}
 .ownbox b{color:var(--info)}
+.mvsum{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:8px;margin-bottom:12px}
+.mvsum div{background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:8px 10px}
+.mvsum span{display:block;font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em}
+.mvsum b{font:600 16px var(--font-num)}
+.mvmap{height:300px;border-radius:10px;border:1px solid var(--line);margin-bottom:12px;background:var(--sunken)}
+.tl{display:flex;flex-direction:column}
+.tl .stop{display:grid;grid-template-columns:34px minmax(0,1fr);gap:10px;align-items:start}
+.tl .no{width:28px;height:28px;border-radius:50%;background:var(--accent);color:var(--accent-ink);display:grid;place-items:center;font:700 13px var(--font-num)}
+.tl .no.tel{background:var(--muted)}
+.tl .card{border:1px solid var(--line);border-radius:8px;padding:8px 12px;background:var(--bg);font-size:13px}
+.tl .card .t1{display:flex;gap:8px;flex-wrap:wrap;align-items:baseline;justify-content:space-between}
+.tl .card .t1 b{font-size:14px}
+.tl .card .tm{font:600 13px var(--font-num)}
+.tl .gap{margin:4px 0 4px 13px;border-left:2px dashed var(--line);padding:6px 0 6px 20px;font-size:12px;color:var(--muted)}
+.mvall td button{border:0;background:none;color:var(--accent);font:600 13px var(--font-ui);cursor:pointer;padding:0;text-decoration:underline}
+.linkn{border:0;background:none;color:var(--accent);font:600 13px var(--font-num);cursor:pointer;padding:0;text-decoration:underline}
+.segtabs{display:inline-flex;gap:4px;background:var(--sunken);padding:4px;border-radius:999px}
+.segtabs button{border:0;background:transparent;color:var(--muted);font:600 13px var(--font-ui);padding:6px 14px;border-radius:999px;cursor:pointer}
+.segtabs button[aria-selected="true"]{background:var(--surface);color:var(--fg);box-shadow:0 1px 3px rgba(0,0,0,.12)}
+.pmsum{display:flex;flex-wrap:wrap;gap:6px 18px;font-size:13px;margin:12px 0}
+.pmsum b{font-family:var(--font-num)}
+.leaflet-container{font:12px var(--font-ui)}
+@media (max-width:720px){ .mvsum{grid-template-columns:repeat(2,minmax(0,1fr))} .mvmap{height:240px} }
 .st-Diterima{background:var(--good-soft);color:var(--good)}
 .st-Ditolak{background:var(--bad-soft);color:var(--bad)}
 </style>
@@ -368,7 +391,7 @@ button.kpi:hover{border-color:var(--accent)}
     <button class="btn primary" type="submit" id="lgBtn">Masuk</button>
     <span class="msg err" id="lgMsg"></span>
     <span class="hint">Lupa PIN? Minta admin mengatur ulang PIN dari menu Pengaturan.</span>
-    <span class="hint" style="text-align:center;opacity:.7">Versi 2026.11.23-k</span>
+    <span class="hint" style="text-align:center;opacity:.7">Versi 2026.11.24-l</span>
   </form>
 </div>
 
@@ -570,6 +593,29 @@ button.kpi:hover{border-color:var(--accent)}
       <button type="button" class="kpi bad" data-rk="lost"><div class="k">Ditolak</div><div class="v" id="kClose">0</div><div class="s" id="kCloseS">-</div></button>
     </div>
     <div class="panel rkdetail" id="rkDetail" hidden><h2><span id="rkTitle"></span><button class="btn sm" type="button" id="rkClose">Tutup ✕</button></h2><p class="hint" id="rkLede" style="margin:-6px 0 12px"></p><div class="list" id="rkList"></div></div>
+    <div class="panel" id="mvPanel"><h2>Pergerakan harian sales <small>urutan kunjungan, lama di klien &amp; perjalanan</small></h2>
+      <div class="inline" style="margin-top:0">
+        <label class="switch" style="font-weight:600">Tanggal<input type="date" id="mvDate" style="width:auto"></label>
+        <label class="switch" style="font-weight:600">Sales<select id="mvSales" style="width:auto"></select></label>
+        <button class="btn sm" type="button" id="mvPrev">‹ Kemarin</button><button class="btn sm" type="button" id="mvNext">Besok ›</button>
+      </div>
+      <div id="mvBody" style="margin-top:12px"></div>
+    </div>
+    <div class="panel" id="opPanel"><h2>Klien belum selesai per sales <small>belum Diterima / Ditolak, semua periode</small></h2>
+      <div class="tbl"><table><thead><tr><th>Sales</th><th>Tim</th><th class="num">Belum selesai</th><th class="num">Lead</th><th class="num">Penawaran</th><th class="num">Negosiasi</th><th class="num">Nilai</th><th class="num">Follow-up terlewat</th><th class="num">&gt;14 hari tanpa kunjungan</th></tr></thead>
+      <tbody id="opRows"></tbody></table></div>
+      <p class="hint" style="margin:8px 0 0">Klik angka untuk melihat daftar kliennya.</p>
+    </div>
+    <div class="panel" id="pmPanel"><h2>Pantau per sales <small>daftar klien &amp; kunjungan harian / bulanan</small></h2>
+      <div class="inline" style="margin-top:0">
+        <label class="switch" style="font-weight:600">Sales<select id="pmSales" style="width:auto"></select></label>
+        <label class="switch" style="font-weight:600">Lihat<select id="pmMode" style="width:auto"><option value="day">Harian</option><option value="month" selected>Bulanan</option></select></label>
+        <input type="date" id="pmDay" style="width:auto"><input type="month" id="pmMonth" style="width:auto">
+      </div>
+      <div class="segtabs" role="tablist" style="margin-top:12px"><button type="button" role="tab" data-pmv="klien" aria-selected="true">Daftar klien</button><button type="button" role="tab" data-pmv="kunjungan" aria-selected="false">Daftar kunjungan</button></div>
+      <div id="pmSum" class="pmsum"></div>
+      <div class="list" id="pmList"></div>
+    </div>
     <div class="panel"><h2>Laporan per sales <small>untuk dicetak atau disimpan sebagai PDF</small></h2>
       <div class="inline" style="margin-top:0"><label class="switch" style="font-weight:600">Sales<select id="repSales" style="width:auto"></select></label>
         <button class="btn primary" type="button" id="repBtn">Buat laporan</button>
@@ -679,7 +725,7 @@ button.kpi:hover{border-color:var(--accent)}
 <div class="toast" id="toast" hidden></div>
 <div class="lightbox" id="lightbox" hidden><img id="lbImg" alt="Foto"></div>
 <script>
-const APP_VERSION="2026.11.23-k";
+const APP_VERSION="2026.11.24-l";
 const PRODUK=["Event activation","Sponsorship event","Iklan media online","Iklan radio","Konten IG / TikTok","Aktivasi komunitas","Event services / produksi","Lainnya"];
 const STATUSES=[["Lead","var(--accent)","var(--accent-soft)","Perkenalan"],["Penawaran","var(--info)","var(--info-soft)","Penawaran dikirim"],["Negosiasi","var(--warn)","var(--warn-soft)","Tawar-menawar"],["Diterima","var(--good)","var(--good-soft)","Final · deal"],["Ditolak","var(--bad)","var(--bad-soft)","Final · tidak lanjut"]];
 const ADMIN_J="Administrasi pasca-deal";
@@ -1452,8 +1498,7 @@ function openRk(kind){
   RK.kind=kind; const T={visits:"Kunjungan",open:"Prospek berjalan",won:"Deal (diterima)",lost:"Ditolak"}[kind];
   $("rkTitle").textContent=T; $("rkLede").textContent=kind==="open"?"Semua klien yang belum Diterima/Ditolak, dari periode mana pun.":`Periode ${rangeTxt(RK.A,RK.B)}.`;
   let html="";
-  if(kind==="visits") html=RK.visits.slice().sort((a,b)=>(b.tanggal||"").localeCompare(a.tanggal||"")||(b.createdAt||0)-(a.createdAt||0)).slice(0,300).map(r=>`<div class="item"><div class="top"><span class="client">${esc(r.klien)} <span class="hint">· kunjungan ke-${r.kunjunganKe}</span></span>${pills(r)}</div>
-    <div class="meta">${fmtDate(r.tanggal)} · ${esc(r.jenis===ADMIN_J?(r.keperluan||ADMIN_J):(r.jenis||"-"))} · <b>${esc(r.sales)}</b>${r.tim?" ("+esc(r.tim)+")":""}${r.checkIn?` · ${hm(r.checkIn.at)}–${r.checkOut?hm(r.checkOut.at):"…"}${r.checkOut?" ("+dur(vDur(r))+")":""}`:""}</div>${r.hasil?`<div class="meta" style="margin-top:4px;color:var(--fg)">${esc(r.hasil)}</div>`:""}</div>`).join("");
+  if(kind==="visits") html=RK.visits.slice().sort((a,b)=>(b.tanggal||"").localeCompare(a.tanggal||"")||(b.createdAt||0)-(a.createdAt||0)).slice(0,300).map(visitItem).join("");
   else html=(RK[kind]||[]).map(rkCard).join("");
   $("rkList").innerHTML=html||`<div class="empty" style="padding:18px"><b>Tidak ada data</b>untuk pilihan ini.</div>`;
   $("rkDetail").hidden=false; $("rkDetail").scrollIntoView({behavior:"smooth",block:"start"});
@@ -1462,6 +1507,98 @@ $("rkTiles").addEventListener("click",e=>{ const b=e.target.closest("[data-rk]")
 $("rkClose").onclick=()=>{ $("rkDetail").hidden=true; RK.kind=null; };
 $("rkList").addEventListener("click",e=>{ const d=e.target.closest("[data-rdel]"); if(d) return delReport(d.dataset.rdel,d);
   const b=e.target.closest("[data-foto]"); if(b) showFoto(b); });
+// ----- daftar generik di panel rincian
+function showRkList(title,lede,html){ RK.kind=null; $("rkTitle").textContent=title; $("rkLede").textContent=lede; $("rkList").innerHTML=html||`<div class="empty" style="padding:18px"><b>Tidak ada data</b>untuk pilihan ini.</div>`; $("rkDetail").hidden=false; $("rkDetail").scrollIntoView({behavior:"smooth",block:"start"}); }
+const dayOf=r=>r.checkIn?ymd(new Date(r.checkIn.at)):(r.tanggal||"");
+function visitItem(r){ return `<div class="item"><div class="top"><span class="client">${esc(r.klien)} <span class="hint">· kunjungan ke-${r.kunjunganKe}</span></span>${pills(r)}</div>
+    <div class="meta">${fmtDate(r.tanggal)} · ${esc(r.jenis===ADMIN_J?(r.keperluan||ADMIN_J):(r.jenis||"-"))} · <b>${esc(r.sales)}</b>${r.tim?" ("+esc(r.tim)+")":""}${r.checkIn?` · ${hm(r.checkIn.at)}–${r.checkOut?hm(r.checkOut.at):"…"}${r.checkOut?" ("+dur(vDur(r))+")":""}`:""}${r.checkIn&&r.checkIn.gps?" · "+mapLink(r.checkIn.gps):""}</div>${r.hasil?`<div class="meta" style="margin-top:4px;color:var(--fg)">${esc(r.hasil)}</div>`:""}
+    ${(r.checkIn||r.checkOut||(r.bukti||[]).length)?`<div class="gallery" data-gal="${r.id}" hidden></div><div class="row-actions"><button class="btn sm" data-foto="${r.id}">Lihat foto (${(r.checkIn?1:0)+(r.checkOut?1:0)+(r.bukti||[]).length})</button></div>`:""}</div>`; }
+const salesNames=()=>[...new Set((RK.salesIn||[]).map(u=>u.nama).concat((RK.base||[]).map(r=>r.sales)).filter(Boolean))].sort((a,b)=>a.localeCompare(b,"id"));
+function fillSel(sel,list,first){ const c=sel.value; sel.innerHTML=(first?`<option value="">${first}</option>`:"")+list.map(n=>`<option${n===c?" selected":""}>${esc(n)}</option>`).join(""); if(!first&&!list.includes(c)&&list.length) sel.value=list[0]; }
+// ----- pergerakan harian
+const geoOf=g=>{ if(!g) return null; const [a,b]=String(g).split(",").map(Number); return isFinite(a)&&isFinite(b)?[a,b]:null; };
+function km(p,q){ if(!p||!q) return null; const R=6371,r=x=>x*Math.PI/180,dl=r(q[0]-p[0]),dn=r(q[1]-p[1]),h=Math.sin(dl/2)**2+Math.cos(r(p[0]))*Math.cos(r(q[0]))*Math.sin(dn/2)**2; return 2*R*Math.asin(Math.sqrt(h)); }
+const fkm=k=>k==null?"":k<1?Math.round(k*1000)+" m":k.toLocaleString("id-ID",{maximumFractionDigits:1})+" km";
+let leafP=null, mvMap=null;
+function loadLeaflet(){ if(window.L) return Promise.resolve(window.L); if(leafP) return leafP;
+  leafP=new Promise((res,rej)=>{ const l=document.createElement("link"); l.rel="stylesheet"; l.href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"; document.head.appendChild(l);
+    const sc=document.createElement("script"); sc.src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"; sc.onload=()=>res(window.L); sc.onerror=()=>{ leafP=null; rej(); }; document.head.appendChild(sc); }); return leafP; }
+function renderMove(){
+  if(!RK.base) return; const d=$("mvDate").value||today(), sl=$("mvSales").value, rows=RK.base.filter(r=>dayOf(r)===d), body=$("mvBody");
+  if(!sl){ // ringkasan semua sales
+    const by={}; rows.forEach(r=>(by[r.sales]??=[]).push(r));
+    const names=salesNames(), list=names.map(n=>{ const rs=(by[n]||[]).filter(r=>r.checkIn).sort((a,b)=>a.checkIn.at-b.checkIn.at), all=(by[n]||[]);
+      return {n,cnt:all.length,vis:rs.length,first:rs[0]?rs[0].checkIn.at:null,last:rs.length?Math.max(...rs.map(r=>r.checkOut?r.checkOut.at:r.checkIn.at)):null,dur:rs.reduce((s,r)=>s+vDur(r),0),onsite:rs.some(r=>r.visitStatus==="Di lokasi")}; });
+    body.innerHTML=`<div class="tbl"><table class="mvall"><thead><tr><th>Sales</th><th class="num">Aktivitas</th><th class="num">Kunjungan</th><th class="num">Check-in pertama</th><th class="num">Terakhir</th><th class="num">Total di klien</th><th></th></tr></thead><tbody>
+      ${list.map(x=>`<tr><td><b>${esc(x.n)}</b>${x.onsite?' <span class="pill vs-onsite">Di lokasi</span>':""}</td><td class="num">${x.cnt}</td><td class="num">${x.vis}</td><td class="num">${x.first?hm(x.first):"-"}</td><td class="num">${x.last?hm(x.last):"-"}</td><td class="num">${x.dur?dur(x.dur):"-"}</td><td>${x.cnt?`<button type="button" data-mvs="${esc(x.n)}">Lihat pergerakan</button>`:'<span class="hint">tidak ada aktivitas</span>'}</td></tr>`).join("")}</tbody></table></div>
+      <p class="hint" style="margin:8px 0 0">${fmtDate(d)} · pilih sales untuk melihat urutan kunjungan dan peta rutenya.</p>`;
+    return; }
+  const rs=rows.filter(r=>r.sales===sl), vis=rs.filter(r=>r.checkIn).sort((a,b)=>a.checkIn.at-b.checkIn.at), other=rs.filter(r=>!r.checkIn);
+  if(!rs.length){ body.innerHTML=`<div class="empty" style="padding:18px"><b>${esc(sl)} tidak punya aktivitas</b>pada ${fmtDate(d)}.</div>`; return; }
+  let travel=0, dist=0, html="";
+  vis.forEach((r,i)=>{ if(i){ const p=vis[i-1], gapMs=r.checkIn.at-(p.checkOut?p.checkOut.at:p.checkIn.at), k=km(geoOf(p.checkOut&&p.checkOut.gps||p.checkIn.gps),geoOf(r.checkIn.gps));
+      if(gapMs>0) travel+=gapMs; if(k!=null) dist+=k;
+      html+=`<div class="gap">↓ jeda ${gapMs>0?dur(gapMs):"-"}${k!=null?" · ±"+fkm(k)+" garis lurus":""}</div>`; }
+    html+=`<div class="stop"><span class="no">${i+1}</span><div class="card"><div class="t1"><b>${esc(r.klien)}</b><span class="tm">${hm(r.checkIn.at)}–${r.checkOut?hm(r.checkOut.at):"sekarang"} · ${r.checkOut?dur(vDur(r)):dur(Date.now()-r.checkIn.at)+" (berlangsung)"}</span></div>
+      <div class="meta">${esc(r.jenis===ADMIN_J?"Administrasi: "+(r.keperluan||"-"):r.jenis)} · kunjungan ke-${r.kunjunganKe} ${pills(r)}</div>
+      <div class="meta">Masuk ${mapLink(r.checkIn.gps)}${r.checkIn.acc?" (±"+r.checkIn.acc+" m)":""}${r.checkOut?` · Keluar ${mapLink(r.checkOut.gps)}`:""}${r.lokasi?" · "+esc(r.lokasi):""}</div>
+      ${r.hasil?`<div class="meta" style="color:var(--fg)">${esc(r.hasil)}</div>`:""}</div></div>`; });
+  const tot=vis.reduce((s,r)=>s+(r.checkOut?vDur(r):0),0), pts=vis.map(r=>geoOf(r.checkIn.gps)).filter(Boolean);
+  const gm=pts.length?`https://www.google.com/maps/dir/${pts.map(p=>p.join(",")).join("/")}`:"";
+  body.innerHTML=`<div class="mvsum"><div><span>Kunjungan</span><b>${vis.length}</b></div><div><span>Check-in pertama</span><b>${vis[0]?hm(vis[0].checkIn.at):"-"}</b></div><div><span>Terakhir keluar</span><b>${vis.length?hm(Math.max(...vis.map(r=>r.checkOut?r.checkOut.at:r.checkIn.at))):"-"}</b></div><div><span>Total di klien</span><b>${tot?dur(tot):"-"}</b></div><div><span>Jeda antar klien</span><b>${travel?dur(travel):"-"}</b></div></div>
+    ${pts.length?`<div class="mvmap" id="mvMap"></div><p class="hint" style="margin:-6px 0 12px">Jarak tempuh garis lurus ±${fkm(dist)||"0 m"}. <a href="${gm}" target="_blank" rel="noopener">Buka rute di Google Maps</a></p>`:""}
+    <div class="tl">${html||'<p class="hint">Tidak ada kunjungan dengan check-in.</p>'}</div>
+    ${other.length?`<h3 style="font-size:13px;margin:14px 0 6px">Aktivitas tanpa kunjungan (${other.length})</h3>${other.map(r=>`<div class="meta">• ${esc(r.klien)} · ${esc(r.jenis)}${r.kontak?" · "+esc(r.kontak):""} ${pills(r)}</div>`).join("")}`:""}`;
+  if(pts.length) loadLeaflet().then(L=>{ const el=$("mvMap"); if(!el) return; if(mvMap){ mvMap.remove(); mvMap=null; }
+    mvMap=L.map(el,{scrollWheelZoom:false}); L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",{maxZoom:19,attribution:"© OpenStreetMap"}).addTo(mvMap);
+    const ll=[]; vis.forEach((r,i)=>{ const p=geoOf(r.checkIn.gps); if(!p) return; ll.push(p);
+      L.marker(p,{icon:L.divIcon({className:"",html:`<span class="no" style="width:26px;height:26px;border-radius:50%;background:#2447D6;color:#fff;display:grid;place-items:center;font:700 12px sans-serif;border:2px solid #fff;box-shadow:0 1px 4px rgba(0,0,0,.4)">${i+1}</span>`,iconSize:[26,26],iconAnchor:[13,13]})})
+        .addTo(mvMap).bindPopup(`<b>${esc(r.klien)}</b><br>${hm(r.checkIn.at)}–${r.checkOut?hm(r.checkOut.at):"…"}`); });
+    if(ll.length>1) L.polyline(ll,{color:"#2447D6",weight:3,opacity:.7,dashArray:"6 6"}).addTo(mvMap);
+    ll.length>1?mvMap.fitBounds(ll,{padding:[30,30]}):mvMap.setView(ll[0],15); })
+    .catch(()=>{ const el=$("mvMap"); if(el) el.outerHTML='<p class="hint">Peta tidak bisa dimuat (periksa koneksi). Gunakan tautan Google Maps di bawah.</p>'; });
+}
+function shiftDay(n){ const [y,m,d]=($("mvDate").value||today()).split("-").map(Number); $("mvDate").value=ymd(new Date(y,m-1,d+n)); renderMove(); }
+$("mvDate").addEventListener("change",renderMove); $("mvSales").addEventListener("change",renderMove);
+$("mvPrev").onclick=()=>shiftDay(-1); $("mvNext").onclick=()=>shiftDay(1);
+$("mvBody").addEventListener("click",e=>{ const b=e.target.closest("[data-mvs]"); if(b){ $("mvSales").value=b.dataset.mvs; renderMove(); } });
+// ----- klien belum selesai per sales
+function renderOpen(){
+  if(!RK.base) return; const t=today(), d14=ymd(new Date(Date.now()-14*864e5)), acts=groupActs(RK.base).filter(a=>a.open);
+  const names=salesNames(), rows=names.map(n=>{ const o=acts.filter(a=>a.latest.sales===n); const u=(RK.salesIn||[]).find(x=>x.nama===n);
+    return {n,tim:(u&&u.tim)||(o[0]&&o[0].latest.tim)||"",o,lead:o.filter(a=>a.status==="Lead"),pen:o.filter(a=>a.status==="Penawaran"),neg:o.filter(a=>a.status==="Negosiasi"),
+      late:o.filter(a=>a.latest.tglFu&&a.latest.tglFu<t),stale:o.filter(a=>a.last<d14)}; }).sort((a,b)=>b.o.length-a.o.length);
+  RK.opRows=rows;
+  const cell=(r,k,arr)=>arr.length?`<button type="button" class="linkn" data-op="${esc(r.n)}" data-k="${k}">${arr.length}</button>`:'<span class="hint">0</span>';
+  $("opRows").innerHTML=rows.length?rows.map(r=>`<tr><td><b>${esc(r.n)}</b></td><td>${esc(r.tim||"-")}</td><td class="num">${cell(r,"o",r.o)}</td><td class="num">${cell(r,"lead",r.lead)}</td><td class="num">${cell(r,"pen",r.pen)}</td><td class="num">${cell(r,"neg",r.neg)}</td>
+    <td class="num">${rpShort(r.o.reduce((s,a)=>s+valOpen(a.latest),0))}</td><td class="num" style="color:${r.late.length?"var(--bad)":""}">${cell(r,"late",r.late)}</td><td class="num" style="color:${r.stale.length?"var(--warn)":""}">${cell(r,"stale",r.stale)}</td></tr>`).join("")
+    :`<tr><td colspan="9" class="empty" style="padding:18px">Belum ada data sales.</td></tr>`;
+}
+$("opRows").addEventListener("click",e=>{ const b=e.target.closest("[data-op]"); if(!b) return; const r=(RK.opRows||[]).find(x=>x.n===b.dataset.op); if(!r) return;
+  const L={o:"semua klien belum selesai",lead:"tahap Lead",pen:"tahap Penawaran",neg:"tahap Negosiasi",late:"follow-up terlewat",stale:"lebih dari 14 hari tanpa kunjungan"}[b.dataset.k];
+  const list=r[b.dataset.k].slice().sort((x,y)=>(x.latest.tglFu||"9").localeCompare(y.latest.tglFu||"9"));
+  showRkList(`${r.n} · ${list.length} klien`,`Klien ${L}.`,list.map(rkCard).join("")); });
+// ----- pantau per sales (harian / bulanan)
+let pmView="klien";
+function pmRange(){ if($("pmMode").value==="day"){ const d=$("pmDay").value||today(); return [d,d]; }
+  const m=$("pmMonth").value||today().slice(0,7), [y,mo]=m.split("-").map(Number); return [m+"-01",ymd(new Date(y,mo,0))]; }
+function renderPm(){
+  if(!RK.base) return; const day=$("pmMode").value==="day"; $("pmDay").hidden=!day; $("pmMonth").hidden=day;
+  const sl=$("pmSales").value, [a,b]=pmRange(), rows=RK.base.filter(r=>r.sales===sl), vis=rows.filter(r=>inRange(dayOf(r),a,b)).sort((x,y)=>(y.checkIn?y.checkIn.at:0)-(x.checkIn?x.checkIn.at:0)||(y.tanggal||"").localeCompare(x.tanggal||""));
+  const acts=groupActs(rows), actsP=acts.filter(x=>x.rows.some(r=>inRange(dayOf(r),a,b))), won=acts.filter(x=>!x.open&&x.status==="Diterima"&&inRange(x.closed,a,b)), lost=acts.filter(x=>!x.open&&x.status==="Ditolak"&&inRange(x.closed,a,b));
+  const tot=vis.reduce((s,r)=>s+vDur(r),0);
+  $("pmSum").innerHTML=sl?`<span>${day?fmtDate(a):perLabel({start:a,end:b})}</span><span>Kunjungan <b>${vis.length}</b></span><span>Klien <b>${actsP.length}</b></span><span>Waktu di klien <b>${tot?dur(tot):"-"}</b></span><span>Deal <b>${won.length}</b> (${rpShort(won.reduce((s,x)=>s+valDeal(x.latest),0))})</span><span>Ditolak <b>${lost.length}</b></span><span>Belum selesai <b>${actsP.filter(x=>x.open).length}</b></span>`:"";
+  document.querySelectorAll("[data-pmv]").forEach(x=>x.setAttribute("aria-selected",x.dataset.pmv===pmView));
+  $("pmList").innerHTML=!sl?'<p class="hint">Pilih sales.</p>':pmView==="klien"?(actsP.map(rkCard).join("")||`<div class="empty" style="padding:18px"><b>Tidak ada klien</b>pada periode ini.</div>`)
+    :(vis.map(visitItem).join("")||`<div class="empty" style="padding:18px"><b>Tidak ada kunjungan</b>pada periode ini.</div>`);
+}
+["pmSales","pmMode","pmDay","pmMonth"].forEach(id=>$(id).addEventListener("change",renderPm));
+document.querySelectorAll("[data-pmv]").forEach(b=>b.onclick=()=>{ pmView=b.dataset.pmv; renderPm(); });
+["pmList","mvBody"].forEach(id=>$(id).addEventListener("click",e=>{ const d=e.target.closest("[data-rdel]"); if(d) return delReport(d.dataset.rdel,d); const b=e.target.closest("[data-foto]"); if(b) showFoto(b); }));
+function renderMonitor(){ const ns=salesNames();
+  if(!$("mvDate").value) $("mvDate").value=today(); if(!$("pmDay").value) $("pmDay").value=today(); if(!$("pmMonth").value) $("pmMonth").value=today().slice(0,7);
+  fillSel($("mvSales"),ns,"Semua sales (ringkasan)"); fillSel($("pmSales"),ns,null);
+  renderMove(); renderOpen(); renderPm(); }
 // ----- laporan per sales (cetak / PDF)
 function evalSales(x){
   const ev=[], keys=TKEYS.map(([k,l])=>({k,l,t:x.tg&&x.tg[k]||0,v:x.ach[k]||0})).filter(o=>o.t>0).map(o=>Object.assign(o,{p:o.v/o.t}));
@@ -1588,6 +1725,7 @@ function render(){
   $("rankNote").textContent=rank.some(r=>r.sc!==null)?"diurutkan dari rata-rata pencapaian target, lalu nilai deal":"diurutkan dari nilai deal, jumlah deal, lalu kunjungan";
   RK.rank=rank; const rs0=$("repSales").value; $("repSales").innerHTML=`<option value="">Semua sales (${rank.length})</option>`+rank.map(r=>`<option${r.n===rs0?" selected":""}>${esc(r.n)}</option>`).join("");
   if(!$("rkDetail").hidden&&RK.kind) openRk(RK.kind);
+  renderMonitor();
   $("rankRows").innerHTML=rank.length?rank.map((r,i)=>`<tr><td><span class="medal ${i<3?"m"+(i+1):""}">${i+1}</span></td><td><b>${esc(r.n)}</b></td><td>${esc(r.tim||"-")}</td>
     <td class="num">${r.ach.kunjungan}</td><td class="num">${r.ach.klienBaru}</td><td class="num">${r.ach.deal}</td><td class="num">${r.lo}</td><td class="num">${rpShort(r.ach.nilaiDeal)}</td>
     <td class="num">${r.rate===null?"-":r.rate+"%"}</td><td>${r.sc===null?'<span class="hint">target belum diatur</span>':`<div class="minibar"><div class="bar"><i style="width:${Math.min(100,r.sc*100)}%;${r.sc>=1?"background:var(--good)":""}"></i></div><span class="num">${Math.round(r.sc*100)}%</span></div>`}</td></tr>`).join("")
