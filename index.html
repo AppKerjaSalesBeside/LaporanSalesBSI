@@ -378,6 +378,27 @@ button.kpi:hover{border-color:var(--accent)}
 @media (max-width:720px){ .mvsum{grid-template-columns:repeat(2,minmax(0,1fr))} .mvmap{height:240px} }
 .zone-lay{background:var(--info-soft);border:1px solid var(--info)} .zone-lay .zdot{background:var(--info)} .zone-lay .sec{color:var(--info)}
 .pill.lay{background:var(--info-soft);color:var(--info)}
+.pill.barter{background:var(--warn-soft);color:var(--warn)}
+.zsearch{width:100%;margin:0 0 10px;padding:9px 12px;border:1px solid var(--line);border-radius:10px;background:var(--surface);color:var(--fg);font:500 14px var(--font-ui)}
+.act.flash{outline:2.5px solid var(--accent);outline-offset:2px}
+.gatebox{border:1.5px solid var(--warn);background:var(--warn-soft);border-radius:10px;padding:12px 14px;font-size:14px;display:flex;flex-direction:column;gap:10px}
+.gatebox .row-actions{display:flex;gap:8px;flex-wrap:wrap}
+.timbar{display:flex;gap:8px;flex-wrap:wrap;margin:14px 0 6px}
+.timbar input{flex:1 1 220px;min-width:0}
+.timbar input,.timbar select,.composer textarea,.composer input{padding:9px 12px;border:1px solid var(--line);border-radius:10px;background:var(--surface);color:var(--fg);font:500 14px var(--font-ui)}
+.tcrow{display:flex;gap:8px;flex-wrap:wrap;align-items:baseline;font-size:13px;padding:6px 0;border-top:1px dashed var(--line)}
+.tcrow:first-of-type{border-top:0}
+.tcrow .who{font-weight:700}
+.composer{border:1px solid var(--line);border-radius:var(--r);background:var(--surface);padding:12px;margin:14px 0;display:flex;flex-direction:column;gap:8px}
+.composer textarea{min-height:72px;resize:vertical;width:100%}
+.composer .crow{display:flex;gap:8px;flex-wrap:wrap}
+.composer .crow input{flex:1 1 200px;min-width:0}
+.mitem{border:1px solid var(--line);border-radius:var(--r);background:var(--surface);padding:10px 14px}
+.mitem.me{border-color:var(--accent);background:var(--accent-soft)}
+.mitem .mh{display:flex;gap:8px;flex-wrap:wrap;align-items:baseline;font-size:13px}
+.mitem .mh b{font-size:14px}
+.mitem .mb{margin-top:4px;white-space:pre-wrap;overflow-wrap:anywhere;font-size:14px}
+.mitem .new{background:var(--bad);color:#fff;font-size:10px;font-weight:700;border-radius:999px;padding:1px 7px}
 .ekreq{display:flex;flex-direction:column;gap:10px}
 .lay-panel{border-color:var(--info)}
 .lay-panel h2{color:var(--info)}
@@ -396,7 +417,7 @@ button.kpi:hover{border-color:var(--accent)}
     <button class="btn primary" type="submit" id="lgBtn">Masuk</button>
     <span class="msg err" id="lgMsg"></span>
     <span class="hint">Lupa PIN? Minta admin mengatur ulang PIN dari menu Pengaturan.</span>
-    <span class="hint" style="text-align:center;opacity:.7">Versi 2026.11.24-o</span>
+    <span class="hint" style="text-align:center;opacity:.7">Versi 2026.11.25-p</span>
   </form>
 </div>
 
@@ -405,6 +426,7 @@ button.kpi:hover{border-color:var(--accent)}
   <div class="brand"><span class="logoplate"><img src="data:image/png;base64,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" alt="Berkah Sinergi Ide Group"></span><span class="brandtxt"><b>Laporan Sales</b><span>BERKAH SINERGI IDE</span></span></div>
   <div class="tabs" role="tablist" id="tabs">
     <button role="tab" aria-selected="true" data-view="isi" id="tabIsi">Isi Laporan</button>
+    <button role="tab" aria-selected="false" data-view="tim" id="tabTim" hidden>Tim<span class="tabbadge" id="msgBadge" hidden></span></button>
     <button role="tab" aria-selected="false" data-view="rekap" id="tabRekap">Rekap Tim<span class="tabbadge" id="apprBadge" hidden></span></button>
   </div>
   <div class="who">
@@ -435,16 +457,19 @@ button.kpi:hover{border-color:var(--accent)}
       <section class="zone zone-open">
         <h2 class="sec"><span class="zdot"></span>Prospek berjalan <span class="hint" id="openCount"></span></h2>
         <p class="hint" style="margin:-4px 0 10px">Tetap tampil sampai hasilnya Diterima atau Ditolak, walaupun periode target sudah berganti.</p>
+        <input type="search" class="zsearch" id="qOpen" placeholder="Cari prospek: klien, PIC, produk, lokasi…" aria-label="Cari prospek berjalan">
         <div class="list" id="openList"></div>
       </section>
       <section class="zone zone-lay" id="layZone">
         <details id="layBox"><summary class="sec"><span class="zdot"></span>Aktivitas layanan / client service <span class="hint" id="layCount"></span></summary>
           <p class="hint" style="margin:10px 0">Kegiatan tanpa penawaran produk, mis. menemani shooting podcast, talkshow, atau pelayanan klien. Mengikuti periode target yang dipilih.</p>
+          <input type="search" class="zsearch" id="qLay" placeholder="Cari aktivitas layanan: klien, kegiatan, catatan…" aria-label="Cari aktivitas layanan">
           <div class="list" id="layList"></div></details>
       </section>
       <section class="zone zone-done">
         <details id="doneBox"><summary class="sec"><span class="zdot"></span>Aktivitas selesai <span class="hint" id="doneCount"></span></summary>
           <div class="perpick"><label for="doneSel">Tampilkan periode</label><select id="doneSel"></select></div>
+          <input type="search" class="zsearch" id="qDone" placeholder="Cari aktivitas selesai: klien, PIC, produk…" aria-label="Cari aktivitas selesai">
           <div class="list" id="doneList"></div></details>
       </section>
     </div>
@@ -572,6 +597,8 @@ button.kpi:hover{border-color:var(--accent)}
           <label class="money" id="negoWrap"><span id="negoLbl">Nilai hasil negosiasi</span><input id="nilaiNego" class="rupiah" inputmode="numeric" placeholder="0"></label>
           <label class="money" id="dealWrap"><span class="req">Nilai deal (final)</span><input id="nilaiDeal" class="rupiah" inputmode="numeric" placeholder="0"></label>
           <div class="full negodiff" id="negoDiff" hidden></div>
+          <div class="full" id="barterWrap"><label style="display:flex;gap:10px;align-items:flex-start;font-weight:500;cursor:pointer"><input type="checkbox" id="barter" style="width:auto;margin-top:3px"><span><b>Full barter</b> (tanpa nilai rupiah)<br><span class="hint">Pertukaran jasa/produk tanpa uang. Tidak dihitung ke KPI pencapaian dan dicatat di laporan sebagai kegiatan non-profit.</span></span></label></div>
+          <label class="full" id="barterKetWrap"><span class="req">Bentuk barter</span><input id="barterKet" placeholder="mis. slot iklan 1 bulan ditukar dengan venue acara"></label>
           <label class="full" id="fuWrap">Rencana kunjungan / follow-up berikutnya<textarea id="rencana" placeholder="mis. Kirim penawaran resmi &amp; rate card, presentasi ke owner"></textarea></label>
           <label id="fuDateWrap">Tanggal follow-up<input id="tglFu" type="date"></label>
         </fieldset>
@@ -716,6 +743,27 @@ button.kpi:hover{border-color:var(--accent)}
     <div id="printArea"></div>
   </section>
 
+  <!-- TIM: klien tim & pesan -->
+  <section id="view-tim" hidden>
+    <div class="listhead"><div><h1>Tim</h1><p class="lede" style="margin:0">Lihat klien dan prospek yang sedang dipegang sales lain supaya tidak terjadi follow-up ganda, lalu saling berkabar lewat pesan tim.</p></div>
+      <button class="btn" type="button" id="timReload">Muat ulang</button></div>
+    <div class="segtabs" role="tablist"><button type="button" role="tab" data-tt="klien" aria-selected="true">Klien tim</button><button type="button" role="tab" data-tt="pesan" aria-selected="false">Pesan tim <span class="tabbadge" id="msgBadge2" hidden></span></button></div>
+    <div id="tt-klien">
+      <div class="timbar"><input type="search" id="tcQ" placeholder="Cari klien, sales, produk, lokasi…" aria-label="Cari klien tim">
+        <select id="tcF" aria-label="Status"><option value="open">Prospek berjalan</option><option value="done">Sudah selesai</option><option value="">Semua</option></select>
+        <select id="tcS" aria-label="Sales"><option value="">Semua sales</option></select></div>
+      <p class="hint" id="tcInfo" style="margin:0 0 10px"></p>
+      <div class="list" id="tcList"></div>
+    </div>
+    <div id="tt-pesan" hidden>
+      <div class="composer"><textarea id="msgText" maxlength="1500" placeholder="Tulis pesan untuk tim, mis. “Saya sedang follow-up PT ABC minggu ini, tolong jangan dikunjungi dulu ya.”" aria-label="Pesan"></textarea>
+        <div class="crow"><input id="msgKlien" list="tcKlienList" placeholder="Terkait klien (opsional)" aria-label="Terkait klien"><datalist id="tcKlienList"></datalist><button class="btn primary" type="button" id="msgSend">Kirim</button></div>
+        <span class="msg" id="msgMsg"></span></div>
+      <div id="msgFilt" hidden></div>
+      <div class="list" id="msgList"></div>
+    </div>
+  </section>
+
   <!-- AKUN -->
   <section id="view-akun" hidden>
     <h1>Akun saya</h1>
@@ -750,7 +798,7 @@ button.kpi:hover{border-color:var(--accent)}
 <div class="toast" id="toast" hidden></div>
 <div class="lightbox" id="lightbox" hidden><img id="lbImg" alt="Foto"></div>
 <script>
-const APP_VERSION="2026.11.24-o";
+const APP_VERSION="2026.11.25-p";
 const PRODUK=["Event activation","Sponsorship event","Iklan media online","Iklan radio","Konten IG / TikTok","Aktivasi komunitas","Event services / produksi","Lainnya"];
 const STATUSES=[["Lead","var(--accent)","var(--accent-soft)","Perkenalan"],["Penawaran","var(--info)","var(--info-soft)","Penawaran dikirim"],["Negosiasi","var(--warn)","var(--warn-soft)","Tawar-menawar"],["Diterima","var(--good)","var(--good-soft)","Final · deal"],["Ditolak","var(--bad)","var(--bad-soft)","Final · tidak lanjut"]];
 const ADMIN_J="Administrasi pasca-deal", LAY_J="Layanan / client service";
@@ -789,7 +837,7 @@ const DEMO=(()=>{
   const PL=[["lapor","Isi laporan kunjungan"],["rekap","Lihat Rekap Tim"],["rekapSemua","Rekap semua tim (bukan hanya timnya sendiri)"],["hapusSemua","Hapus laporan milik siapa pun"],["aksesData","Buka Google Sheet & folder foto"],["kelolaUser","Kelola pengguna & otoritas"],["approveKlien","Setujui pengajuan klien ganda"],["approveDataKlien","Setujui ubah nama / hapus klien"]];
   let roles=[{name:"Admin",perms:Object.fromEntries(PK.map(k=>[k,true]))},{name:"Supervisor",perms:{lapor:true,rekap:true,approveKlien:true}},{name:"Sales",perms:{lapor:true}}];
   const users=[{id:"u-admin",username:"admin",nama:"Administrator",tim:"",role:"Admin",aktif:true,pin:"123456",lastLogin:null}];
-  const rows=[], files={}, APR=[]; let n=0; const nn=new Date();
+  const rows=[], files={}, APR=[], MSG=[]; let n=0; const nn=new Date();
   const d8=d=>d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");
   const KPI={periods:[{start:d8(new Date(nn.getFullYear(),nn.getMonth(),1)),end:d8(new Date(nn.getFullYear(),nn.getMonth()+1,0)),targets:{},unsaved:true}],active:0};
   const kpiActive=()=>{ KPI.periods.sort((a,b)=>b.start.localeCompare(a.start)); const t=d8(new Date()); const i=KPI.periods.findIndex(p=>p.start<=t&&t<=p.end); KPI.active=i<0?0:i; return KPI; };
@@ -834,6 +882,14 @@ const DEMO=(()=>{
       if(!rs.some(r=>r.name==="Admin")) throw new Error('Peran "Admin" tidak boleh dihapus.');
       const used=users.map(u=>u.role).filter(r=>!rs.some(x=>x.name===r)); if(used.length) throw new Error(`Peran "${used[0]}" masih dipakai pengguna. Pindahkan penggunanya dulu.`);
       roles=rs.map(r=>({name:r.name,perms:Object.fromEntries(PK.map(k=>[k,r.name==="Admin"||!!r.perms[k]]))})); return {users:users.map(pub),roles,perms:PL,kpi:KPI,counts:cnt()}; }),
+    apiTeamClients:t=>run(()=>{ const c=ctx(t); if(!c.perms.lapor) throw new Error("Kamu tidak punya izin untuk tindakan ini."); const m={};
+      rows.forEach(o=>{ if(o.jenis===LAY_J) return; (m[o.aktivitasId]??=[]).push(o); });
+      return Object.values(m).map(rs=>{ rs.sort((a,b)=>a.kunjunganKe-b.kunjunganKe); const L=rs[rs.length-1], cl=rs.find(r=>r.hasilAt&&FINALS.includes(r.status)&&r.jenis!==ADMIN_J);
+        return {aktivitasId:L.aktivitasId,mine:L.userId===c.user.id,sales:L.sales,tim:L.tim||"",klien:L.klien,kategori:L.kategori||"",lokasi:L.lokasi||"",status:cl?cl.status:L.status,selesai:!!cl,barter:(cl||L).barter==="Ya",
+          produk:L.produk||[],kunjungan:rs.length,terakhir:L.tanggal||"",tglFu:cl?"":(L.tglFu||""),rencana:cl?"":(L.rencana||""),visitStatus:L.visitStatus||""}; }); }),
+    apiMessages:t=>run(()=>{ ctx(t); return MSG.slice(); }),
+    apiPostMessage:(t,d)=>run(()=>{ const c=ctx(t), p=String(d.pesan||"").trim(); if(!p) throw new Error("Tulis pesannya."); const m={id:fid(),createdAt:Date.now(),userId:c.user.id,sales:c.user.nama,tim:c.user.tim||"",klien:String(d.klien||"").trim(),pesan:p}; MSG.push(m); return m; }),
+    apiDeleteMessage:(t,id)=>run(()=>{ const c=ctx(t), i=MSG.findIndex(m=>m.id===id); if(i<0) return true; if(MSG[i].userId!==c.user.id&&!c.perms.kelolaUser) throw new Error("Hanya pengirim atau admin yang bisa menghapus pesan ini."); MSG.splice(i,1); return true; }),
     apiSave:(t,p)=>run(()=>{ const c=ctx(t); if(!c.perms.lapor) throw new Error("Kamu tidak punya izin untuk tindakan ini.");
       let o=rows.find(r=>r.id===p.id); const now=Date.now();
       if(o&&o.userId!==c.user.id) throw new Error("Laporan ini milik pengguna lain dan tidak bisa diubah.");
@@ -923,11 +979,12 @@ function enter(r){
   ME=r.user; PERM=r.perms||{}; setTimeout(()=>checkServerVersion(r.version),0);
   $("loginView").hidden=true; $("app").hidden=false;
   $("meName").textContent=ME.nama; $("meAv").textContent=initials(ME.nama);
-  $("tabIsi").hidden=!PERM.lapor; $("tabRekap").hidden=!(PERM.rekap||PERM.approveKlien||PERM.approveDataKlien); $("tabs").hidden=!(PERM.lapor&&(PERM.rekap||PERM.approveKlien||PERM.approveDataKlien));
+  $("tabIsi").hidden=!PERM.lapor; $("tabRekap").hidden=!(PERM.rekap||PERM.approveKlien||PERM.approveDataKlien); $("tabTim").hidden=!PERM.lapor; $("tabs").hidden=!PERM.lapor;
   $("gearBtn").hidden=!PERM.kelolaUser;
   $("akunKv").innerHTML=`<dt>Versi aplikasi</dt><dd>${APP_VERSION}</dd><dt>Nama</dt><dd>${esc(ME.nama)}</dd><dt>Username</dt><dd>${esc(ME.username)}</dd><dt>Tim / area</dt><dd>${esc(ME.tim||"-")}</dd><dt>Peran</dt><dd>${esc(ME.role)}</dd>`;
   resetForm();
-  if(PERM.lapor){ api("apiMine",SESSION).then(rows=>{ mine=rows||[]; renderMine(); restoreDraft(); }).catch(()=>{});
+  TC=[]; MSGS=[]; msgKf=""; $("tcList").innerHTML=""; $("msgList").innerHTML=""; setTimTab("klien"); msgBadge();
+  if(PERM.lapor){ api("apiMine",SESSION).then(rows=>{ mine=rows||[]; renderMine(); restoreDraft(); }).catch(()=>{}); setTimeout(loadMsgs,1500);
     api("apiTargets",SESSION).then(k=>{ MYKPI=k; homePer=null; donePer=null; renderMine(); }).catch(()=>{}); loadDups(); loadMyAppr(); }
   APPRS=[]; renderAppr(); loadAppr();
   show(PERM.lapor?"isi":PERM.rekap?"rekap":PERM.kelolaUser?"set":"akun");
@@ -984,8 +1041,8 @@ const FINAL=["Diterima","Ditolak"];
 const normSt=s=>s==="Closing"?"Diterima":s==="Batal"?"Ditolak":(s||"");
 const KLIEN_F=["tanggal","jenis","klien","kategori","lokasi","pic","kontak"];
 const MONEY_F=["nilai","nilaiNego","nilaiDeal"];
-const valOpen=r=>(r.nilaiNego||r.nilai||0);                     // nilai prospek berjalan
-const valDeal=r=>(r.nilaiDeal||r.nilaiNego||r.nilai||0);         // nilai deal
+const valOpen=r=>r&&r.barter==="Ya"?0:(r.nilaiNego||r.nilai||0);                     // nilai prospek berjalan
+const valDeal=r=>r&&r.barter==="Ya"?0:(r.nilaiDeal||r.nilaiNego||r.nilai||0);         // nilai deal
 const valOf=r=>normSt(r.status)==="Diterima"?valDeal(r):valOpen(r);
 const HASIL_F=["hasil","rencana","tglFu","kendala"];
 let cur=null, screen="list", dirty=false, mine=[], saving=false;
@@ -1021,8 +1078,10 @@ function readForm(){ const v=id=>$(id).value.trim(); const o={};
   MONEY_F.forEach(k=>o[k]=Number(v(k).replace(/\D/g,""))||0);
   const lj=document.querySelector('input[name="lanjut"]:checked'); o.lanjut=lj?lj.value:"";
   o.keperluan=[...document.querySelectorAll('input[name="keperluan"]:checked')].map(x=>x.value).join(", ");
-  if(o.jenis===ADMIN_J){ o.hasil=$("hasilAdm").value.trim(); o.status="Diterima"; }
-  if(o.jenis===LAY_J){ o.keperluan=[...document.querySelectorAll('input[name="kegiatan"]:checked')].map(x=>x.value).join(", "); o.hasil=$("hasilLay").value.trim(); o.divisi=$("divisi").value.trim(); o.status=""; if(!o.klien) o.klien="Internal"; }
+  o.barter=$("barter").checked&&["Penawaran","Negosiasi","Diterima"].includes(o.status)?"Ya":""; o.barterKet=o.barter?$("barterKet").value.trim():"";
+  if(o.barter){ o.nilai=0; o.nilaiNego=0; o.nilaiDeal=0; }
+  if(o.jenis===ADMIN_J){ o.hasil=$("hasilAdm").value.trim(); o.status="Diterima"; o.barter=""; o.barterKet=""; }
+  if(o.jenis===LAY_J){ o.barter=""; o.barterKet=""; o.keperluan=[...document.querySelectorAll('input[name="kegiatan"]:checked')].map(x=>x.value).join(", "); o.hasil=$("hasilLay").value.trim(); o.divisi=$("divisi").value.trim(); o.status=""; if(!o.klien) o.klien="Internal"; }
   return o; }
 function fillForm(r,{keepHasil=true}={}){
   $("fKlien").reset(); $("fHasil").reset();
@@ -1031,6 +1090,7 @@ function fillForm(r,{keepHasil=true}={}){
   if(r&&r.kendala&&!keepHasil) $("kendala").value=r.kendala;
   const st=r?normSt(r.status):""; document.querySelectorAll('input[name="status"]').forEach(x=>x.checked=x.value===st);
   MONEY_F.forEach(k=>$(k).value=r&&r[k]?Number(r[k]).toLocaleString("id-ID"):"");
+  $("barter").checked=!!(r&&r.barter==="Ya"&&r.jenis!==ADMIN_J); $("barterKet").value=r&&r.barter==="Ya"?(r.barterKet||""):"";
   const lj=r&&keepHasil?r.lanjut:""; document.querySelectorAll('input[name="lanjut"]').forEach(x=>x.checked=x.value===lj);
   const kp=r&&keepHasil?String(r.keperluan||"").split(", "):[]; document.querySelectorAll('input[name="keperluan"]').forEach(x=>x.checked=kp.includes(x.value));
   $("hasilAdm").value=r&&keepHasil&&r.jenis===ADMIN_J?(r.hasil||""):"";
@@ -1064,7 +1124,7 @@ function startAdminVisit(a){
   $("ciLede").textContent="Kunjungan setelah deal, mis. menyerahkan surat tagihan, kwitansi, atau bukti tayang. Status klien tetap Diterima.";
   dirty=false; msg($("ciMsg"),""); showScreen("checkin"); renderCheckin(); }
 function startReoffer(a){
-  const L=a.latest; startNew(); ["klien","kategori","lokasi","pic","kontak"].forEach(k=>$(k).value=L[k]||"");
+  const L=a.latest; startNew(); cur.reoffer=true; ["klien","kategori","lokasi","pic","kontak"].forEach(k=>$(k).value=L[k]||"");
   $("ciTitle").textContent="Penawaran baru · "+L.klien;
   $("ciLede").textContent=`Aktivitas baru untuk klien yang sebelumnya ${a.status==="Diterima"?"sudah deal":"menolak"}. Data klien diambil dari aktivitas sebelumnya dan masih bisa diubah.`;
   checkKlienLive(); }
@@ -1090,6 +1150,7 @@ function clearDraft(){ ls("draft",null); }
 function applyFields(f){ if(!f) return;
   KLIEN_F.concat(HASIL_F).forEach(k=>{ if(f[k]!=null&&$(k)) $(k).value=f[k]; });
   MONEY_F.forEach(k=>$(k).value=f[k]?Number(f[k]).toLocaleString("id-ID"):"");
+  $("barter").checked=f.barter==="Ya"; $("barterKet").value=f.barterKet||"";
   document.querySelectorAll('input[name="status"]').forEach(x=>x.checked=x.value===f.status);
   document.querySelectorAll('input[name="lanjut"]').forEach(x=>x.checked=x.value===f.lanjut);
   document.querySelectorAll('input[name="produk"]').forEach(x=>x.checked=(f.produk||[]).includes(x.value));
@@ -1123,12 +1184,24 @@ function restoreDraft(){
 const gpsTxt=g=>g?esc(g.lat.toFixed(5)+", "+g.lng.toFixed(5))+" (±"+Math.round(g.acc)+" m)":"tidak tersedia";
 
 // ----- layar check-in
+// klien milik sendiri yang aktivitasnya sudah selesai -> arahkan ke "+ Penawaran baru"
+function ownClosed(){ if(!cur||isFollow()||cur.reoffer||isLayJ()||isAdmJ()) return null; const k=klienKey($("klien").value); if(!k) return null;
+  const acts=groupActs(mine).filter(a=>klienKey(a.latest.klien)===k); if(!acts.length||acts.some(a=>a.open)) return null; return acts[0]; }
+function closedGateHtml(a){ const won=a.status==="Diterima";
+  return `<div class="gatebox" role="alert"><span><b>Klien “${esc(a.latest.klien)}” sudah pernah kamu tangani sampai selesai</b> (${won?(a.barter?"deal full barter":"deal"):"ditolak"} ${fmtDate(a.closed)}, ${a.rows.length}× kunjungan).<br>
+    Untuk menawarkan lagi, gunakan tombol <b>+ Penawaran baru</b> di bagian <b>Aktivitas selesai</b> supaya data klien dan riwayatnya tetap tersambung.</span>
+    <div class="row-actions"><button type="button" class="btn sm primary" data-cg="goto">Buka di Aktivitas selesai</button><button type="button" class="btn sm" data-cg="reoffer">+ Penawaran baru sekarang</button>${won?'<button type="button" class="btn sm" data-cg="admin">Kunjungan administrasi</button>':""}<button type="button" class="btn sm" data-cg="back">Batal</button></div></div>`; }
+function bindClosedGate(el,a){ el.querySelectorAll("[data-cg]").forEach(b=>b.onclick=()=>{ const k=b.dataset.cg;
+  if(k==="reoffer") startReoffer(a); else if(k==="admin") startAdminVisit(a); else if(k==="back") resetForm(); else gotoDone(a); }); }
+function gotoDone(a){ dirty=false; resetForm(); donePer="all"; $("doneBox").open=true; $("qDone").value=a.latest.klien; renderMine();
+  setTimeout(()=>{ const c=document.querySelector(`#doneList [data-act="${CSS.escape(a.id)}"]`); if(!c) return; c.scrollIntoView({behavior:"smooth",block:"center"}); c.classList.add("flash"); setTimeout(()=>c.classList.remove("flash"),2600); },60); }
 function renderCheckin(){
   if(!cur) return;
   const visit=isVisitJ($("jenis").value), p=cur.pending.checkin, shot=$("inShot"), body=$("inBody");
   $("fsIn").querySelector("legend").lastChild.textContent=visit?"Check-in kedatangan":"Lanjut ke hasil";
-  const blocked=!isFollow()&&cur.dup&&cur.dup.length&&!(apprFor($("klien").value,$("kontak").value)||{}).status?.startsWith("Disetujui");
+  const cg=ownClosed(), blocked=!!cg||(!isFollow()&&cur.dup&&cur.dup.length&&!(apprFor($("klien").value,$("kontak").value)||{}).status?.startsWith("Disetujui"));
   shot.hidden=!visit||blocked; $("fsIn").querySelector(".cio").classList.toggle("single",!visit||blocked);
+  if(cg){ body.innerHTML=closedGateHtml(cg); bindClosedGate(body,cg); if(cur.cgShown!==cg.id){ cur.cgShown=cg.id; setTimeout(()=>{ const g=body.querySelector(".gatebox"); g&&g.scrollIntoView({behavior:"smooth",block:"center"}); },50); } return; }
   if(visit){
     shot.innerHTML=p?`<img src="${p}" alt="Foto check-in">`:`<span>${CAM}Ambil foto<br>check-in</span>`; shot.onclick=()=>pick("checkin",true);
     const gate=!isFollow()&&cur.dup&&cur.dup.length?apprGate():null;
@@ -1210,9 +1283,11 @@ function renderFinalNote(){
   $("pickFirst").hidden=!!st; $("fsDetail").hidden=!st;
   show("lanjutWrap",st==="Lead");
   show("produkWrap",["Penawaran","Negosiasi","Diterima"].includes(st));
-  show("nilaiWrap",["Penawaran","Negosiasi","Diterima"].includes(st));
-  show("negoWrap",["Negosiasi","Diterima"].includes(st));
-  show("dealWrap",st==="Diterima");
+  const pnd=["Penawaran","Negosiasi","Diterima"].includes(st), bt=pnd&&$("barter").checked;
+  show("barterWrap",pnd); show("barterKetWrap",bt);
+  show("nilaiWrap",pnd&&!bt);
+  show("negoWrap",["Negosiasi","Diterima"].includes(st)&&!bt);
+  show("dealWrap",st==="Diterima"&&!bt);
   show("fuWrap",!fin); show("fuDateWrap",!fin);
   $("nilaiLbl").textContent=st==="Penawaran"?"Nilai penawaran":"Nilai penawaran awal";
   $("nilaiLbl").className=st==="Penawaran"?"req":"";
@@ -1220,16 +1295,16 @@ function renderFinalNote(){
   $("negoLbl").className=st==="Negosiasi"?"req":"";
   $("kendalaLbl").textContent=st==="Ditolak"?"Alasan ditolak":"Kendala / catatan";
   $("detailLegend").textContent={Lead:"Hasil perkenalan",Penawaran:"Hasil & nilai penawaran",Negosiasi:"Hasil negosiasi",Diterima:"Hasil akhir · deal",Ditolak:"Hasil akhir · ditolak"}[st]||"Hasil kunjungan";
-  if(st==="Diterima"&&!$("nilaiDeal").value){ const f=readForm(), v=f.nilaiNego||f.nilai; if(v) $("nilaiDeal").value=v.toLocaleString("id-ID"); }
+  if(st==="Diterima"&&!bt&&!$("nilaiDeal").value){ const f=readForm(), v=f.nilaiNego||f.nilai; if(v) $("nilaiDeal").value=v.toLocaleString("id-ID"); }
   n.hidden=!fin;
   if(fin){ n.style.background=st==="Diterima"?"var(--good-soft)":"var(--bad-soft)"; n.style.color=st==="Diterima"?"var(--good)":"var(--bad)";
-    n.textContent=st==="Diterima"?"Penawaran diterima: aktivitas dengan klien ini akan ditutup sebagai DEAL setelah disimpan."
+    n.textContent=st==="Diterima"&&bt?"Deal full barter: aktivitas ditutup sebagai DEAL non-profit (tanpa revenue) dan tidak masuk KPI pencapaian.":st==="Diterima"?"Penawaran diterima: aktivitas dengan klien ini akan ditutup sebagai DEAL setelah disimpan."
       :"Penawaran ditolak: aktivitas dengan klien ini akan ditutup setelah disimpan dan tidak bisa ditambah kunjungan lagi."; }
   renderNegoDiff();
 }
 function renderNegoDiff(){
   const f=readForm(), el=$("negoDiff"), st=f.status;
-  if(!["Negosiasi","Diterima"].includes(st)||!f.nilai||!(f.nilaiNego||f.nilaiDeal)){ el.hidden=true; return; }
+  if(f.barter||!["Negosiasi","Diterima"].includes(st)||!f.nilai||!(f.nilaiNego||f.nilaiDeal)){ el.hidden=true; return; }
   const akhir=st==="Diterima"&&f.nilaiDeal?f.nilaiDeal:f.nilaiNego, d=akhir-f.nilai, pct=f.nilai?Math.round(d/f.nilai*1000)/10:0;
   el.hidden=false; el.innerHTML=`Dari penawaran awal <b>${rp(f.nilai)}</b> menjadi <b>${rp(akhir)}</b> · ${d===0?"tidak berubah":(d<0?"turun ":"naik ")+rp(Math.abs(d))+" ("+Math.abs(pct).toLocaleString("id-ID")+"%)"}`;
 }
@@ -1251,9 +1326,12 @@ async function saveHasil(){
   if(!r.status) return setMsg("Pilih status penawaran dulu.","err");
   if(!r.hasil) return setMsg("Isi hasil kunjungan ini.","err");
   if(r.status==="Lead"&&!r.lanjut) return setMsg("Jawab dulu: apakah lanjut ke penawaran?","err");
+  if(r.barter){ if(!r.barterKet) return setMsg("Tulis bentuk barternya (apa ditukar dengan apa).","err"); }
+  else {
   if(r.status==="Penawaran"&&!r.nilai) return setMsg("Isi nilai penawaran.","err");
   if(r.status==="Negosiasi"&&!r.nilaiNego) return setMsg("Isi nilai hasil negosiasi.","err");
   if(r.status==="Diterima"&&!r.nilaiDeal) return setMsg("Isi nilai deal.","err");
+  }
   }
   if(FINAL.includes(r.status)&&r.jenis!==ADMIN_J){ r.rencana=""; r.tglFu=""; }
   saving=true; $("saveBtn").disabled=true; setMsg("Menyimpan ke Google Drive…");
@@ -1262,12 +1340,13 @@ async function saveHasil(){
     const res=await api("apiSave",SESSION,{id:cur.row?cur.row.id:null,aktivitasId:cur.aktivitasId,approvalId:cur.approvalId||null,action:"hasil",fields:r,removeBukti:cur.removed,photos:{bukti:cur.pending.bukti.map(p=>p.data)}});
     res.bukti.filter(id=>!cur.bukti.includes(id)).forEach((id,i)=>cur.pending.bukti[i]&&photoCache.set(id,cur.pending.bukti[i].data));
     upsertMine(res); dirty=false; clearDraft();
-    loadDups(); toast(res.jenis===LAY_J?`Laporan aktivitas layanan tersimpan`:FINAL.includes(res.status)?`Aktivitas ${res.klien} selesai: ${res.status}`:`Hasil kunjungan ${res.klien} tersimpan`);
+    loadDups(); toast(res.jenis===LAY_J?`Laporan aktivitas layanan tersimpan`:FINAL.includes(res.status)?`Aktivitas ${res.klien} selesai: ${res.status}${res.barter==="Ya"?" (full barter)":""}`:`Hasil kunjungan ${res.klien} tersimpan`);
     resetForm();
   }catch(err){ setMsg(/status penawaran/i.test(err.message)&&r.jenis===LAY_J?"Server masih versi lama dan belum mengenal aktivitas layanan. Minta admin memperbarui Code.gs (Deploy → New version), lalu simpan lagi. Isianmu tetap tersimpan di HP.":err.message,"err"); if(r.jenis===LAY_J) saveDraft(); }
   finally{ saving=false; $("saveBtn").disabled=false; }
 }
 $("saveBtn").onclick=saveHasil;
+$("barter").addEventListener("change",()=>{ dirty=true; renderFinalNote(); if($("barter").checked) $("barterKet").focus(); });
 $("newLayBtn").onclick=()=>{ const on=mine.find(r=>r.visitStatus==="Di lokasi"); if(on){ toast("Selesaikan dulu kunjungan ke "+on.klien+"."); return openRow(on); } startLayanan(); };
 $("newVisitBtn").onclick=()=>{ const on=mine.find(r=>r.visitStatus==="Di lokasi"); if(on){ toast("Selesaikan dulu kunjungan ke "+on.klien+" (belum check-out)."); return openRow(on); } startNew(); };
 window.addEventListener("beforeunload",e=>{ if(dirty){ e.preventDefault(); e.returnValue=""; } });
@@ -1278,7 +1357,7 @@ function groupActs(rows){
   return Object.entries(m).map(([id,rs])=>{ rs.sort((a,b)=>(a.kunjunganKe||1)-(b.kunjunganKe||1)||(a.createdAt||0)-(b.createdAt||0));
     const latest=rs[rs.length-1], close=rs.find(r=>r.hasilAt&&FINAL.includes(normSt(r.status))&&r.jenis!==ADMIN_J);
     const st=close?normSt(close.status):normSt(latest.status);
-    return {id,rows:rs,latest,close,status:st,open:!close,last:latest.tanggal||"",closed:close?close.tanggal:"",adminVisits:rs.filter(r=>r.jenis===ADMIN_J).length}; })
+    return {id,rows:rs,latest,close,status:st,open:!close,last:latest.tanggal||"",closed:close?close.tanggal:"",adminVisits:rs.filter(r=>r.jenis===ADMIN_J).length,barter:(close||latest).barter==="Ya",barterKet:(close||latest).barterKet||""}; })
     .sort((a,b)=>b.last.localeCompare(a.last)||(b.latest.updatedAt||0)-(a.latest.updatedAt||0));
 }
 function upsertMine(r){ const i=mine.findIndex(x=>x.id===r.id); if(i>=0) mine[i]=r; else mine.unshift(r); if(screen==="list") renderMine(); }
@@ -1289,10 +1368,10 @@ function histHtml(a){ return a.rows.slice().reverse().map(r=>`<div class="hrow">
 function actCard(a){
   const L=a.latest, t=today(), inProg=L.visitStatus==="Di lokasi"||L.visitStatus==="Isi hasil";
   const fu=a.open&&L.tglFu?`<span>Follow-up <b class="${L.tglFu<t?"fu-late":L.tglFu===t?"fu-today":""}">${fmtDate(L.tglFu)}</b></span>`:"";
-  return `<article class="act ${a.open?"":a.status==="Diterima"?"won":"lost"}" data-act="${a.id}"><div class="top"><span class="client">${esc(L.klien)}</span>${L.visitStatus==="Di lokasi"?'<span class="pill vs-onsite">Di lokasi</span>':L.visitStatus==="Isi hasil"?'<span class="pill vs-onsite">Hasil belum diisi</span>':""}${stPill(a.status)}</div>
+  return `<article class="act ${a.open?"":a.status==="Diterima"?"won":"lost"}" data-act="${a.id}"><div class="top"><span class="client">${esc(L.klien)}</span>${L.visitStatus==="Di lokasi"?'<span class="pill vs-onsite">Di lokasi</span>':L.visitStatus==="Isi hasil"?'<span class="pill vs-onsite">Hasil belum diisi</span>':""}${stPill(a.status)}${a.barter?'<span class="pill barter">Full barter</span>':""}</div>
     ${DUPS.some(d=>d.aktivitasId===a.id)?'<div style="margin-top:4px"><span class="pill dup">⚠ Data klien ganda</span></div>':""}
     <div class="meta"><span class="vcount">${a.rows.length}× kunjungan</span> terakhir ${fmtDate(L.tanggal)}${L.pic?" · PIC "+esc(L.pic):""}${a.close?` · ${a.status==="Diterima"?"deal":"ditolak"} ${fmtDate(a.closed)}`:""}${a.adminVisits?` · ${a.adminVisits}× administrasi`:""}</div>
-    <div class="nums">${L.nilai?`<span>Penawaran <b>${rp(L.nilai)}</b></span>`:""}${L.nilaiNego?`<span>Negosiasi <b>${rp(L.nilaiNego)}</b></span>`:""}${L.nilaiDeal&&a.status==="Diterima"?`<span>Deal <b>${rp(L.nilaiDeal)}</b></span>`:""}${a.status==="Lead"&&L.lanjut?`<span>Lanjut ke penawaran: <b>${esc(L.lanjut)}</b></span>`:""}${(L.produk||[]).length?`<span>${esc(L.produk.join(", "))}</span>`:""}${fu}</div>
+    <div class="nums">${a.barter?`<span>Barter: <b style="font-family:var(--font-ui)">${esc(a.barterKet||"-")}</b> · tanpa revenue</span>`:""}${L.nilai?`<span>Penawaran <b>${rp(L.nilai)}</b></span>`:""}${L.nilaiNego?`<span>Negosiasi <b>${rp(L.nilaiNego)}</b></span>`:""}${L.nilaiDeal&&a.status==="Diterima"?`<span>Deal <b>${rp(L.nilaiDeal)}</b></span>`:""}${a.status==="Lead"&&L.lanjut?`<span>Lanjut ke penawaran: <b>${esc(L.lanjut)}</b></span>`:""}${(L.produk||[]).length?`<span>${esc(L.produk.join(", "))}</span>`:""}${fu}</div>
     ${a.open&&L.rencana?`<div class="meta" style="margin-top:6px">Rencana: ${esc(L.rencana)}</div>`:""}
     <div class="row-actions">${a.open?(inProg?`<button class="btn sm primary" data-row="${L.id}">${L.visitStatus==="Di lokasi"?"Lanjutkan kunjungan":"Isi hasil kunjungan"}</button>`
       :`<button class="btn sm primary" data-follow="${a.id}">+ Kunjungan lanjutan</button><button class="btn sm" data-row="${L.id}">Ubah hasil terakhir</button>`)
@@ -1301,20 +1380,24 @@ function actCard(a){
       <button class="btn sm" data-hist="${a.id}">Riwayat (${a.rows.length})</button><button class="btn sm" data-eklien="${a.id}">Edit klien</button></div>
     <div class="hist" hidden>${histHtml(a)}</div></article>`;
 }
+const qv=id=>($(id).value||"").trim().toLowerCase();
+const actMatch=(a,q)=>!q||a.rows.some(r=>[r.klien,r.pic,r.kontak,(r.produk||[]).join(" "),r.hasil,r.lokasi,r.kategori,r.rencana,r.barterKet,r.status].join(" ").toLowerCase().includes(q));
+["qOpen","qLay","qDone"].forEach(id=>$(id).addEventListener("input",()=>renderMine()));
 function renderMine(){
   const acts=groupActs(mine), open=acts.filter(a=>a.open), doneAll=acts.filter(a=>!a.open), P=homePeriod(), pl=perLabel(P);
   const inP=a=>inRange(a.closed,P.start,P.end);
-  const won=doneAll.filter(a=>a.status==="Diterima"&&inP(a)), lost=doneAll.filter(a=>a.status==="Ditolak"&&inP(a));
+  const won=doneAll.filter(a=>a.status==="Diterima"&&!a.barter&&inP(a)), brt=doneAll.filter(a=>a.status==="Diterima"&&a.barter&&inP(a)), lost=doneAll.filter(a=>a.status==="Ditolak"&&inP(a));
   const vPer=mine.filter(r=>!isLay(r)&&inRange(r.tanggal,P.start,P.end)).length, layP=mine.filter(r=>isLay(r)&&inRange(r.tanggal,P.start,P.end)).sort((a,b)=>(b.checkIn?b.checkIn.at:0)-(a.checkIn?a.checkIn.at:0));
+  const qL=qv("qLay"), layF=layP.filter(r=>!qL||[r.klien,r.keperluan,r.hasil,r.divisi,r.lokasi,r.pic].join(" ").toLowerCase().includes(qL));
   $("layCount").textContent=`(${layP.length} · ${perLabel(P)})`;
-  $("layList").innerHTML=layP.length?layP.map(r=>`<article class="act"><div class="top"><span class="client">${esc(r.keperluan||"Aktivitas layanan")}</span>${r.visitStatus==="Di lokasi"?'<span class="pill vs-onsite">Berlangsung</span>':r.visitStatus==="Isi hasil"?'<span class="pill vs-onsite">Laporan belum diisi</span>':'<span class="pill lay">Layanan</span>'}</div>
+  $("layList").innerHTML=layF.length?layF.map(r=>`<article class="act"><div class="top"><span class="client">${esc(r.keperluan||"Aktivitas layanan")}</span>${r.visitStatus==="Di lokasi"?'<span class="pill vs-onsite">Berlangsung</span>':r.visitStatus==="Isi hasil"?'<span class="pill vs-onsite">Laporan belum diisi</span>':'<span class="pill lay">Layanan</span>'}</div>
       <div class="meta">${fmtDate(r.tanggal)}${r.checkIn?` · ${hm(r.checkIn.at)}–${r.checkOut?hm(r.checkOut.at):"…"}${r.checkOut?" ("+dur(vDur(r))+")":""}`:""} · ${esc(r.klien)}${r.divisi?" · "+esc(r.divisi):""}</div>
       ${r.hasil?`<div class="meta" style="margin-top:4px">${esc(r.hasil)}</div>`:""}<div class="row-actions"><button class="btn sm" data-row="${r.id}">${r.visitStatus==="Di lokasi"?"Lanjutkan":r.visitStatus==="Isi hasil"?"Isi laporan":"Lihat / ubah"}</button><button class="btn sm danger" data-del="${r.id}">Hapus</button></div></article>`).join("")
-    :`<div class="empty" style="padding:16px">Belum ada aktivitas layanan di periode ini.</div>`;
+    :`<div class="empty" style="padding:16px">${qL&&layP.length?"Tidak ada aktivitas layanan yang cocok dengan “"+esc(qL)+"”.":"Belum ada aktivitas layanan di periode ini."}</div>`;
   $("myStats").innerHTML=`<button type="button" class="kpi" data-detail="visits"><div class="k">Kunjungan · ${esc(pl)}</div><div class="v">${vPer}</div><div class="s">${new Set(mine.filter(r=>!isLay(r)&&inRange(r.tanggal,P.start,P.end)).map(r=>r.aktivitasId)).size} klien${layP.length?` · ${layP.length} layanan`:""}</div></button>
     <button type="button" class="kpi" data-detail="open"><div class="k">Prospek berjalan</div><div class="v">${open.length}</div><div class="s">${rpShort(open.reduce((x,a)=>x+valOpen(a.latest),0))} · semua periode</div></button>
-    <button type="button" class="kpi good" data-detail="won"><div class="k">Deal · ${esc(pl)}</div><div class="v">${won.length}</div><div class="s">${rpShort(won.reduce((x,a)=>x+valDeal(a.latest),0))}</div></button>
-    <button type="button" class="kpi bad" data-detail="lost"><div class="k">Ditolak · ${esc(pl)}</div><div class="v">${lost.length}</div><div class="s">${won.length+lost.length?Math.round(won.length/(won.length+lost.length)*100)+"% tingkat deal":"belum ada hasil final"}</div></button>`;
+    <button type="button" class="kpi good" data-detail="won"><div class="k">Deal · ${esc(pl)}</div><div class="v">${won.length}</div><div class="s">${rpShort(won.reduce((x,a)=>x+valDeal(a.latest),0))}${brt.length?` · ${brt.length} barter`:""}</div></button>
+    <button type="button" class="kpi bad" data-detail="lost"><div class="k">Ditolak · ${esc(pl)}</div><div class="v">${lost.length}</div><div class="s">${won.length+brt.length+lost.length?Math.round((won.length+brt.length)/(won.length+brt.length+lost.length)*100)+"% tingkat deal":"belum ada hasil final"}</div></button>`;
   const DP=donePeriod(), done=DP?doneAll.filter(a=>inRange(a.closed,DP.start,DP.end)):doneAll;
   const ps=(MYKPI&&MYKPI.periods&&MYKPI.periods.length)?MYKPI.periods:[curMonthPer()], dsel=donePer==="all"?"all":String(ps.indexOf(DP));
   $("doneSel").innerHTML=ps.map((p,i)=>`<option value="${i}">${esc(perLabel(p))}</option>`).join("")+`<option value="all">Semua periode</option>`; $("doneSel").value=dsel;
@@ -1322,10 +1405,12 @@ function renderMine(){
   const prog=mine.filter(r=>r.visitStatus==="Di lokasi"||r.visitStatus==="Isi hasil"), box=$("resume");
   box.hidden=!prog.length;
   box.innerHTML=`<b>Perlu diselesaikan</b>`+prog.map(r=>`<div class="r"><span>${esc(r.klien)} · ${r.visitStatus==="Di lokasi"?"sedang di lokasi sejak "+hm(r.checkIn&&r.checkIn.at):"sudah check-out, hasil belum diisi"}</span><button type="button" class="btn sm primary" data-row="${r.id}">${r.visitStatus==="Di lokasi"?"Buka timer":"Isi hasil"}</button></div>`).join("");
-  $("openCount").textContent=open.length?`(${open.length})`:"";
-  $("openList").innerHTML=open.length?open.map(actCard).join(""):`<div class="empty" style="padding:22px"><b>Belum ada prospek berjalan</b>Tekan “+ Kunjungan baru” untuk memulai kunjungan ke klien.</div>`;
+  const qO=qv("qOpen"), openF=open.filter(a=>actMatch(a,qO)), qD=qv("qDone"), doneF=done.filter(a=>actMatch(a,qD));
+  $("openCount").textContent=open.length?`(${qO?openF.length+" dari ":""}${open.length})`:"";
+  $("qOpen").hidden=open.length<2&&!qO;
+  $("openList").innerHTML=openF.length?openF.map(actCard).join(""):open.length?`<div class="empty" style="padding:16px">Tidak ada prospek yang cocok dengan “${esc(qO)}”.</div>`:`<div class="empty" style="padding:22px"><b>Belum ada prospek berjalan</b>Tekan “+ Kunjungan baru” untuk memulai kunjungan ke klien.</div>`;
   $("doneCount").textContent=`(${done.length} · ${done.filter(a=>a.status==="Diterima").length} deal · ${done.filter(a=>a.status==="Ditolak").length} ditolak${DP?" · "+perLabel(DP):""})`;
-  $("doneList").innerHTML=done.length?done.map(actCard).join(""):`<div class="empty" style="padding:16px">Belum ada aktivitas yang selesai ${DP?"di periode "+esc(perLabel(DP)):""}.</div>`;
+  $("doneList").innerHTML=doneF.length?doneF.map(actCard).join(""):qD&&done.length?`<div class="empty" style="padding:16px">Tidak ada aktivitas selesai yang cocok dengan “${esc(qD)}”.</div>`:`<div class="empty" style="padding:16px">Belum ada aktivitas yang selesai ${DP?"di periode "+esc(perLabel(DP)):""}.</div>`;
   $("klienList").innerHTML=[...new Set(mine.map(r=>r.klien))].map(k=>`<option value="${esc(k)}">`).join("");
 }
 const pendingDel=new Set();
@@ -1443,6 +1528,7 @@ function chooseClient(it){
   if(it.nw){ $("klien").value=it.nw; $("ciOwn").hidden=true; cur.fromClient=null; checkKlienLive(); return; }
   const c=it.c, L=c.a.latest; ["klien","kategori","lokasi","pic","kontak"].forEach(k=>$(k).value=L[k]||""); cur.fromClient=c.key; dirty=true;
   const box=$("ciOwn"), oa=c.openAct, won=c.acts.find(a=>!a.open&&a.status==="Diterima");
+  if(!oa){ box.hidden=true; renderCheckin(); checkKlienLive(); return; }
   box.hidden=false;
   box.innerHTML=oa?`<span><b>Klien ini masih punya prospek berjalan</b> (${esc(oa.status||"-")}, ${oa.rows.length}× kunjungan). Sebaiknya lanjutkan aktivitas itu supaya riwayatnya tetap satu.</span>
       <div class="row-actions" style="margin:0"><button type="button" class="btn sm primary" data-own="follow">Lanjutkan sebagai kunjungan ke-${oa.rows.length+1}</button><button type="button" class="btn sm" data-own="new">Tetap buat aktivitas baru</button></div>`
@@ -1472,11 +1558,11 @@ function curMonthPer(){ const n=new Date(); return {start:ymd(new Date(n.getFull
 function homePeriod(){ const ps=MYKPI&&MYKPI.periods; if(!ps||!ps.length) return curMonthPer(); return ps[homePer??MYKPI.active]||ps[0]; }
 function donePeriod(){ if(donePer==="all") return null; const ps=MYKPI&&MYKPI.periods; if(!ps||!ps.length) return curMonthPer(); return ps[donePer??homePer??MYKPI.active]||ps[0]; }
 const inRange=(d,a,b)=>!!d&&(!a||d>=a)&&(!b||d<=b);
-function achieve(rows,a,b){ const acts=groupActs(rows), won=acts.filter(x=>!x.open&&x.status==="Diterima"&&inRange(x.closed,a,b));
+function achieve(rows,a,b){ const acts=groupActs(rows), won=acts.filter(x=>!x.open&&x.status==="Diterima"&&!x.barter&&inRange(x.closed,a,b)), brt=acts.filter(x=>!x.open&&x.status==="Diterima"&&x.barter&&inRange(x.closed,a,b));
   // klien baru = aktivitas pertama ke klien tsb (penawaran ulang ke klien lama tidak dihitung)
   const firstSeen={}; acts.slice().sort((x,y)=>(x.rows[0].tanggal||"").localeCompare(y.rows[0].tanggal||"")).forEach(x=>{ const k=(x.latest.userId||x.latest.sales)+"|"+(klienKey(x.latest.klien)||x.id); if(!firstSeen[k]) firstSeen[k]=x.id; });
   return {kunjungan:rows.filter(r=>!isLay(r)&&inRange(r.tanggal,a,b)).length, klienBaru:acts.filter(x=>inRange(x.rows[0].tanggal,a,b)&&firstSeen[(x.latest.userId||x.latest.sales)+"|"+(klienKey(x.latest.klien)||x.id)]===x.id).length,
-    deal:won.length, nilaiDeal:won.reduce((s,x)=>s+valDeal(x.latest),0)}; }
+    deal:won.length, nilaiDeal:won.reduce((s,x)=>s+valDeal(x.latest),0), barter:brt.length}; }
 const fmtK=(k,v)=>k==="nilaiDeal"?rpShort(v):String(v);
 function kpiRowsHtml(ach,tgt){ return TKEYS.map(([k,l])=>{ const t=tgt&&tgt[k]||0, v=ach[k]||0, p=t?Math.round(v/t*100):null;
   return `<div class="kprow"><span>${l}</span><div class="bar"><i class="${p>=100?"ok":""}" style="width:${t?Math.min(100,v/t*100):0}%"></i></div><span class="val">${fmtK(k,v)} <small>/ ${t?fmtK(k,t):"–"}${p!==null?" · "+p+"%":""}</small></span></div>`; }).join(""); }
@@ -1551,17 +1637,77 @@ function onListClick(e){ const b=e.target.closest("button"); if(!b) return;
 // ---------- navigasi
 function show(v){
   document.querySelectorAll("#tabs button").forEach(b=>b.setAttribute("aria-selected",b.dataset.view===v));
-  ["isi","rekap","set","akun","report"].forEach(x=>$("view-"+x).hidden=x!==v);
+  ["isi","tim","rekap","set","akun","report"].forEach(x=>$("view-"+x).hidden=x!==v);
   $("savebar").hidden=!(v==="isi"&&screen==="hasil"); $("gearBtn").setAttribute("aria-pressed",v==="set"); window.scrollTo(0,0);
-  if(v==="rekap"){ loadDash(); loadAppr(); } if(v==="set") loadSettings();
+  if(v==="rekap"){ loadDash(); loadAppr(); } if(v==="set") loadSettings(); if(v==="tim") loadTim();
 }
 document.querySelectorAll("#tabs button").forEach(b=>b.onclick=()=>show(b.dataset.view));
+// ---------- TIM: klien tim (anti follow-up ganda) & pesan tim
+let TC=[], MSGS=[], timTab="klien", msgKf="", timLoading=false;
+const seenKey=()=>"bsi_msgseen_"+(ME?ME.id:"");
+const getSeen=()=>{ try{ return Number(localStorage.getItem(seenKey()))||0; }catch(e){ return 0; } };
+const setSeen=v=>{ try{ localStorage.setItem(seenKey(),String(v)); }catch(e){} };
+function msgBadge(){ const seen=getSeen(), n=MSGS.filter(m=>m.createdAt>seen&&(!ME||m.userId!==ME.id)).length;
+  [$("msgBadge"),$("msgBadge2")].forEach(b=>{ b.hidden=!n; b.textContent=n>9?"9+":String(n); }); }
+async function loadMsgs(){ if(!SESSION||!PERM.lapor) return; try{ MSGS=(await api("apiMessages",SESSION)||[]).sort((a,b)=>b.createdAt-a.createdAt); msgBadge(); if(!$("view-tim").hidden&&timTab==="pesan") renderMsgs(); }catch(e){} }
+setInterval(()=>{ if(SESSION&&PERM.lapor) loadMsgs(); },90000);
+async function loadTim(){ if(timLoading||!PERM.lapor) return; timLoading=true; $("timReload").disabled=true; $("tcInfo").textContent="Memuat klien tim…";
+  try{ const [tc]=await Promise.all([api("apiTeamClients",SESSION),loadMsgs()]); TC=tc||[]; renderTc(); if(timTab==="pesan") renderMsgs(); }
+  catch(err){ $("tcInfo").textContent=err.message; }
+  finally{ timLoading=false; $("timReload").disabled=false; } }
+$("timReload").onclick=loadTim;
+function setTimTab(t){ timTab=t; document.querySelectorAll("[data-tt]").forEach(b=>b.setAttribute("aria-selected",b.dataset.tt===t)); $("tt-klien").hidden=t!=="klien"; $("tt-pesan").hidden=t!=="pesan";
+  if(t==="pesan"){ renderMsgs(); } }
+document.querySelectorAll("[data-tt]").forEach(b=>b.onclick=()=>setTimTab(b.dataset.tt));
+["tcQ"].forEach(id=>$(id).addEventListener("input",renderTc)); ["tcF","tcS"].forEach(id=>$(id).addEventListener("change",renderTc));
+function renderTc(){
+  opts($("tcS"),[...new Set(TC.map(x=>x.sales).filter(Boolean))].sort((a,b)=>a.localeCompare(b,"id")),"Semua sales");
+  $("tcKlienList").innerHTML=[...new Set(TC.map(x=>x.klien))].map(k=>`<option value="${esc(k)}">`).join("");
+  const q=$("tcQ").value.trim().toLowerCase(), f=$("tcF").value, sl=$("tcS").value, t=today();
+  const g={}; TC.forEach(x=>{ const k=klienKey(x.klien)||x.klien.toLowerCase(); (g[k]??=[]).push(x); });
+  let groups=Object.values(g).map(xs=>{ xs.sort((a,b)=>(a.selesai-b.selesai)||(b.terakhir||"").localeCompare(a.terakhir||"")); return xs; });
+  groups=groups.filter(xs=>(!f||(f==="open"?xs.some(x=>!x.selesai):xs.every(x=>x.selesai)))&&(!sl||xs.some(x=>x.sales===sl))
+    &&(!q||xs.some(x=>[x.klien,x.sales,x.tim,x.kategori,x.lokasi,(x.produk||[]).join(" "),x.status,x.rencana].join(" ").toLowerCase().includes(q))));
+  groups.sort((a,b)=>(b[0].terakhir||"").localeCompare(a[0].terakhir||""));
+  const nOpen=TC.filter(x=>!x.selesai).length, nOth=TC.filter(x=>!x.selesai&&!x.mine).length;
+  $("tcInfo").textContent=`${groups.length} klien ditampilkan · ${nOpen} prospek berjalan di tim (${nOth} dipegang sales lain). Nilai rupiah & kontak klien tidak ditampilkan di sini.`;
+  const mc=k=>MSGS.filter(m=>m.klien&&klienKey(m.klien)===k).length;
+  $("tcList").innerHTML=groups.length?groups.slice(0,300).map(xs=>{ const k=klienKey(xs[0].klien)||xs[0].klien.toLowerCase(), openBy=[...new Set(xs.filter(x=>!x.selesai).map(x=>x.sales))], n=mc(k);
+    const warn=openBy.length>1?`<div style="margin-top:4px"><span class="pill dup">⚠ ${openBy.length} sales sedang menangani klien ini</span></div>`:"";
+    return `<article class="act"><div class="top"><span class="client">${esc(xs[0].klien)}</span>${xs.some(x=>x.mine)?'<span class="pill adm">Klienmu</span>':""}</div>${warn}
+      ${xs[0].kategori||xs[0].lokasi?`<div class="meta">${[xs[0].kategori,xs[0].lokasi].filter(Boolean).map(esc).join(" · ")}</div>`:""}
+      <div style="margin-top:8px">${xs.map(x=>`<div class="tcrow"><span class="who">${esc(x.sales)}${x.mine?" (kamu)":""}</span>${x.tim?`<span class="hint">${esc(x.tim)}</span>`:""}${stPill(x.status)}${x.barter?'<span class="pill barter">Full barter</span>':""}${x.visitStatus==="Di lokasi"?'<span class="pill vs-onsite">Sedang di lokasi</span>':""}
+        <span class="hint">${x.kunjungan}× kunjungan · terakhir ${fmtDate(x.terakhir)}${x.tglFu?` · follow-up <b class="${x.tglFu<t?"fu-late":x.tglFu===t?"fu-today":""}">${fmtDate(x.tglFu)}</b>`:""}${(x.produk||[]).length?" · "+esc(x.produk.join(", ")):""}${x.selesai?" · selesai":""}</span>
+        ${x.rencana?`<span class="hint" style="flex-basis:100%">Rencana: ${esc(x.rencana)}</span>`:""}</div>`).join("")}</div>
+      <div class="row-actions"><button type="button" class="btn sm" data-disk="${esc(xs[0].klien)}">Diskusi${n?` (${n})`:""}</button></div></article>`; }).join("")
+    :`<div class="empty"><b>${TC.length?"Tidak ada klien yang cocok":"Belum ada data klien tim"}</b>${TC.length?"Coba ubah kata kunci atau filter.":"Klien muncul di sini begitu sales mencatat kunjungan."}</div>`;
+}
+$("tcList").addEventListener("click",e=>{ const b=e.target.closest("[data-disk]"); if(!b) return; msgKf=b.dataset.disk; $("msgKlien").value=msgKf; setTimTab("pesan"); $("msgText").focus(); });
+function renderMsgs(){
+  const seen=getSeen(), k=msgKf?klienKey(msgKf)||msgKf.toLowerCase():"";
+  const list=k?MSGS.filter(m=>m.klien&&(klienKey(m.klien)||m.klien.toLowerCase())===k):MSGS;
+  $("msgFilt").hidden=!k; $("msgFilt").innerHTML=k?`<div class="hint" style="margin:0 0 10px">Menampilkan diskusi klien <b>${esc(msgKf)}</b> · <button type="button" class="btn sm" id="msgAll">Tampilkan semua pesan</button></div>`:"";
+  $("msgAll")&&($("msgAll").onclick=()=>{ msgKf=""; $("msgKlien").value=""; renderMsgs(); });
+  $("msgList").innerHTML=list.length?list.slice(0,200).map(m=>{ const me=ME&&m.userId===ME.id, canDel=me||PERM.kelolaUser;
+    return `<div class="mitem${me?" me":""}"><div class="mh"><b>${esc(m.sales)}</b>${m.tim?`<span class="hint">${esc(m.tim)}</span>`:""}<span class="hint">${dt(m.createdAt)}</span>${m.createdAt>seen&&!me?'<span class="new">BARU</span>':""}${m.klien?`<span class="pill adm">${esc(m.klien)}</span>`:""}
+      ${canDel?`<button type="button" class="btn sm" style="margin-left:auto" data-mdel="${esc(m.id)}">Hapus</button>`:""}</div><div class="mb">${esc(m.pesan)}</div></div>`; }).join("")
+    :`<div class="empty"><b>Belum ada pesan${k?" untuk klien ini":""}</b>Gunakan pesan tim untuk mengabarkan klien yang sedang kamu follow-up, supaya tidak dikunjungi dua sales sekaligus.</div>`;
+  if(MSGS.length) setSeen(Math.max(seen,MSGS[0].createdAt)); msgBadge();
+}
+$("msgSend").onclick=async()=>{ const pesan=$("msgText").value.trim(), klien=$("msgKlien").value.trim(); if(!pesan) return msg($("msgMsg"),"Tulis pesannya dulu.","err");
+  $("msgSend").disabled=true; msg($("msgMsg"),"Mengirim…");
+  try{ const m=await api("apiPostMessage",SESSION,{pesan,klien}); MSGS.unshift(m); $("msgText").value=""; msg($("msgMsg"),""); if(klien) msgKf=klien; renderMsgs(); if(TC.length) renderTc(); toast("Pesan terkirim ke tim"); }
+  catch(err){ msg($("msgMsg"),err.message,"err"); } finally{ $("msgSend").disabled=false; } };
+$("msgList").addEventListener("click",async e=>{ const b=e.target.closest("[data-mdel]"); if(!b) return; b.disabled=true;
+  try{ await api("apiDeleteMessage",SESSION,b.dataset.mdel); MSGS=MSGS.filter(m=>m.id!==b.dataset.mdel); renderMsgs(); }catch(err){ toast(err.message); b.disabled=false; } });
+
 
 // ---------- dashboard / rekap
 function rkCard(a){ const L=a.latest;
     const vr=a.rows.slice().reverse().map(r=>{ const n=(r.checkIn?1:0)+(r.checkOut?1:0)+(r.bukti||[]).length, canDel=PERM.hapusSemua||(ME&&r.userId===ME.id);
       const det=[r.hasil&&`<b>Hasil:</b> ${esc(r.hasil)}`,r.kendala&&`<b>${normSt(r.status)==="Ditolak"?"Alasan":"Kendala"}:</b> ${esc(r.kendala)}`,r.rencana&&`<b>Rencana:</b> ${esc(r.rencana)}${r.tglFu?" ("+fmtDate(r.tglFu)+")":""}`,
         normSt(r.status)==="Lead"&&r.lanjut&&`<b>Lanjut ke penawaran:</b> ${esc(r.lanjut)}`,
+        r.barter==="Ya"&&`<b>Full barter:</b> ${esc(r.barterKet||"-")} (tanpa revenue)`,
         [r.nilai&&"Penawaran "+rp(r.nilai),r.nilaiNego&&"Negosiasi "+rp(r.nilaiNego),normSt(r.status)==="Diterima"&&r.nilaiDeal&&"Deal "+rp(r.nilaiDeal)].filter(Boolean).join(" · ")].filter(Boolean);
       return `<div class="vrow"><span style="font:600 12px var(--font-num);background:var(--sunken);border-radius:6px;padding:2px 7px">#${r.kunjunganKe}</span>
         <div class="t"><div>${fmtDate(r.tanggal)} · ${esc(r.jenis||"-")} ${pills(r)}</div>
@@ -1569,9 +1715,9 @@ function rkCard(a){ const L=a.latest;
         ${det.length?`<div class="meta" style="margin-top:4px;color:var(--fg)">${det.join("<br>")}</div>`:""}
         <div class="gallery" data-gal="${r.id}" hidden></div>
         ${n||canDel?`<div class="row-actions">${n?`<button class="btn sm" data-foto="${r.id}">Lihat foto (${n})</button>`:""}${canDel?`<button class="btn sm danger" data-rdel="${r.id}">Hapus</button>`:""}</div>`:""}</div></div>`; }).join("");
-    return `<article class="act ${a.open?"":a.status==="Diterima"?"won":"lost"}"><div class="top"><span class="client">${esc(L.klien)}</span>${stPill(a.status)}</div>
+    return `<article class="act ${a.open?"":a.status==="Diterima"?"won":"lost"}"><div class="top"><span class="client">${esc(L.klien)}</span>${stPill(a.status)}${a.barter?'<span class="pill barter">Full barter</span>':""}</div>
       <div class="meta"><span class="vcount">${a.rows.length}× kunjungan</span> ${esc(L.sales)}${L.tim?" ("+esc(L.tim)+")":""}${L.kategori?" · "+esc(L.kategori):""}${L.lokasi?" · "+esc(L.lokasi):""}</div>
-      <div class="nums">${L.pic?`<span>PIC <b style="font-family:var(--font-ui)">${esc(L.pic)}</b>${L.kontak?" · "+esc(L.kontak):""}</span>`:""}${valOf(L)?`<span>${a.status==="Diterima"?"Deal":"Nilai"} <b>${rp(valOf(L))}</b></span>`:""}<span>Terakhir ${fmtDate(L.tanggal)}</span></div>
+      <div class="nums">${L.pic?`<span>PIC <b style="font-family:var(--font-ui)">${esc(L.pic)}</b>${L.kontak?" · "+esc(L.kontak):""}</span>`:""}${valOf(L)?`<span>${a.status==="Diterima"?"Deal":"Nilai"} <b>${rp(valOf(L))}</b></span>`:""}${a.barter?`<span>Barter <b style="font-family:var(--font-ui)">${esc(a.barterKet||"-")}</b></span>`:""}<span>Terakhir ${fmtDate(L.tanggal)}</span></div>
       <details style="margin-top:8px"><summary class="hint" style="cursor:pointer;font-weight:600;color:var(--accent)">Lihat ${a.rows.length} kunjungan</summary>${vr}</details></article>`; }
 
 let all=[], dashLoading=false, DASH={kpi:null,sales:[]}, RK={};
@@ -1729,7 +1875,8 @@ function evalSales(x){
   else ev.push(`Melakukan <b>${x.nVisit} kunjungan</b> ke <b>${x.nKlien} klien</b> (rata-rata ${(x.nVisit/Math.max(1,x.nKlien)).toLocaleString("id-ID",{maximumFractionDigits:1})} kunjungan per klien)${x.avgDur>=60000?`, durasi rata-rata ${dur(x.avgDur)}`:""}${x.nAdm?`, termasuk ${x.nAdm} kunjungan administrasi pasca-deal`:""}.`);
   if(x.won+x.lost){ const r=Math.round(x.won/(x.won+x.lost)*100), tr=x.teamRate;
     ev.push(`Tingkat deal <b>${r}%</b> (${x.won} deal dari ${x.won+x.lost} hasil final)`+(tr!==null?`, ${r>tr?"di atas":r<tr?"di bawah":"sama dengan"} rata-rata tim (${tr}%).`:".")); }
-  else ev.push("Belum ada klien yang mencapai hasil final (deal / ditolak) pada periode ini.");
+  else if(!x.barter) ev.push("Belum ada klien yang mencapai hasil final (deal / ditolak) pada periode ini.");
+  if(x.barter) ev.push(`Ada <b>${x.barter} deal full barter</b> (kegiatan non-profit, tanpa revenue rupiah). Deal ini dicatat sebagai kontribusi relasi/brand dan <b>tidak dihitung</b> ke capaian KPI.`);
   if(x.open.length){ const neg=x.open.filter(a=>a.status==="Negosiasi"); ev.push(`Masih ada <b>${x.open.length} prospek berjalan</b> senilai ${rp(x.open.reduce((s,a)=>s+valOpen(a.latest),0))}`+(neg.length?`, ${neg.length} di antaranya sudah tahap negosiasi. Prioritaskan untuk closing.`:".")); }
   if(x.late.length) ev.push(`<b>${x.late.length} follow-up terlewat</b> dari jadwal (${x.late.slice(0,3).map(a=>esc(a.latest.klien)).join(", ")}${x.late.length>3?", dst.":""}). Segera tindak lanjuti.`);
   const reasons=x.lostActs.map(a=>(a.close||a.latest).kendala).filter(Boolean); if(reasons.length) ev.push(`Alasan penolakan yang tercatat: ${reasons.slice(0,3).map(esc).join("; ")}.`);
@@ -1742,23 +1889,24 @@ function buildReport(name){
   const pages=names.map(n=>{
     const rows=base.filter(r=>r.sales===n), u=(RK.salesIn||[]).find(x=>x.nama===n)||DASH.sales.find(x=>x.nama===n), acts=groupActs(rows);
     const vis=rows.filter(r=>!isLay(r)&&inRange(r.tanggal,A,B)), actsP=acts.filter(a=>a.rows.some(r=>inRange(r.tanggal,A,B)));
-    const open=acts.filter(a=>a.open), wonA=acts.filter(a=>!a.open&&a.status==="Diterima"&&inRange(a.closed,A,B)), lostA=acts.filter(a=>!a.open&&a.status==="Ditolak"&&inRange(a.closed,A,B));
+    const open=acts.filter(a=>a.open), wonA=acts.filter(a=>!a.open&&a.status==="Diterima"&&!a.barter&&inRange(a.closed,A,B)), brtA=acts.filter(a=>!a.open&&a.status==="Diterima"&&a.barter&&inRange(a.closed,A,B)), lostA=acts.filter(a=>!a.open&&a.status==="Ditolak"&&inRange(a.closed,A,B));
     const dd=vis.filter(r=>vDur(r)>0), t=today();
     const lay=rows.filter(r=>isLay(r)&&inRange(r.tanggal,A,B));
     const x={nLay:lay.length,durLay:lay.reduce((s,r)=>s+vDur(r),0),ach:achieve(rows,A,B),tg:u&&KP?KP.targets[u.id]:null,nVisit:vis.length,nKlien:actsP.length,avgDur:dd.length?dd.reduce((s,r)=>s+vDur(r),0)/dd.length:0,nAdm:vis.filter(r=>r.jenis===ADMIN_J).length,
-      won:wonA.length,lost:lostA.length,teamRate,open,late:open.filter(a=>a.latest.tglFu&&a.latest.tglFu<t),lostActs:lostA};
+      won:wonA.length,lost:lostA.length,barter:brtA.length,teamRate,open,late:open.filter(a=>a.latest.tglFu&&a.latest.tglFu<t),lostActs:lostA};
     const E=evalSales(x), tim=(u&&u.tim)||(rows[0]&&rows[0].tim)||"-";
     const stRows=STATUSES.map(([s])=>{ const g=actsP.filter(a=>a.status===s); return `<tr><td>${s}</td><td class="n">${g.length}</td><td class="n">${rp(g.reduce((v,a)=>v+valOf(a.latest),0))}</td></tr>`; }).join("");
-    const kl=actsP.slice().sort((a,b)=>b.last.localeCompare(a.last)).map(a=>{ const L=a.latest; return `<tr><td>${esc(L.klien)}</td><td>${esc(L.kategori||"-")}</td><td class="n">${a.rows.filter(r=>inRange(r.tanggal,A,B)).length} / ${a.rows.length}</td><td>${esc(a.status||"-")}</td><td class="n">${valOf(L)?rp(valOf(L)):"-"}</td><td>${fmtDate(L.tanggal)}</td><td>${esc(a.open&&L.tglFu?fmtDate(L.tglFu):"-")}</td></tr>`; }).join("");
+    const kl=actsP.slice().sort((a,b)=>b.last.localeCompare(a.last)).map(a=>{ const L=a.latest; return `<tr><td>${esc(L.klien)}</td><td>${esc(L.kategori||"-")}</td><td class="n">${a.rows.filter(r=>inRange(r.tanggal,A,B)).length} / ${a.rows.length}</td><td>${esc(a.status||"-")}${a.barter?" (barter)":""}</td><td class="n">${a.barter?"Barter":valOf(L)?rp(valOf(L)):"-"}</td><td>${fmtDate(L.tanggal)}</td><td>${esc(a.open&&L.tglFu?fmtDate(L.tglFu):"-")}</td></tr>`; }).join("");
     return `<div class="rep"><div class="rhead"><div><h2>Laporan Kinerja Sales</h2><div style="color:#5D6479">Periode ${rangeTxt(A,B)}${KP&&KP.start===A&&KP.end===B?" · target "+perLabel(KP):""}</div>
         <div style="margin-top:8px;font-size:15px"><b>${esc(n)}</b> · Tim ${esc(tim)}</div></div>${logo?`<img src="${logo}" alt="Berkah Sinergi Ide Group">`:""}</div>
-      <div class="rmeta"><div><span>Kunjungan</span><b>${x.nVisit}</b></div><div><span>Klien dikunjungi</span><b>${x.nKlien}</b></div><div><span>Deal</span><b>${x.won} · ${rpShort(x.ach.nilaiDeal)}</b></div><div><span>Ditolak</span><b>${x.lost}</b></div></div>
+      <div class="rmeta"><div><span>Kunjungan</span><b>${x.nVisit}</b></div><div><span>Klien dikunjungi</span><b>${x.nKlien}</b></div><div><span>Deal</span><b>${x.won} · ${rpShort(x.ach.nilaiDeal)}</b></div><div><span>Ditolak</span><b>${x.lost}</b></div>${brtA.length?`<div><span>Full barter</span><b>${brtA.length}</b></div>`:""}</div>
       <h3>Target KPI vs capaian</h3><table><thead><tr><th>Indikator</th><th class="n">Target</th><th class="n">Capaian</th><th class="n">%</th></tr></thead><tbody>
         ${TKEYS.map(([k,l])=>{ const tv=x.tg&&x.tg[k]||0, v=x.ach[k]||0; return `<tr><td>${l}</td><td class="n">${tv?fmtK(k,tv):"-"}</td><td class="n">${fmtK(k,v)}</td><td class="n">${tv?Math.round(v/tv*100)+"%":"-"}</td></tr>`; }).join("")}</tbody></table>
       <h3>Evaluasi singkat <span class="verdict" style="color:${E.verdict[1]};background:${E.verdict[2]};margin-left:6px;text-transform:none;letter-spacing:0">${E.verdict[0]}</span></h3>
       <ul class="eval">${E.ev.map(e=>`<li>${e}</li>`).join("")}</ul>
       <h3>Status klien pada periode ini</h3><table><thead><tr><th>Status</th><th class="n">Klien</th><th class="n">Nilai</th></tr></thead><tbody>${stRows}</tbody></table>
       <h3>Daftar klien (${actsP.length})</h3>${actsP.length?`<table><thead><tr><th>Klien</th><th>Kategori</th><th class="n">Kunjungan (periode / total)</th><th>Status</th><th class="n">Nilai</th><th>Terakhir</th><th>Follow-up</th></tr></thead><tbody>${kl}</tbody></table>`:`<p style="color:#5D6479">Tidak ada klien pada periode ini.</p>`}
+      <h3>Kegiatan non-profit · full barter (tanpa revenue)</h3>${brtA.length?`<table><thead><tr><th>Klien</th><th>Bentuk barter</th><th>Produk</th><th class="n">Kunjungan</th><th>Tanggal deal</th></tr></thead><tbody>${brtA.map(a=>`<tr><td>${esc(a.latest.klien)}</td><td>${esc(a.barterKet||"-")}</td><td>${esc(((a.close||a.latest).produk||[]).join(", ")||"-")}</td><td class="n">${a.rows.length}</td><td>${fmtDate(a.closed)}</td></tr>`).join("")}</tbody></table><p style="color:#5D6479;font-size:12px;margin-top:4px">Deal full barter tidak menghasilkan revenue rupiah dan tidak dihitung ke capaian KPI (jumlah deal &amp; nilai deal).</p>`:`<p style="color:#5D6479">Tidak ada deal full barter pada periode ini.</p>`}
       <h3>Catatan atasan</h3><div class="note" contenteditable="true" aria-label="Catatan atasan"></div>
       <div class="sign"><div></div><div></div></div><div class="sign" style="margin-top:0;padding-top:0"><span>${esc(n)} · Sales</span><span>${esc(ME?ME.nama:"")} · ${esc(ME?ME.role:"")}</span></div>
       <div class="foot">Dicetak ${dt(Date.now())} dari aplikasi Laporan Sales BERKAH SINERGI IDE</div></div>`; });
@@ -1808,15 +1956,15 @@ function render(){
   const acts=actsAll.filter(a=>!st||a.status===st).filter(a=>!q||a.rows.some(r=>[r.klien,r.pic,r.hasil,r.rencana,r.kendala,r.lokasi,r.sales].join(" ").toLowerCase().includes(q)));
   const actsInPeriod=acts.filter(a=>a.rows.some(r=>inRange(r.tanggal,A,B)));
   const visits=base.filter(r=>inRange(r.tanggal,A,B)&&acts.some(a=>a.id===r.aktivitasId));
-  const open=acts.filter(a=>a.open), won=acts.filter(a=>!a.open&&a.status==="Diterima"&&inRange(a.closed,A,B)), lost=acts.filter(a=>!a.open&&a.status==="Ditolak"&&inRange(a.closed,A,B));
+  const open=acts.filter(a=>a.open), won=acts.filter(a=>!a.open&&a.status==="Diterima"&&!a.barter&&inRange(a.closed,A,B)), brt=acts.filter(a=>!a.open&&a.status==="Diterima"&&a.barter&&inRange(a.closed,A,B)), lost=acts.filter(a=>!a.open&&a.status==="Ditolak"&&inRange(a.closed,A,B));
   const done=visits.filter(r=>vDur(r)>0), onsite=visits.filter(r=>r.visitStatus==="Di lokasi").length;
   const layR=base.filter(r=>isLay(r)&&inRange(r.tanggal,A,B));
-  RK={A,B,base,visits,open,won,lost,layR};
+  RK={A,B,base,visits,open,won,lost,layR,brt};
   // KPI tiles
   $("kAkt").textContent=visits.length; $("kAktS").textContent=`${actsInPeriod.length} klien · rata2 ${done.length?dur(done.reduce((a,r)=>a+vDur(r),0)/done.length):"-"}`+(layR.length?` · ${layR.length} layanan`:"")+(onsite?` · ${onsite} di lokasi`:"");
   $("kVisit").textContent=open.length; $("kVisitS").textContent=rpShort(open.reduce((a,x)=>a+valOpen(x.latest),0))+" nilai berjalan";
-  $("kPipe").textContent=won.length; $("kPipeS").textContent=rpShort(won.reduce((a,x)=>a+valDeal(x.latest),0));
-  $("kClose").textContent=lost.length; $("kCloseS").textContent=(won.length+lost.length)?pct(won.length,won.length+lost.length)+"% tingkat deal":"belum ada hasil final";
+  $("kPipe").textContent=won.length; $("kPipeS").textContent=rpShort(won.reduce((a,x)=>a+valDeal(x.latest),0))+(brt.length?` · ${brt.length} full barter`:"");
+  $("kClose").textContent=lost.length; $("kCloseS").textContent=(won.length+brt.length+lost.length)?pct(won.length+brt.length,won.length+brt.length+lost.length)+"% tingkat deal":"belum ada hasil final";
   // Target KPI tim
   const salesIn=DASH.sales.filter(u=>(!tm||(u.tim||"")===tm)&&(!sl||u.nama===sl));
   RK.salesIn=salesIn;
@@ -1922,7 +2070,7 @@ async function saveUser(){
   try{ const s=await api("apiSaveUser",SESSION,u); const isNew=!editingUser; applySettings(s); closeEditor();
     toast(isNew?`Pengguna ${u.nama} ditambahkan. Username: ${u.username}`:"Data pengguna disimpan"); if(u.id===ME.id){ const me=await api("apiMe",SESSION); enterPerms(me); } }
   catch(err){ msg(m,err.message,"err"); if($("euSave")) $("euSave").disabled=false; } }
-function enterPerms(r){ ME=r.user; PERM=r.perms; $("tabIsi").hidden=!PERM.lapor; $("tabRekap").hidden=!(PERM.rekap||PERM.approveKlien||PERM.approveDataKlien); $("tabs").hidden=!(PERM.lapor&&(PERM.rekap||PERM.approveKlien||PERM.approveDataKlien)); $("gearBtn").hidden=!PERM.kelolaUser; }
+function enterPerms(r){ ME=r.user; PERM=r.perms; $("tabIsi").hidden=!PERM.lapor; $("tabRekap").hidden=!(PERM.rekap||PERM.approveKlien||PERM.approveDataKlien); $("tabTim").hidden=!PERM.lapor; $("tabs").hidden=!PERM.lapor; $("gearBtn").hidden=!PERM.kelolaUser; }
 let kpiIdx=null, kpiDraftNew=false;
 function renderKpiSet(){
   const k=SET.kpi; $("kpiPanel").hidden=!k; if(!k) return;
